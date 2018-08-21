@@ -14,4 +14,4 @@ This will link the installed version of the `henrietta` package to your local re
 
 ## Contributors
 
-This package was written by [Zach Berta-Thompson](https://github.com/zkbt) and [Will Waalkes]](https://github.com/waalkesw).
+This package was written by [Zach Berta-Thompson](https://github.com/zkbt) and [Will Waalkes](https://github.com/waalkesw).
