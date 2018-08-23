@@ -17,8 +17,8 @@ if sys.version_info[0] < 3:
 else:
     import builtins
 builtins.__HENRIETTASETUP__ = True
-import thefriendlystars
-version = thefriendlystars.__version__
+import henrietta
+version = henrietta.__version__
 
 setup(name = "henrietta",
     version = version,
