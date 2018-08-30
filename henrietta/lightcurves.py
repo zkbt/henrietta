@@ -11,6 +11,7 @@ def get_lightcurve(star='Kepler-42', quarter=1, kind='PDCSAP_FLUX'):
     lcf.plot()
     lc = lcf.get_lightcurve('PDCSAP_FLUX')
     lc.plot()
+    print("hello")
 
 def get_all_lightcurves(star='Kepler-42'):
     '''
