@@ -1,17 +1,16 @@
 
-def get_lightcurve(star='Kepler-42', quarter=1, kind='PDCSAP_FLUX'):
+def get_lightcurve(star='Kepler-186', quarter=1, kind='PDCSAP_FLUX'):
     '''
     This function is a wrapper to download a single quarter of Kepler
     lightcurve and extract the PDCSAP_FLUX from it.
     '''
 
     (maybe it looks something like this?)
-    lcf = lightkurve.KeplerLightCurveFile.from_archive('Kepler-186')
-    lcf = lightkurve.KeplerLightCurveFile.from_archive('Kepler-186', quarter=1)
+    lcf = lightkurve.KeplerLightCurveFile.from_archive(star)
+    lcf = lightkurve.KeplerLightCurveFile.from_archive(star, quarter=quarter)
     lcf.plot()
-    lc = lcf.get_lightcurve('PDCSAP_FLUX')
+    lc = lcf.get_lightcurve(kind)
     lc.plot()
-    print("hello")
 
 def get_all_lightcurves(star='Kepler-42'):
     '''
