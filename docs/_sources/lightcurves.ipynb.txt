@@ -6,7 +6,7 @@
    "source": [
     "# Light Curve Basics\n",
     "\n",
-    "The examples over at [`lightkurve`](http://lightkurve.keplerscience.org) are really useful for understanding all the wonderful ways you can access *Kepler* data via online archives. This very short example demonstrates a quick-and-dirty tool that uses `lightkurve` to download the entire *Kepler* light curve for a particular star."
+    "The examples over at [lightkurve](http://lightkurve.keplerscience.org) are really useful for understanding all the wonderful ways you can access *Kepler* data via online archives. This very short example demonstrates a quick-and-dirty tool that uses `lightkurve` to download the entire *Kepler* light curve for a particular star."
    ]
   },
   {
