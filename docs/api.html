@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Function Definitions &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing and reporting issues" href="contributing.html" />
+    <link rel="prev" title="Light Curve Basics" href="lightcurves.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Function Definitions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="function-definitions">
+<span id="api"></span><h1>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h1>
+<p>This page details the functions and classes defined in the <code class="docutils literal"><span class="pre">henrietta</span></code> package.</p>
+<span class="target" id="module-henrietta.lightcurves"></span><dl class="function">
+<dt id="henrietta.lightcurves.download_kepler_lc">
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">download_kepler_lc</code><span class="sig-paren">(</span><em>star='Kepler-186'</em>, <em>quarter='all'</em>, <em>cadence='long'</em>, <em>quality_bitmask='hard'</em>, <em>kind='PDCSAP_FLUX'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#download_kepler_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.download_kepler_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function is a wrapper to download a single quarter of Kepler
+lightcurve data, and extract a LightCurve object from it.</p>
+<p>When downloading a Kepler LightCurveFile from online, we get lots
+of information, including multiple different kinds of light curves
+for the same star. The goal of this little wrapper is to make it
+easy to get just one single light curve to play with.</p>
+<p>This has been tested only on data from the main Kepler mission.
+For K2 data, you may need to download a TPF.</p>
+<dl class="docutils">
+<dt>star: str, int</dt>
+<dd>The name of the star whose light curve you want to download.
+This can be a name (&#8220;Kepler-42&#8221;, &#8220;KOI-961&#8221;) or a KIC number
+(8561063)</dd>
+<dt>quarter: str, int</dt>
+<dd><dl class="first last docutils">
+<dt>Which Kepler quarter to download?</dt>
+<dd>&#8216;all&#8217; = download the entire mission of data
+1, 2, 3 ... = download a specific quarter</dd>
+</dl>
+</dd>
+<dt>cadence: str</dt>
+<dd>&#8216;long&#8217; for Kepler long cadence
+&#8216;short&#8217; for Kepler short cadence</dd>
+<dt>quality_bitmask: str, int</dt>
+<dd>&#8216;none&#8217; = ignore no data
+&#8216;default&#8217; = ignore data with serious quality issues
+&#8216;hard&#8217; = be a little more cautious in what we call good data
+&#8216;hardest&#8217; = be too cautious about what we call good data</dd>
+<dt>kind: str</dt>
+<dd><p class="first">&#8220;SAP_FLUX&#8221; = simple aperture photometry
+&#8220;PDCSAP_FLUX&#8221; = SAP, with pre-search data conditioning applied,</p>
+<blockquote class="last">
+<div>to get rid of some instrumental systematics
+from the light curves (but watch out! some
+astrophysical signals might be messed up too!)</div></blockquote>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing and reporting issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lightcurves.html" class="btn btn-neutral" title="Light Curve Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

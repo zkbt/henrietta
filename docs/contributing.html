@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing and reporting issues &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Function Definitions" href="api.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing and reporting issues</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#proposing-changes-to-henrietta-using-github-pull-requests">Proposing changes to henrietta using GitHub pull requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#coding-and-documentation-guidelines">Coding and documentation guidelines</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Contributing and reporting issues</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="contributing-and-reporting-issues">
+<span id="contributing"></span><h1>Contributing and reporting issues<a class="headerlink" href="#contributing-and-reporting-issues" title="Permalink to this headline">¶</a></h1>
+<p>(These contribution instructions are duplicated from the nice tutorial
+put together by the <a class="reference external" href="https://github.com/KeplerGO/lightkurve">lightkurve folks</a>.
+Many thanks to them for providing nice examples to help us all be more
+collaborative coders!)</p>
+<p><strong>henrietta</strong> is a set of tools for playing with stellar light curves from the Kepler and TESS telescopes. It is actively developed on its <a class="reference external" href="https://github.com/zkbt/henrietta">GitHub repository</a>. If you encounter a problem with <strong>henrietta</strong>, please <a class="reference external" href="https://github.com/zkbt/henrietta/issues">open an issue on the GitHub repository</a>, post a comment on the ASTR3400 canvas page, or  contact Zach Berta-Thompsons directly.</p>
+<p>If you would like to contribute a patch for a bugfix, please go ahead and open a pull request.</p>
+<div class="section" id="proposing-changes-to-henrietta-using-github-pull-requests">
+<h2>Proposing changes to henrietta using GitHub pull requests<a class="headerlink" href="#proposing-changes-to-henrietta-using-github-pull-requests" title="Permalink to this headline">¶</a></h2>
+<p>We welcome suggestions for enhancements or new features to <strong>henrietta</strong> via GitHub.</p>
+<p>If you want to make a significant change such as adding a new feature, we recommend opening a GitHub issue to discuss the changes.</p>
+<p>Once you are ready to propose the changes, please go ahead and open a pull request.</p>
+<p>If in doubt on how to open a pull request, we recommend Astropy&#8217;s
+&#8220;<a class="reference external" href="http://docs.astropy.org/en/stable/development/workflow/development_workflow.html">How to make a code contribution</a>&#8221; tutorial.
+In brief, the steps are as follows:</p>
+<ol class="arabic simple">
+<li>Fork the main <strong>henrietta</strong> repository by logging into GitHub, browsing to
+<code class="docutils literal"><span class="pre">https://github.com/zkbt/henrietta</span></code> and clicking on <code class="docutils literal"><span class="pre">Fork</span></code> in the top right corner. This will create your own version of the repository, which you can modify to your heart&#8217;s content.</li>
+<li>Clone your fork onto your computer, where you can use your code and make edits to it:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/YOUR-GITHUB-USERNAME/henrietta.git
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>Install the development version of henrietta. This means you&#8217;ll be able to edit the code and instantaneously see those changes no matter where you <cite>import henrietta</cite> from on your computer:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> henrietta
+$ pip install -e .
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>Add the zkbt remote to your GitHub environment. This means that your local repository will know to check for changes to the main repository:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git remote add upstream https://github.com/zkbt/henrietta.git
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li>Let&#8217;s make sure everything is setup correctly. Execute:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git remote -v
+</pre></div>
+</div>
+<p>You should see something like this:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>origin      https://github.com/YOUR-GITHUB-USERNAME/henrietta.git <span class="o">(</span>fetch<span class="o">)</span>
+origin      https://github.com/YOUR-GITHUB-USERNAME/henrietta.git <span class="o">(</span>push<span class="o">)</span>
+upstream    https://github.com/zkbt/henrietta.git <span class="o">(</span>fetch<span class="o">)</span>
+upstream    https://github.com/zkbt/henrietta.git <span class="o">(</span>push<span class="o">)</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li>Now you are ready to start contributing; make a new branch with a name of your choice and checkout. This means you&#8217;re working on a parallel version of the code; you can play with these changes, but they won&#8217;t be incorporated for everybody until they are merged into the master branch of the main repository:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git branch name-of-your-branch
+$ git checkout name-of-your-branch
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li>Do the changes you want and add them:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git add FILE-YOU-ADDED-OR-MODIFIED
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li>Commit and push your changes:</li>
+</ol>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git commit -m <span class="s2">&quot;description of changes&quot;</span>
+$ git push origin name-of-my-branch
+</pre></div>
+</div>
+<ol class="arabic simple" start="9">
+<li>Head to <a class="reference external" href="https://github.com/zkbt/henrietta">https://github.com/zkbt/henrietta</a> and you should now see a button
+&#8220;Compare and open a pull request&#8221;.  Click the button and submit your pull request. This will alert Zach that you have some code you&#8217;d like to add, and we can discuss if any changes are needed before it can be merged.</li>
+<li>That&#8217;s it! :)</li>
+</ol>
+</div>
+<div class="section" id="coding-and-documentation-guidelines">
+<h2>Coding and documentation guidelines<a class="headerlink" href="#coding-and-documentation-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>For <strong>henrietta</strong>, let&#8217;s try to adopt AstroPy&#8217;s coding guidelines and standards,
+as documented in <a class="reference external" href="http://docs.astropy.org/en/stable/index.html#developer-documentation">AstroPy&#8217;s Development Documentation</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="api.html" class="btn btn-neutral" title="Function Definitions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

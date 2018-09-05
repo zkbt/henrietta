@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>henrietta.lightcurves &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>henrietta.lightcurves</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for henrietta.lightcurves</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">KeplerLightCurveFile</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="download_kepler_lc"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.download_kepler_lc">[docs]</a><span class="k">def</span> <span class="nf">download_kepler_lc</span><span class="p">(</span><span class="n">star</span><span class="o">=</span><span class="s1">&#39;Kepler-186&#39;</span><span class="p">,</span>
+                       <span class="n">quarter</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
+                       <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
+                       <span class="n">quality_bitmask</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span>
+                       <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;PDCSAP_FLUX&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function is a wrapper to download a single quarter of Kepler</span>
+<span class="sd">    lightcurve data, and extract a LightCurve object from it.</span>
+
+<span class="sd">    When downloading a Kepler LightCurveFile from online, we get lots</span>
+<span class="sd">    of information, including multiple different kinds of light curves</span>
+<span class="sd">    for the same star. The goal of this little wrapper is to make it</span>
+<span class="sd">    easy to get just one single light curve to play with.</span>
+
+<span class="sd">    This has been tested only on data from the main Kepler mission.</span>
+<span class="sd">    For K2 data, you may need to download a TPF.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    star: str, int</span>
+<span class="sd">        The name of the star whose light curve you want to download.</span>
+<span class="sd">        This can be a name (&quot;Kepler-42&quot;, &quot;KOI-961&quot;) or a KIC number</span>
+<span class="sd">        (8561063)</span>
+
+<span class="sd">    quarter: str, int</span>
+<span class="sd">        Which Kepler quarter to download?</span>
+<span class="sd">            &#39;all&#39; = download the entire mission of data</span>
+<span class="sd">            1, 2, 3 ... = download a specific quarter</span>
+
+<span class="sd">    cadence: str</span>
+<span class="sd">        &#39;long&#39; for Kepler long cadence</span>
+<span class="sd">        &#39;short&#39; for Kepler short cadence</span>
+
+<span class="sd">    quality_bitmask: str, int</span>
+<span class="sd">        &#39;none&#39; = ignore no data</span>
+<span class="sd">        &#39;default&#39; = ignore data with serious quality issues</span>
+<span class="sd">        &#39;hard&#39; = be a little more cautious in what we call good data</span>
+<span class="sd">        &#39;hardest&#39; = be too cautious about what we call good data</span>
+
+<span class="sd">    kind: str</span>
+<span class="sd">        &quot;SAP_FLUX&quot; = simple aperture photometry</span>
+<span class="sd">        &quot;PDCSAP_FLUX&quot; = SAP, with pre-search data conditioning applied,</span>
+<span class="sd">                        to get rid of some instrumental systematics</span>
+<span class="sd">                        from the light curves (but watch out! some</span>
+<span class="sd">                        astrophysical signals might be messed up too!)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># download a KeplerLightCurveFile from the MAST archive</span>
+    <span class="n">lcf</span> <span class="o">=</span> <span class="n">KeplerLightCurveFile</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">star</span><span class="p">,</span>
+                                            <span class="n">quarter</span><span class="o">=</span><span class="n">quarter</span><span class="p">,</span>
+                                            <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span>
+                                            <span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">)</span>
+
+    <span class="c1"># if a list, stitch things together (crudely! will be terrible for SAP!)</span>
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lcf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+        <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">thisquarter</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+            <span class="n">lc</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thisquarter</span><span class="o">.</span><span class="n">normalize</span><span class="p">())</span>
+    <span class="c1"># if a single quarter, simply return that light curve</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lc</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
