@@ -22,27 +22,27 @@ def download_kepler_lc(star='Kepler-186',
     Parameters
     ----------
 
-    star : str, int
+    star: str, int
         The name of the star whose light curve you want to download.
         This can be a name ("Kepler-42", "KOI-961") or a KIC number
         (8561063)
 
-    quarter : str, int, list of ints
+    quarter: str, int
         Which Kepler quarter to download?
             'all' = download the entire mission of data
             1, 2, 3 ... = download a specific quarter
 
-    cadence : str
+    cadence: str
         'long' for Kepler long cadence
         'short' for Kepler short cadence
 
-    quality_bitmask : str, int
+    quality_bitmask: str, int
         'none' = ignore no data
         'default' = ignore data with serious quality issues
         'hard' = be a little more cautious in what we call good data
         'hardest' = be too cautious about what we call good data
 
-    kind : str
+    kind: str
         "SAP_FLUX" = simple aperture photometry
         "PDCSAP_FLUX" = SAP, with pre-search data conditioning applied,
                         to get rid of some instrumental systematics
