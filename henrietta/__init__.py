@@ -28,5 +28,4 @@ if not __HENRIETTASETUP__:
         [her papers](https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22leavitt%2C%20henrietta%20swan).
         ''')
 
-    from lightcurves import *
-    
+    from .lightcurves import *
