@@ -1,6 +1,12 @@
 from lightkurve import KeplerLightCurveFile
+import matplotlib.pyplot as plt
+import numpy as np
 
-def download_kepler_lc(star='Kepler-186', quarter=1, kind='PDCSAP_FLUX'):
+def download_kepler_lc(star='Kepler-186',
+                       quarter='all',
+                       cadence='long',
+                       quality_bitmask='hard',
+                       kind='PDCSAP_FLUX'):
     '''
     This function is a wrapper to download a single quarter of Kepler
     lightcurve data, and extract a LightCurve object from it.
@@ -21,8 +27,20 @@ def download_kepler_lc(star='Kepler-186', quarter=1, kind='PDCSAP_FLUX'):
         This can be a name ("Kepler-42", "KOI-961") or a KIC number
         (8561063)
 
-    quarter : int
+    quarter : str, int, list of ints
         Which Kepler quarter to download?
+            'all' = download the entire mission of data
+            1, 2, 3 ... = download a specific quarter
+
+    cadence : str
+        'long' for Kepler long cadence
+        'short' for Kepler short cadence
+
+    quality_bitmask : str, int
+        'none' = ignore no data
+        'default' = ignore data with serious quality issues
+        'hard' = be a little more cautious in what we call good data
+        'hardest' = be too cautious about what we call good data
 
     kind : str
         "SAP_FLUX" = simple aperture photometry
@@ -33,12 +51,19 @@ def download_kepler_lc(star='Kepler-186', quarter=1, kind='PDCSAP_FLUX'):
 
     '''
 
-    lcf = KeplerLightCurveFile.from_archive(star, quarter=quarter)
-    lc = lcf.get_lightcurve(kind)
-    return lc
+    # download a KeplerLightCurveFile from the MAST archive
+    lcf = KeplerLightCurveFile.from_archive(star,
+                                            quarter=quarter,
+                                            cadence=cadence,
+                                            quality_bitmask=quality_bitmask)
 
-def get_all_lightcurves(star='Kepler-42'):
-    '''
-    This function downloads all quarters of Kepler light curves, and
-    stitches them together.
-    '''
+    # if a list, stitch things together (crudely! will be terrible for SAP!)
+    if type(lcf) == list:
+        lc = lcf[0].get_lightcurve(kind).normalize()
+        for f in lcf[1:]:
+            thisquarter = f.get_lightcurve(kind)
+            lc = lc.append(thisquarter.normalize())
+    # if a single quarter, simply return that light curve
+    else:
+        lc = lcf.get_lightcurve(kind)
+    return lc
