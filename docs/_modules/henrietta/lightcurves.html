@@ -199,7 +199,15 @@
 <span class="sd">                        to get rid of some instrumental systematics</span>
 <span class="sd">                        from the light curves (but watch out! some</span>
 <span class="sd">                        astrophysical signals might be messed up too!)</span>
-
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    </span>
+<span class="sd">    lc: LightCurve object</span>
+<span class="sd">        This is a `lightkurve`-style LightCurve object, which contains</span>
+<span class="sd">        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness</span>
+<span class="sd">        of the star), as well as lots of methods for analysis and plotting.</span>
+<span class="sd">        </span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># download a KeplerLightCurveFile from the MAST archive</span>
@@ -210,13 +218,20 @@
 
     <span class="c1"># if a list, stitch things together (crudely! will be terrible for SAP!)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lcf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+        
+        <span class="c1"># make a normalized light curve from the first light curve file</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+
+        <span class="c1"># append the normalized light curves from all other light curve files</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">thisquarter</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
             <span class="n">lc</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">thisquarter</span><span class="o">.</span><span class="n">normalize</span><span class="p">())</span>
+
     <span class="c1"># if a single quarter, simply return that light curve</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
+    
+    <span class="c1"># return the light curve</span>
     <span class="k">return</span> <span class="n">lc</span></div>
 </pre></div>
 
