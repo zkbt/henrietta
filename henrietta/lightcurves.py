@@ -48,7 +48,15 @@ def download_kepler_lc(star='Kepler-186',
                         to get rid of some instrumental systematics
                         from the light curves (but watch out! some
                         astrophysical signals might be messed up too!)
-
+    
+    Returns
+    -------
+    
+    lc: LightCurve object
+        This is a `lightkurve`-style LightCurve object, which contains
+        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
+        of the star), as well as lots of methods for analysis and plotting.
+        
     '''
 
     # download a KeplerLightCurveFile from the MAST archive
@@ -59,11 +67,18 @@ def download_kepler_lc(star='Kepler-186',
 
     # if a list, stitch things together (crudely! will be terrible for SAP!)
     if type(lcf) == list:
+        
+        # make a normalized light curve from the first light curve file
         lc = lcf[0].get_lightcurve(kind).normalize()
+
+        # append the normalized light curves from all other light curve files
         for f in lcf[1:]:
             thisquarter = f.get_lightcurve(kind)
             lc = lc.append(thisquarter.normalize())
+
     # if a single quarter, simply return that light curve
     else:
         lc = lcf.get_lightcurve(kind)
+    
+    # return the light curve
     return lc

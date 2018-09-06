@@ -9,7 +9,7 @@ put together by the `lightkurve folks  <https://github.com/KeplerGO/lightkurve>`
 Many thanks to them for providing nice examples to help us all be more
 collaborative coders!)
 
-**henrietta** is a set of tools for playing with stellar light curves from the Kepler and TESS telescopes. It is actively developed on its `GitHub repository <https://github.com/zkbt/henrietta>`_. If you encounter a problem with **henrietta**, please `open an issue on the GitHub repository <https://github.com/zkbt/henrietta/issues>`_, post a comment on the ASTR3400 canvas page, or  contact Zach Berta-Thompsons directly.
+**henrietta** is a set of tools for playing with stellar light curves from the Kepler and TESS telescopes. It is actively developed on its `GitHub repository <https://github.com/zkbt/henrietta>`_. If you encounter a problem with **henrietta**, please `open an issue on the GitHub repository <https://github.com/zkbt/henrietta/issues>`_, post a comment on the ASTR3400 canvas page, or  contact Zach Berta-Thompson directly.
 
 If you would like to contribute a patch for a bugfix, please go ahead and open a pull request.
 

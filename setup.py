@@ -36,7 +36,7 @@ setup(name = "henrietta",
       'Programming Language :: Python',
       'Topic :: Scientific/Engineering :: Astronomy'
       ],
-    install_requires=['numpy', 'astropy', 'scipy', 'matplotlib'],
+    install_requires=['numpy', 'astropy', 'scipy', 'matplotlib', 'lightkurve'],
     zip_safe=False,
     license='MIT',
 )
