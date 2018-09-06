@@ -1,8 +1,10 @@
 # henrietta
-Tools for the Fall 2018 semester of ASTR3400: Research Methods (The Henrietta Project).
+Tools for the Fall 2018 semester of ASTR3400: Research Methods (The Henrietta Project). The documentation for using these tools, along with some examples and exercises, are located over at [zkbt.github.io/henrietta/docs](http://zkbt.github.io/henrietta/docs). 
 
 ## Installation
-You should be able to install this simply by running `pip install git+https://github.com/zkbt/henrietta.git`.
+If you're working on the `scorpius` computers at SBO, you should be able to access these tools simply by running `source henrietta` from a UNIX prompt.
+
+Otherwise, you should be able to install this by running `pip install git+https://github.com/zkbt/henrietta.git`.
 
 If you want to be able to modify the code yourself, please also feel free to fork/clone this repository onto your own computer and install directly from that editable package. For example, this might look like:
 ```
