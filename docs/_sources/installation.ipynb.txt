@@ -6,11 +6,21 @@
    "source": [
     "# Installation\n",
     "\n",
-    "The latest versions of these tools will always be available on the `scorpius` machines at CU Boulder. To access them, simply run the command \n",
+    "`henrietta` is a Python package. It's already installed on `scorpius`, but you may want to install it on your own computer. These are instructions to help do that. If you have any questions, please come talk to Will or Zach!"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Installing on scorpius\n",
+    "The latest versions of these tools will always already be available on the `scorpius` machines at CU Boulder. To access them, simply run the command \n",
     "```\n",
     "source henrietta\n",
     "```\n",
-    "from the UNIX prompt. This will activate an environment that has all the basic tools you need for playing with Kepler and TESS light curve data, as well as the tools in our `henrietta` package.\n"
+    "from the UNIX prompt. This will activate an environment that has all the basic tools you need for playing with Kepler and TESS light curve data, as well as the tools in our `henrietta` package. This not only includes the specific Python package described here, it also activates a whole environment full of useful tools. \n",
+    "\n",
+    "If you don't want to run this command every time you open a terminal, you can include it as a shortcut that opens automatically. To do so, edit the file called `~/.bashrc` in your home directory on `scorpius`, and add the line `source henrietta` to the bottom of the file. Save it, and then next time you open a terminal, you should start out in the henrietta environment."
    ]
   },
   {
@@ -18,9 +28,7 @@
    "metadata": {},
    "source": [
     "## On your own computer\n",
-    "If you want to install on `henrietta` on your own computer, skip on over to the [github repository](https://github.com/zkbt/henrietta), and follow the installation instructions listed there. \n",
-    "\n",
-    "If you want help, please come talk to Will or Zach!\n"
+    "If you want to install on `henrietta` on your own computer, please skip on over to the [github repository](https://github.com/zkbt/henrietta), and follow the installation instructions listed there. We'll be updating the `henrietta` package throughout the semester. To get the latest, you'll need to upgrade the package periodically."
    ]
   }
  ],
