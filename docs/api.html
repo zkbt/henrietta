@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contributing and reporting issues" href="contributing.html" />
-    <link rel="prev" title="Light Curve Basics" href="lightcurves.html" /> 
+    <link rel="prev" title="Statistical Cartoons" href="statistics.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,6 +86,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.lightcurves">lightcurves</a></li>
 </ul>
@@ -227,6 +228,61 @@ of the star), as well as lots of methods for analysis and plotting.</dd>
 </dl>
 </dd></dl>
 
+<span class="target" id="module-henrietta.statistics"></span><dl class="function">
+<dt id="henrietta.statistics.catch_photons_in_bucket">
+<code class="descclassname">henrietta.statistics.</code><code class="descname">catch_photons_in_bucket</code><span class="sig-paren">(</span><em>rate=1</em>, <em>diameter=1.0</em>, <em>time=1800.0</em>, <em>visualize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#catch_photons_in_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.catch_photons_in_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a telescope catching photons,
+for a given photon flux (photons/s/m**2),
+telescope diameter (m), and exposure time (s).</p>
+<dl class="docutils">
+<dt>rate: float</dt>
+<dd>The rate at which photons are coming towards us,
+expressed in units of (photons/s/m**2).</dd>
+<dt>diameter: float</dt>
+<dd>The effective diameter of a circular telescope,
+expressed in units of (m).</dd>
+<dt>time: float</dt>
+<dd>The exposure duration, expressed in units of (s).</dd>
+</dl>
+<dl class="docutils">
+<dt>N: int</dt>
+<dd>The number of photons that land in the telescope</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="henrietta.statistics.create_approximate_lightcurve">
+<code class="descclassname">henrietta.statistics.</code><code class="descname">create_approximate_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_approximate_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_approximate_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a lightkurve object, assuming we detect
+a particular number of photons per exposure,
+but treating the PDF for photon counts with the
+Gaussian approximation, instead of a true Poisson
+distribution.</p>
+<dl class="docutils">
+<dt>N: float</dt>
+<dd>The average number of photons per exposure.</dd>
+<dt>cadence: float</dt>
+<dd>The time between successive exposures (in days).</dd>
+<dt>duration: float</dt>
+<dd>The total time spanned by the light curve (in days).</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="henrietta.statistics.create_photon_lightcurve">
+<code class="descclassname">henrietta.statistics.</code><code class="descname">create_photon_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_photon_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_photon_lightcurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a lightkurve object, assuming we detect
+a particular number of photons per exposure.</p>
+<dl class="docutils">
+<dt>N: float</dt>
+<dd>The average number of photons per exposure.</dd>
+<dt>cadence: float</dt>
+<dd>The time between successive exposures (in days).</dd>
+<dt>duration: float</dt>
+<dd>The total time spanned by the light curve (in days).</dd>
+</dl>
+</dd></dl>
+
 </div>
 </div>
 
@@ -241,7 +297,7 @@ of the star), as well as lots of methods for analysis and plotting.</dd>
         <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing and reporting issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lightcurves.html" class="btn btn-neutral" title="Light Curve Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="statistics.html" class="btn btn-neutral" title="Statistical Cartoons" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -1,0 +1,120 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Statistical Cartoons\n",
+    "\n",
+    "We built in a few toy models to help us understand photon-counting noise."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Making a Fake Light Curve\n",
+    "\n",
+    "Let's make a really boring light curve, just so we can understand what we should expect for the noise properties of a star of a given brightness."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import henrietta as hsl"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# create a fake light curve, where we expect 100 photons per exposure\n",
+    "lc = hsl.create_photon_lightcurve(N=100, duration=1)\n",
+    "\n",
+    "# plot that fake light curve\n",
+    "lc.plot(marker='.', normalize=False, linewidth=0);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Remember, we can always pull out the flux values from a light curve. For example, if we want to compute the RMS of the light curve, we can use:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "np.std(lc.flux)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Catching Photons in a Bucket\n",
+    "\n",
+    "In some ways, we can think of the Kepler telescope just as a big light bucket. It collects photons that are raining down from particular locations on the sky. We can simulate how many photons a telescope will gather from the sky using the following:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "N = hsl.catch_photons_in_bucket(rate=1, diameter=2, time=3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If we want to use this function without generating a plot (let's imagine we want to run it millions of times), then we can call it with the `visualize` keyword set to `False`:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "N = hsl.catch_photons_in_bucket(rate=1, \n",
+    "                                diameter=2, \n",
+    "                                time=3, \n",
+    "                                visualize=False)\n",
+    "print(N)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.2"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
