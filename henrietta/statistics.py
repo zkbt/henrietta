@@ -15,3 +15,7 @@ def create_photon_lightcurve(N=1):
                     flux_err=np.sqrt(photons),
                     meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
     return lc
+
+# write this as its own lightcurve class?
+# a light curve that includes a projected histogram?
+# write a Gaussian one
