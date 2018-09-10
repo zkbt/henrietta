@@ -1,5 +1,6 @@
 import numpy as np, matplotlib.pyplot as plt
 from lightkurve import LightCurve
+plt.ion()
 
 def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=100):
     '''
