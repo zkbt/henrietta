@@ -29,3 +29,4 @@ if not __HENRIETTASETUP__:
         ''')
 
     from .lightcurves import *
+    from .statistics import *

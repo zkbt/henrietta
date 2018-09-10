@@ -1,23 +1,57 @@
 import numpy as np, matplotlib.pyplot as plt
-from scipy.stats import poisson, norm
 from lightkurve import LightCurve
 
+def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=100):
+    '''
+    Create a lightkurve object, assuming we detect
+    a particular number of photons per exposure.
 
-def create_photon_lightcurve(N=1):
+    Parameters
+    ----------
 
-    cadence = 1.0/60/60/24
-    duration = 1.0
+    N: float
+        The average number of photons per exposure.
+    cadence: float
+        The time between successive exposures (in days).
+    duration: float
+        The total time spanned by the light curve (in days).
+    '''
     t = np.arange(0, duration, step=cadence)
-    photons = poisson.rvs(N, size=t.shape)
+    photons = np.random.poisson(N, t.shape)
     lc = LightCurve(time=t,
                     flux=photons,
                     flux_err=np.sqrt(photons),
                     meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
     return lc
 
+def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=100):
+    '''
+    Create a lightkurve object, assuming we detect
+    a particular number of photons per exposure,
+    but treating the PDF for photon counts with the
+    Gaussian approximation, instead of a true Poisson
+    distribution.
+
+    Parameters
+    ----------
+
+    N: float
+        The average number of photons per exposure.
+    cadence: float
+        The time between successive exposures (in days).
+    duration: float
+        The total time spanned by the light curve (in days).
+    '''
+    t = np.arange(0, duration, step=cadence)
+    photons = np.random.normal(N, np.sqrt(N), t.shape)
+    lc = LightCurve(time=t,
+                    flux=photons,
+                    flux_err=np.sqrt(photons),
+                    meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
+    return lc
 # write a Gaussian one
 
-def catch_photons(rate=1e3, diameter=1.0, time=1.0, visualize=True):
+def catch_photons(rate=1, diameter=1.0, time=60*30.0, visualize=True):
     '''
     Simulate a telescope catching photons,
     for a given photon flux (photons/s/m**2),
