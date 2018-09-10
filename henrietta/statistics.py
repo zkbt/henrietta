@@ -2,7 +2,7 @@ import numpy as np, matplotlib.pyplot as plt
 from lightkurve import LightCurve
 plt.ion()
 
-def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=10):
+def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=1):
     '''
     Create a lightkurve object, assuming we detect
     a particular number of photons per exposure.
@@ -25,7 +25,7 @@ def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=10):
                     meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
     return lc
 
-def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=10):
+def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=1):
     '''
     Create a lightkurve object, assuming we detect
     a particular number of photons per exposure,
