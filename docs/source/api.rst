@@ -10,3 +10,7 @@ lightcurves
 
 .. automodule:: henrietta.lightcurves
   :members:
+
+.. automodule:: henrietta.statistics
+  :members:
+

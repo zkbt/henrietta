@@ -2,7 +2,7 @@ import numpy as np, matplotlib.pyplot as plt
 from lightkurve import LightCurve
 plt.ion()
 
-def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=100):
+def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=10):
     '''
     Create a lightkurve object, assuming we detect
     a particular number of photons per exposure.
@@ -25,7 +25,7 @@ def create_photon_lightcurve(N=100, cadence=0.5/24.0, duration=100):
                     meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
     return lc
 
-def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=100):
+def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=10):
     '''
     Create a lightkurve object, assuming we detect
     a particular number of photons per exposure,
@@ -50,9 +50,8 @@ def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=100):
                     flux_err=np.sqrt(photons),
                     meta=dict(name='Poisson light curve with {} photons/s'.format(N)))
     return lc
-# write a Gaussian one
 
-def catch_photons(rate=1, diameter=1.0, time=60*30.0, visualize=True):
+def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
     '''
     Simulate a telescope catching photons,
     for a given photon flux (photons/s/m**2),
