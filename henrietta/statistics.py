@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import numpy as np, matplotlib.pyplot as plt
 from lightkurve import LightCurve
 plt.ion()
@@ -52,6 +53,12 @@ def create_approximate_lightcurve(N=100, cadence=0.5/24.0, duration=10):
     return lc
 
 def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
+=======
+import matplotlib.pyplot as plt
+import numpy as np
+
+def catch_photons(rate=1e3, diameter=1.0, time=1.0, visualize=True):
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
     '''
     Simulate a telescope catching photons,
     for a given photon flux (photons/s/m**2),
@@ -59,6 +66,7 @@ def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
 
     Parameters
     ----------
+<<<<<<< HEAD
     rate: float
         The rate at which photons are coming towards us,
         expressed in units of (photons/s/m**2).
@@ -70,16 +78,34 @@ def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
     time: float
         The exposure duration, expressed in units of (s).
 
+=======
+    rate: float 
+        The rate at which photons are coming towards us,
+        expressed in units of (photons/s/m**2).
+    
+    diameter: float
+        The effective diameter of a circular telescope,
+        expressed in units of (m).
+    
+    time: float
+        The exposure duration, expressed in units of (s).
+    
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
     Returns
     -------
     N: int
         The number of photons that land in the telescope
     '''
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
     # what's the radius of the telescope
     radius = diameter/2.0
 
     if visualize:
+<<<<<<< HEAD
 
         # make a rectangle that at least include the telescope
         square = np.maximum(1.3*diameter, 1.0)
@@ -91,15 +117,33 @@ def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
         Ntotal = np.random.poisson(area*time*rate)
         x, y = np.random.uniform(-square/2, square/2, (2, Ntotal))
 
+=======
+    
+        # make a rectangle that at least include the telescope 
+        square = np.maximum(1.3*diameter, 1.0)
+    
+        # what's the expected total number of photons
+        area = square*square
+        
+        # create a rectangle of randomly located photons
+        Ntotal = np.random.poisson(area*time*rate)
+        x, y = np.random.uniform(-square/2, square/2, (2, Ntotal))
+        
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
         # determine which of these photons landed in the telescope
         incircle = (x**2 + y**2) < radius**2
         outofcircle = ~incircle
         N = np.sum(incircle)
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
         kw = dict(marker='.', markeredgecolor='none', alpha=0.5, linewidth=0)
         plt.figure(figsize=(4,4))
         plt.plot(x[incircle], y[incircle], color='mediumseagreen', **kw)
         plt.plot(x[outofcircle], y[outofcircle], color='black', **kw)
+<<<<<<< HEAD
 
         # draw a circle
         theta = np.linspace(0, 2*np.pi, 1000)
@@ -111,20 +155,48 @@ def catch_photons_in_bucket(rate=1, diameter=1.0, time=60*30.0, visualize=True):
         # add a title
         plt.title('{} photons gathered in {}s\n({} photons/s/m$^2$)'.format(N, time, rate))
 
+=======
+        
+        # draw a circle
+        theta = np.linspace(0, 2*np.pi, 1000)
+        plt.plot(radius*np.sin(theta), radius*np.cos(theta), linewidth=4, color='black')
+        
+        # label the radius of the circle
+        plt.text(0, -radius*1.1, '{}m'.format(diameter), ha='center', va='top', fontweight='bold', fontsize=10, color='mediumseagreen')
+        
+        # add a title
+        plt.title('{} photons gathered in {}s\n({} photons/s/m$^2$)'.format(N, time, rate))
+        
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
         # set the aspect ratio of the plot to 1:1
         plt.axis('equal')
         plt.xlim(-square/2, square/2)
         plt.ylim(-square/2, square/2)
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
         # get rid of the square around the plot
         plt.axis('off')
         plt.subplots_adjust(top=0.8)
         plt.show()
+<<<<<<< HEAD
 
     else:
 
+=======
+        
+    else:
+    
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
         # if we don't need to make plot, just draw a Poisson number
         area = np.pi*radius**2
         N = np.random.poisson(area*time*rate)
 
     return N
+<<<<<<< HEAD
+=======
+   
+  
+>>>>>>> 12fa26a2b7e05275d18f39102cf11e481d5be433
