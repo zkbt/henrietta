@@ -4,7 +4,15 @@ Tools for the Fall 2018 semester of ASTR3400: Research Methods (The Henrietta Pr
 ## Installation
 If you're working on the `scorpius` computers at SBO, you should be able to access these tools simply by running `source henrietta` from a UNIX prompt.
 
-Otherwise, you should be able to install this by running `pip install git+https://github.com/zkbt/henrietta.git`.
+If you're working on your own computer, you should be able to install this by running 
+```
+pip install git+https://github.com/zkbt/henrietta.git
+```
+from a UNIX prompt. As we add more code to this package, you may need to upgrade the version that is installed on your computer. To upgrade, run 
+```
+pip install git+https://github.com/zkbt/henrietta.git --upgrade
+```
+instead. That will make sure it always grabs the latest version of the code.
 
 If you want to be able to modify the code yourself, please also feel free to fork/clone this repository onto your own computer and install directly from that editable package. For example, this might look like:
 ```
