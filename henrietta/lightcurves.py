@@ -82,3 +82,58 @@ def download_kepler_lc(star='Kepler-186',
     
     # return the light curve
     return lc
+
+
+
+def locate_transits(lc, period, epoch):
+    
+    '''
+
+    This function takes in a lightcurve object along with the planet's
+    period and epoch in order to identify on the plot each expected location
+    of a transit
+    
+    lc should be a lightkurve object which has (B)JD times and fluxes.
+    period should be in days
+    epoch must be in JD or BJD
+    
+
+    It will return the JD times of 200 post-epoch transits
+
+    '''
+    
+    n = np.linspace(0,199,200)
+    transit_loc = n*period + epoch
+
+    time = lc.time
+    flux = lc.flux
+
+    avg_flux = np.median(flux)
+
+    fig,ax = plt.subplots()
+    plt.title('Transit locations')
+    plt.xlabel('Time (JD)')
+    plt.ylabel('Flux')
+    plt.xlim(time[0],time[-1])
+    plt.scatter(time,flux)
+    for i in range(len(n)):
+        if (transit_loc[i] >= np.amin(time)) and (transit_loc[i] <= np.amax(time)):
+            circle = plt.Circle((0,0),radius=1,fill=False,color='purple',alpha=0.4,linewidth=5)
+    ax.add_artist(circle)
+    plt.show()
+
+
+    return transit_loc
+
+
+def extract_transits(lc, period, epoch, duration, baseline):
+
+    time = lc.time
+    flux = lc.flux
+
+    
+
+    return transits, notransits
+
+
+
