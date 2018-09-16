@@ -2,17 +2,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import batman
 import lightkurve
-import lightkurve.LightCurve
+from lightkurve import LightCurve
 
 def BATMAN(Baseline = 1.0, #units are whatever your flux units come in
            radius = 0.01, #Rp/R*
            per = 0.5, #days
            a = 10.0, #semi-major axis in a/R*
            t0 = 0, #time of inferior conjunction
-           LD = [0.1956, 0.3700] #using GJ1132b params
+           LD = [0.1956, 0.3700], #using GJ1132b params
            t = None):
-
-    P = per * 24.0 #convert to hours
 
     params = batman.TransitParams()
     params.t0 = t0                      #time of inferior conjunction ()
@@ -47,20 +45,21 @@ def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
 
     highres_time = np.linspace(date[0],date[-1],300)
 
+    '''
     model_flux = BATMAN(Baseline = baseline,
                 radius = Rp, #Rp/R*
                 per = period, #days
                 a = a, #semi-major axis in a/R*
                 t0 = t0, #time of inferior conjunction
-                LD = ld #using GJ1132b params
+                LD = ld, #using GJ1132b params
                 t = date)
-
+    '''
     model_plot = BATMAN(Baseline = baseline,
                 radius = Rp, #Rp/R*
                 per = period, #days
                 a = a, #semi-major axis in a/R*
                 t0 = t0, #time of inferior conjunction
-                LD = ld #using GJ1132b params
+                LD = ld, #using GJ1132b params
                 t = highres_time)
 
     plt.figure()
