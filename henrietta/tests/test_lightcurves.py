@@ -1,4 +1,4 @@
-from henrietta import *
+from ..lightcurves import *
 
 def test_download_kepler_lc():
     '''

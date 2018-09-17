@@ -5,9 +5,9 @@ import lightkurve
 from lightkurve import LightCurve
 
 def BATMAN(t,
-           period = 0.5, #days
+           period = 1.0, #days
            t0 = 0, #time of inferior conjunction
-           radius = 0.01, #Rp/R*
+           radius = 0.1, #Rp/R*
            a = 10.0, #semi-major axis in a/R*
            b = 0.0, #impact parameter in stellar radii
            baseline = 1.0, #units are whatever your flux units come in
@@ -187,7 +187,7 @@ def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
     plt.title(planet_name)
     plt.xlabel('Time')
     plt.ylabel('Relative Flux')
-    plt.legend()
+    plt.legend(frameon=False)
     if plot_residuals:
         a1.scatter(date,(model_flux-flux))
         a1.axhline(0)

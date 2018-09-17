@@ -1,5 +1,4 @@
-from henrietta import *
-plt.ion()
+from ..modeling import *
 
 def test_batman():
     '''
