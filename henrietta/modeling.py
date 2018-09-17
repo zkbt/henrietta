@@ -14,11 +14,7 @@ def BATMAN(Baseline = 1.0, #units are whatever your flux units come in
 
     params = batman.TransitParams()
     params.t0 = t0                      #time of inferior conjunction ()
-<<<<<<< HEAD
     params.per = per             #period in days
-=======
-    params.per = per              #period in hours
->>>>>>> 094edc4f98b6a5bb10e8039e438b8526f363fcfc
     params.rp = radius         #planet radius (in units of stellar radii)
     params.a = a                      #semi-major axis (in units of stellar radii)
     params.inc = 90.                     #orbital inclination (in degrees)
