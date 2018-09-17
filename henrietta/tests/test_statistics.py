@@ -1,4 +1,4 @@
-from henrietta import *
+from ..statistics import *
 
 def test_photons():
     '''

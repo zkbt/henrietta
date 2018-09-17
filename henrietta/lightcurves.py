@@ -48,15 +48,15 @@ def download_kepler_lc(star='Kepler-186',
                         to get rid of some instrumental systematics
                         from the light curves (but watch out! some
                         astrophysical signals might be messed up too!)
-    
+
     Returns
     -------
-    
+
     lc: LightCurve object
         This is a `lightkurve`-style LightCurve object, which contains
         the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
         of the star), as well as lots of methods for analysis and plotting.
-        
+
     '''
 
     # download a KeplerLightCurveFile from the MAST archive
@@ -67,7 +67,7 @@ def download_kepler_lc(star='Kepler-186',
 
     # if a list, stitch things together (crudely! will be terrible for SAP!)
     if type(lcf) == list:
-        
+
         # make a normalized light curve from the first light curve file
         lc = lcf[0].get_lightcurve(kind).normalize()
 
@@ -79,6 +79,59 @@ def download_kepler_lc(star='Kepler-186',
     # if a single quarter, simply return that light curve
     else:
         lc = lcf.get_lightcurve(kind)
-    
+
     # return the light curve
     return lc
+
+
+
+def locate_transits(lc, period, epoch):
+
+    '''
+
+    This function takes in a lightcurve object along with the planet's
+    period and epoch in order to identify on the plot each expected location
+    of a transit
+
+    lc should be a lightkurve object which has (B)JD times and fluxes.
+    period should be in days
+    epoch must be in JD or BJD
+
+
+    It will return the JD times of 200 post-epoch transits
+
+    '''
+
+    n = np.linspace(0,199,200)
+    transit_loc = n*period + epoch
+
+    time = lc.time
+    flux = lc.flux
+
+    avg_flux = np.median(flux)
+
+    fig,ax = plt.subplots()
+    plt.title('Transit locations')
+    plt.xlabel('Time (JD)')
+    plt.ylabel('Flux')
+    plt.xlim(time[0],time[-1])
+    plt.scatter(time,flux)
+    for i in range(len(n)):
+        if (transit_loc[i] >= np.amin(time)) and (transit_loc[i] <= np.amax(time)):
+            plt.axvspan(xmin=transit_loc[i]-0.05*(time[-1]-time[0]),
+            xmax=transit_loc[i]+0.05*(time[-1]-time[0]),color='green',alpha=0.4)
+            #circle = plt.Circle((0,0),radius=1,fill=False,color='purple',alpha=0.4,linewidth=5)
+    #ax.add_artist(circle)
+    plt.show()
+
+
+    return transit_loc
+
+
+def extract_transits(lc, period, epoch, duration, baseline):
+
+    time = lc.time
+    flux = lc.flux
+
+
+    return transits, notransits
