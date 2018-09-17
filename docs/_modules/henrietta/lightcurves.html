@@ -85,6 +85,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../lightcurves.html">Light Curve Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -200,15 +201,15 @@
 <span class="sd">                        to get rid of some instrumental systematics</span>
 <span class="sd">                        from the light curves (but watch out! some</span>
 <span class="sd">                        astrophysical signals might be messed up too!)</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
-<span class="sd">    </span>
+
 <span class="sd">    lc: LightCurve object</span>
 <span class="sd">        This is a `lightkurve`-style LightCurve object, which contains</span>
 <span class="sd">        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness</span>
 <span class="sd">        of the star), as well as lots of methods for analysis and plotting.</span>
-<span class="sd">        </span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># download a KeplerLightCurveFile from the MAST archive</span>
@@ -219,7 +220,7 @@
 
     <span class="c1"># if a list, stitch things together (crudely! will be terrible for SAP!)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lcf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
-        
+
         <span class="c1"># make a normalized light curve from the first light curve file</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
 
@@ -231,9 +232,62 @@
     <span class="c1"># if a single quarter, simply return that light curve</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span>
-    
+
     <span class="c1"># return the light curve</span>
     <span class="k">return</span> <span class="n">lc</span></div>
+
+
+
+<div class="viewcode-block" id="locate_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.locate_transits">[docs]</a><span class="k">def</span> <span class="nf">locate_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    This function takes in a lightcurve object along with the planet&#39;s</span>
+<span class="sd">    period and epoch in order to identify on the plot each expected location</span>
+<span class="sd">    of a transit</span>
+
+<span class="sd">    lc should be a lightkurve object which has (B)JD times and fluxes.</span>
+<span class="sd">    period should be in days</span>
+<span class="sd">    epoch must be in JD or BJD</span>
+
+
+<span class="sd">    It will return the JD times of 200 post-epoch transits</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">199</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
+    <span class="n">transit_loc</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">period</span> <span class="o">+</span> <span class="n">epoch</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
+
+    <span class="n">avg_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Transit locations&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (JD)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="n">flux</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">time</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">time</span><span class="p">)):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="n">xmax</span><span class="o">=</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+            <span class="c1">#circle = plt.Circle((0,0),radius=1,fill=False,color=&#39;purple&#39;,alpha=0.4,linewidth=5)</span>
+    <span class="c1">#ax.add_artist(circle)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+    <span class="k">return</span> <span class="n">transit_loc</span></div>
+
+
+<span class="k">def</span> <span class="nf">extract_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">baseline</span><span class="p">):</span>
+
+    <span class="n">time</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
+
+
+    <span class="k">return</span> <span class="n">transits</span><span class="p">,</span> <span class="n">notransits</span>
 </pre></div>
 
            </div>

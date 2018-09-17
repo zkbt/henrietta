@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Statistical Cartoons &mdash; henrietta 0.0.0 documentation</title>
+  <title>Modeling Basics &mdash; henrietta 0.0.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Modeling Basics" href="modeling.html" />
-    <link rel="prev" title="Light Curve Basics" href="lightcurves.html" /> 
+    <link rel="next" title="Function Definitions" href="api.html" />
+    <link rel="prev" title="Statistical Cartoons" href="statistics.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,12 +86,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Statistical Cartoons</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Making-a-Fake-Light-Curve">Making a Fake Light Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Catching-Photons-in-a-Bucket">Catching Photons in a Bucket</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling Basics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#batman-for-simulating-transits"><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -139,13 +138,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Statistical Cartoons</li>
+      <li>Modeling Basics</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/statistics.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/modeling.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -341,15 +340,18 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="Statistical-Cartoons">
-<h1>Statistical Cartoons<a class="headerlink" href="#Statistical-Cartoons" title="Permalink to this headline">¶</a></h1>
-<p>We built in a few toy models to help us understand photon-counting
-noise.</p>
-<div class="section" id="Making-a-Fake-Light-Curve">
-<h2>Making a Fake Light Curve<a class="headerlink" href="#Making-a-Fake-Light-Curve" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s make a really boring light curve, just so we can understand what
-we should expect for the noise properties of a star of a given
-brightness.</p>
+<div class="section" id="Modeling-Basics">
+<h1>Modeling Basics<a class="headerlink" href="#Modeling-Basics" title="Permalink to this headline">¶</a></h1>
+<p>Here are a few examples of how to get started modeling transit light
+curves.</p>
+<div class="section" id="batman-for-simulating-transits">
+<h2><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits<a class="headerlink" href="#batman-for-simulating-transits" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">`batman</span></code> &lt;<a class="reference external" href="https://www.cfa.harvard.edu/~lkreidberg/batman/">https://www.cfa.harvard.edu/~lkreidberg/batman/</a>&gt;`__
+package is a Python toolkit for generating model transit light curves
+for planets of given parameters. Laura Kreidberg wrote it to make
+transit-modeling with Python easier, and she did a great job documenting
+how it works.</p>
+<p>We wrote some quick wrapper so you can immediately start playing:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
@@ -360,64 +362,29 @@ brightness.</p>
 </pre></div>
 </div>
 </div>
+<p>We can make a plot of a model transit light curve for some set of
+parameters.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="c1"># create a fake light curve, where we expect 100 photons per exposure</span>
-<span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># plot that fake light curve</span>
-<span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span>
+<span></span><span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="n">period</span><span class="o">=</span><span class="mf">0.47</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.05</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
-<p>Remember, we can always pull out the flux values from a light curve. For
-example, if we want to compute the RMS of the light curve, we can use:</p>
+<p>If I want to compare two or more different models, I can keep track of
+the plotting axes in which the first is plotted, and keep adding new
+curves to the same plot, on the same scale. For example:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Catching-Photons-in-a-Bucket">
-<h2>Catching Photons in a Bucket<a class="headerlink" href="#Catching-Photons-in-a-Bucket" title="Permalink to this headline">¶</a></h2>
-<p>In some ways, we can think of the Kepler telescope just as a big light
-bucket. It collects photons that are raining down from particular
-locations on the sky. We can simulate how many photons a telescope will
-gather from the sky using the following:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>If we want to use this function without generating a plot (let&#8217;s imagine
-we want to run it millions of times), then we can call it with the
-<code class="docutils literal"><span class="pre">visualize</span></code> keyword set to <code class="docutils literal"><span class="pre">False</span></code>:</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
-<span></span>In [ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
-<span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                                <span class="n">visualize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="n">period</span><span class="o">=</span><span class="mf">0.47</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.05</span><span class="p">);</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -432,10 +399,10 @@ we want to run it millions of times), then we can call it with the
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modeling.html" class="btn btn-neutral float-right" title="Modeling Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Function Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lightcurves.html" class="btn btn-neutral" title="Light Curve Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="statistics.html" class="btn btn-neutral" title="Statistical Cartoons" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

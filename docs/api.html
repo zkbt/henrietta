@@ -29,7 +29,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Contributing and reporting issues" href="contributing.html" />
-    <link rel="prev" title="Statistical Cartoons" href="statistics.html" /> 
+    <link rel="prev" title="Modeling Basics" href="modeling.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.lightcurves">lightcurves</a></li>
 </ul>
@@ -228,6 +229,18 @@ of the star), as well as lots of methods for analysis and plotting.</dd>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="henrietta.lightcurves.locate_transits">
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">locate_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#locate_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.locate_transits" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function takes in a lightcurve object along with the planet&#8217;s
+period and epoch in order to identify on the plot each expected location
+of a transit</p>
+<p>lc should be a lightkurve object which has (B)JD times and fluxes.
+period should be in days
+epoch must be in JD or BJD</p>
+<p>It will return the JD times of 200 post-epoch transits</p>
+</dd></dl>
+
 <span class="target" id="module-henrietta.statistics"></span><dl class="function">
 <dt id="henrietta.statistics.catch_photons_in_bucket">
 <code class="descclassname">henrietta.statistics.</code><code class="descname">catch_photons_in_bucket</code><span class="sig-paren">(</span><em>rate=1</em>, <em>diameter=1.0</em>, <em>time=1800.0</em>, <em>visualize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#catch_photons_in_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.catch_photons_in_bucket" title="Permalink to this definition">¶</a></dt>
@@ -252,7 +265,7 @@ expressed in units of (m).</dd>
 
 <dl class="function">
 <dt id="henrietta.statistics.create_approximate_lightcurve">
-<code class="descclassname">henrietta.statistics.</code><code class="descname">create_approximate_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_approximate_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_approximate_lightcurve" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.statistics.</code><code class="descname">create_approximate_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_approximate_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_approximate_lightcurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a lightkurve object, assuming we detect
 a particular number of photons per exposure,
 but treating the PDF for photon counts with the
@@ -270,7 +283,7 @@ distribution.</p>
 
 <dl class="function">
 <dt id="henrietta.statistics.create_photon_lightcurve">
-<code class="descclassname">henrietta.statistics.</code><code class="descname">create_photon_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_photon_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_photon_lightcurve" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.statistics.</code><code class="descname">create_photon_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_photon_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_photon_lightcurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a lightkurve object, assuming we detect
 a particular number of photons per exposure.</p>
 <dl class="docutils">
@@ -297,7 +310,7 @@ a particular number of photons per exposure.</p>
         <a href="contributing.html" class="btn btn-neutral float-right" title="Contributing and reporting issues" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="statistics.html" class="btn btn-neutral" title="Statistical Cartoons" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="modeling.html" class="btn btn-neutral" title="Modeling Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

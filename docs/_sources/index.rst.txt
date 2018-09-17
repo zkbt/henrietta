@@ -18,6 +18,7 @@ These tools make *very* heavy use of the `lightkurve <http://lightkurve.keplersc
    installation.ipynb
    lightcurves.ipynb
    statistics.ipynb
+   modeling.ipynb
    api.rst
    contributing.rst
 
