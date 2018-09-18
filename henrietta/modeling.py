@@ -1,6 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import batman
+
+try:
+    import batman
+except:
+    print("""
+    `batman-package` is not installed on this computer.
+
+    You can use most of the henrietta tools with no problem,
+    but you will not be able to generate transit models :-(
+    """)
 import lightkurve
 from lightkurve import LightCurve
 
