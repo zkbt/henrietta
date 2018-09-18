@@ -147,9 +147,8 @@ def example_transit_model( period = 0.5, #days
     # return the current axes, in case someone wants to plot into them again
     return plotted_ax
 
-def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
-                ld = [0.1956, 0.3700], planet_name='Some planet, hopefully',
-                plot_residuals = False):
+def transit_model(lc, period, Rp, a = 10.0, baseline = 1.0, t0 = 0.0,
+                ld = [0.1956, 0.3700], planet_name='Some planet, hopefully'):
     '''
     This function will take in a lightcurve for a planet
     with a given period (in hours), Rp/R*, baseline, and
@@ -158,11 +157,7 @@ def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
     specified in the form [u1,u2]
     '''
 
-    date = lc.time
-    flux = lc.flux
-    flux_err = lc.flux_err
-
-    highres_time = np.linspace(date[0],date[-1],300)
+    highres_time = np.linspace(lc.time[0],lc.time[-1],300)
 
 
     model_flux = BATMAN(baseline = baseline,
@@ -171,7 +166,7 @@ def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
                 a = a, #semi-major axis in a/R*
                 t0 = t0, #time of inferior conjunction
                 ld = ld, #using GJ1132b params
-                t = date)
+                t = lc.time)
 
     model_plot = BATMAN(baseline = baseline,
                 radius = Rp, #Rp/R*
@@ -181,16 +176,21 @@ def transit_model(lc, period, Rp, a = 10.0, baseline = 1, t0 = 0,
                 ld = ld, #using GJ1132b params
                 t = highres_time)
 
-    f, (a0, a1) = plt.subplots(1,2, gridspec_kw = {'height_ratios':[4, 1]})
-    a0.errorbar(date,flux,yerr=flux_err,fmt='o',alpha=0.5)
+    residual = (model_flux-lc.flux)
+
+    f, (a0, a1) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[4,1]},figsize=(10,7),sharex=True)
+    a0.set_title(planet_name,fontsize=20)
+    a0.set_ylabel('Flux',fontsize=18)
+    a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',alpha=0.5,
+            color='royalblue',markersize='5',label='Data')
     a0.plot(highres_time,model_plot,zorder=100,color='k',label='I AM BATMAN')
-    plt.title(planet_name)
-    plt.xlabel('Time')
-    plt.ylabel('Relative Flux')
-    plt.legend(frameon=False)
-    if plot_residuals:
-        a1.scatter(date,(model_flux-flux))
-        a1.axhline(0)
-    plt.show()
+    a0.legend()
+
+    a1.scatter(lc.time,residual,color='royalblue',alpha=0.5,label='Residuals')
+    a1.axhline(0,color='k')
+    a1.set_ylim(0+1.5*np.max(np.abs(residual)),0-1.5*np.max(np.abs(residual)))
+    a1.legend()
+
+    plt.xlabel('JD',fontsize=16)
 
     return highres_time,model_plot
