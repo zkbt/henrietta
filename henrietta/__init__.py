@@ -4,7 +4,7 @@ in the Fall 2018 session of ASTR3400: Research Methods in Astronomy,
 taught at CU Boulder by Zach Berta-Thompson (https://github.com/zkbt/).
 '''
 
-__version__ = '0.0.0'
+__version__ = '0.0.1'
 
 # specify whether we're calling this from within setup.py
 try:
