@@ -31,3 +31,4 @@ if not __HENRIETTASETUP__:
     from .lightcurves import *
     from .statistics import *
     from .modeling import *
+    from .tools import *
