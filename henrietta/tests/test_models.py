@@ -8,5 +8,5 @@ def test_batman():
     example_transit_model()
 
 def test_residuals(N=1e6, duration=1000, **kw):
-    lc = create_photon_lightcurve(N=N, duration=duration).normalize()
+    lc = simulate_transit_data(N=N, duration=duration, **kw)
     plot_with_transit_model(lc, **kw)

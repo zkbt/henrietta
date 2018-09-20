@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import batman
 import lightkurve
 from lightkurve import LightCurve
+from .statistics import *
 
 def BATMAN(t,
            period = 1.0, #days
@@ -83,8 +84,6 @@ def example_transit_model( period = 0.5, #days
 
     Parameters
     ----------
-    t : array
-        An array of times, in units of days.
 
     period : float
         The orbital period of the planet, in units of days.
@@ -147,6 +146,40 @@ def example_transit_model( period = 0.5, #days
     # return the current axes, in case someone wants to plot into them again
     return plotted_ax
 
+def simulate_transit_data(N=1e6, cadence=30.0/60.0/24.0, duration=10.0, **kw):
+    '''
+    This function will generate a simulated LightCurve dataset
+    with a given fractional noise (sigma) and time spacing (cadence),
+    with a transit injected into it (whose parameters are set by **kw).
+
+    Parameters
+    ----------
+
+    N : float
+        The average number of photons expected per exposure, to
+        set the standard deviation of the noise.
+
+    cadence : float
+        The integration time of the measurements, in days.
+
+    duration : float
+        The total length of time covered by the light curve.
+
+    **kw : dict
+        Any additional keywords will be passed onward to the
+        batman model to set the parameters of the transit model.
+        Valid additional keywords are period, t0, radius, a, b, ld.
+
+    Returns
+    -------
+    lc : LightCurve
+        A simulated lightkurve LightCurve, with a transit injected,
+        and the specified noise.
+    '''
+    noise = create_photon_lightcurve(N=N, cadence=cadence, duration=duration).normalize()
+    flux = BATMAN(noise.time, **kw)
+    return LightCurve(time=noise.time, flux=flux*noise.flux)
+
 def plot_with_transit_model(lc,
                        period = 1.0, #days
                        t0 = 0, #time of inferior conjunction
@@ -190,6 +223,9 @@ def plot_with_transit_model(lc,
 
     ld : list or array of floats
         The limb-darkening coefficients, for a quadratic limb-darkening.
+
+    planet_name : string
+        The name of the planet, which will be displayed as the
     '''
 
     # create a high-resolution grid of times to plot

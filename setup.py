@@ -37,6 +37,7 @@ setup(name = "henrietta",
       'Topic :: Scientific/Engineering :: Astronomy'
       ],
     install_requires=['numpy', 'astropy', 'scipy', 'matplotlib', 'lightkurve'],
+    extras_require={'models':['batman-package']}
     zip_safe=False,
     license='MIT',
 )
