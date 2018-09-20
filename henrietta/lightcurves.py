@@ -1,6 +1,7 @@
-from lightkurve import KeplerLightCurveFile
+from lightkurve import KeplerLightCurveFile, lightcurve
 import matplotlib.pyplot as plt
 import numpy as np
+from .tools import *
 
 def download_kepler_lc(star='Kepler-186',
                        quarter='all',
@@ -85,7 +86,7 @@ def download_kepler_lc(star='Kepler-186',
 
 
 
-def locate_transits(lc, period, epoch):
+def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
 
     '''
 
@@ -93,42 +94,53 @@ def locate_transits(lc, period, epoch):
     period and epoch in order to identify on the plot each expected location
     of a transit
 
-    lc should be a lightkurve object which has (B)JD times and fluxes.
+    lc should be a lightkurve object which has times and fluxes.
     period should be in days
-    epoch must be in JD or BJD
-
-
-    It will return the JD times of 200 post-epoch transits
-
+    t0 should be in BJD
     '''
 
-    n = np.linspace(0,199,200)
-    transit_loc = n*period + epoch
-
+    # pull out time and flux arrays
     time = lc.time
     flux = lc.flux
 
-    avg_flux = np.median(flux)
+    # figure out the right time format
+    if isinstance(lc, lightcurve.FoldedLightCurve):
+        epoch = 0.0
+        period = 1.0
+    else:
+        if lc.time_format == 'bkjd':
+            epoch = bjd2bkjd(t0)
+        elif lc.time_format == 'btjd':
+            epoch = bjd2btjd(t0)
+        else:
+            epoch = t0
 
-    fig,ax = plt.subplots()
-    plt.title('Transit locations')
-    plt.xlabel('Time (JD)')
-    plt.ylabel('Flux')
-    plt.xlim(time[0],time[-1])
-    plt.scatter(time,flux)
-    for i in range(len(n)):
-        if (transit_loc[i] >= np.amin(time)) and (transit_loc[i] <= np.amax(time)):
-            plt.axvspan(xmin=transit_loc[i]-0.05*(time[-1]-time[0]),
-            xmax=transit_loc[i]+0.05*(time[-1]-time[0]),color='green',alpha=0.4)
-            #circle = plt.Circle((0,0),radius=1,fill=False,color='purple',alpha=0.4,linewidth=5)
-    #ax.add_artist(circle)
-    plt.show()
+    # calculate the integer orbit numbers, and mid-transit locations
+    allorbitnumbers = np.round((lc.time - epoch)/period).astype(np.int)
+    n = np.arange(np.min(allorbitnumbers), np.max(allorbitnumbers))
+    transit_loc = n*period + epoch
 
+    #avg_flux = np.median(flux)
+    #fig,ax = plt.subplots()
+    #plt.title('Transit locations')
+    #plt.xlabel('Time (JD)')
+    #lt.ylabel('Flux')
+    #plt.xlim(time[0],time[-1])
+    #plt.scatter(time,flux)
 
+    for i, this_transit in enumerate(transit_loc):
+        if i == 0:
+            label=name or '{period}{multiply}n + {epoch:.5f}'.format(multiply=r'$\times$', **locals())
+        else:
+            label=None
+        plt.axvline(this_transit, ymin=0.9, ymax=0.95, alpha=0.4, color=color, label=label, **kw)
     return transit_loc
 
 
 def extract_transits(lc, period, epoch, duration, baseline):
+    '''
+    Not yet implemented.
+    '''
 
     time = lc.time
     flux = lc.flux

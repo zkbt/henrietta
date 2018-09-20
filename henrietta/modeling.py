@@ -73,7 +73,7 @@ def BATMAN(t,
 
 def example_transit_model( period = 0.5, #days
                            t0 = 0, #time of inferior conjunction
-                           radius = 0.01, #Rp/R*
+                           radius = 0.1, #Rp/R*
                            a = 10.0, #semi-major axis in a/R*
                            b = 0.0, #impact parameter in stellar radii,
                            tmin=-0.5, tmax=0.5, cadence=1.0/60.0/24.0,
@@ -178,17 +178,18 @@ def simulate_transit_data(N=1e6, cadence=30.0/60.0/24.0, duration=10.0, **kw):
     '''
     noise = create_photon_lightcurve(N=N, cadence=cadence, duration=duration).normalize()
     flux = BATMAN(noise.time, **kw)
-    return LightCurve(time=noise.time, flux=flux*noise.flux)
+    return LightCurve(time=noise.time, flux=flux*noise.flux, flux_err=noise.flux_err)
 
 def plot_with_transit_model(lc,
-                       period = 1.0, #days
-                       t0 = 0, #time of inferior conjunction
-                       radius = 0.1, #Rp/R*
-                       a = 10.0, #semi-major axis in a/R*
-                       b = 0.0, #impact parameter in stellar radii
-                       baseline = 1.0, #units are whatever your flux units come in
-                ld = [0.1956, 0.3700],
-                planet_name='Some planet.'):
+                           period = 1.0, #days
+                           t0 = 0, #time of inferior conjunction
+                           radius = 0.1, #Rp/R*
+                           a = 10.0, #semi-major axis in a/R*
+                           b = 0.0, #impact parameter in stellar radii
+                           baseline = 1.0, #units are whatever your flux units come in
+                           ld = [0.1956, 0.3700],
+                           planet_name='Some planet.',
+                           show_errors=False):
     '''
     This function will take in a lightcurve for a planet
     with a given set of transit parameters (period, t0, radius, a, b, baseline)
@@ -229,7 +230,19 @@ def plot_with_transit_model(lc,
     '''
 
     # create a high-resolution grid of times to plot
-    highres_time = np.arange(lc.time[0],lc.time[-1],2.0/60.0/24.0)
+    highres_time = np.arange(lc.time[0],lc.time[-1],1.0/60.0/24.0)
+
+    # figure out the right time format
+    if isinstance(lc, lightkurve.lightcurve.FoldedLightCurve):
+        epoch = 0.0
+        period = 1.0
+    else:
+        if lc.time_format == 'bkjd':
+            epoch = bjd2bkjd(t0)
+        elif lc.time_format == 'btjd':
+            epoch = bjd2btjd(t0)
+        else:
+            epoch = t0
 
     # craete a model of the flux at the light curve times
     model_flux = BATMAN(baseline = baseline,
@@ -237,7 +250,7 @@ def plot_with_transit_model(lc,
                 period = period, #days
                 a = a, #semi-major axis in a/R*
                 b = b,
-                t0 = t0, #time of inferior conjunction
+                t0 = epoch, #time of inferior conjunction
                 ld = ld, #using GJ1132b params
                 t = lc.time)
 
@@ -247,7 +260,7 @@ def plot_with_transit_model(lc,
                 period = period, #days
                 a = a, #semi-major axis in a/R*
                 b = b,
-                t0 = t0, #time of inferior conjunction
+                t0 = epoch, #time of inferior conjunction
                 ld = ld, #using GJ1132b params
                 t = highres_time)
 
@@ -257,17 +270,26 @@ def plot_with_transit_model(lc,
     f, (a0, a1) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[4,1]},figsize=(10,7),sharex=True)
     a0.set_title(planet_name,fontsize=20)
     a0.set_ylabel('Flux',fontsize=18)
-    a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',alpha=0.5,
-            color='royalblue',markersize='5',label='Data')
-    summary = 'BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})'.format(**locals())
-    a0.plot(highres_time,model_plot,zorder=100,color='k',label=summary)
-    a0.legend()
+    datakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none')
 
-    a1.scatter(lc.time,residual,color='royalblue',alpha=0.5,label='Residuals')
-    a1.axhline(0,color='k')
+    if show_errors:
+        a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',label='Data', **datakw)
+    else:
+        a0.plot(lc.time,lc.flux,label='Data', marker='o', linewidth=0, **datakw)
+
+    summary = 'Model\n"BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})"'.format(**locals())
+    a0.plot(highres_time,model_plot,zorder=100,color='k',label=summary)
+    a0.legend(loc='upper left', bbox_to_anchor=(1,1))
+
+    if show_errors:
+        a1.errorbar(lc.time,residual,yerr=lc.flux_err,**datakw)
+    else:
+        a1.plot(lc.time,residual,marker='o',linewidth=0, **datakw)
+    a1.axhline(0,color='k', zorder=100)
     a1.set_ylim(0+1.5*np.max(np.abs(residual)),0-1.5*np.max(np.abs(residual)))
-    a1.legend()
+    a1.set_ylabel('Residuals')
+    #a1.legend()
 
     plt.xlabel('Time (days)',fontsize=16)
-
+    plt.tight_layout()
     return highres_time,model_plot
