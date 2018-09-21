@@ -34,7 +34,7 @@
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages',
-              'nbsphinx']
+              'nbsphinx', 'numpydoc']
 
 nbsphinx_execute = 'never'
 

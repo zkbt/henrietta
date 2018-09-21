@@ -95,8 +95,9 @@ setup(
                       'ipython',
                       'matplotlib',
                       'lightkurve'],
-    # these will be installed if folks run `pip install henrietta[models]`
-    extras_require={'models':['batman-package']},
+    # the packages in `key` will be installed if folks run `pip install henrietta[key]`
+    extras_require={'models':['batman-package'],
+                    'docs':['sphinx', 'nbsphinx', 'sphinx_rtd_theme', 'numpydoc']},
     # (I think just leave this set to False)
     zip_safe=False,
     # under what license is this code released?

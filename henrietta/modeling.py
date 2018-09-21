@@ -162,7 +162,8 @@ def simulate_transit_data(N=1e6, cadence=2.0/60.0/24.0, duration=3.0, **kw):
     '''
     This function will generate a simulated LightCurve dataset
     with a given fractional noise (sigma) and time spacing (cadence),
-    with a transit injected into it (whose parameters are set by **kw).
+    with a transit injected into it (whose parameters are set by any
+    extra keyword arguments that you feed in, like `period`, `radius`, ...)
 
     Parameters
     ----------

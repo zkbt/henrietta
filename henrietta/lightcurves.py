@@ -45,10 +45,9 @@ def download_kepler_lc(star='Kepler-186',
 
     kind: str
         "SAP_FLUX" = simple aperture photometry
-        "PDCSAP_FLUX" = SAP, with pre-search data conditioning applied,
-                        to get rid of some instrumental systematics
-                        from the light curves (but watch out! some
-                        astrophysical signals might be messed up too!)
+        "PDCSAP_FLUX" = SAP, with pre-search data conditioning applied to get
+        rid of some instrumental systematics from the light curves (but watch
+        out! some astrophysical signals might be messed up too!)
 
     Returns
     -------
