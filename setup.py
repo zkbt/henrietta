@@ -29,6 +29,9 @@ running the following command:
 The template for this setup.py came was pieced together with help from
 barentsen, christinahedges, timothydmorton, and dfm. Check them out on github
 for more neat tricks!
+
+[`python-packaging`](https://python-packaging.readthedocs.io/en/latest/index.html)
+is a pretty useful resource too!
 '''
 
 # import our basic setup ingredients
