@@ -151,9 +151,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for henrietta.lightcurves</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">KeplerLightCurveFile</span>
+<span></span><span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">KeplerLightCurveFile</span><span class="p">,</span> <span class="n">lightcurve</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
 
 <div class="viewcode-block" id="download_kepler_lc"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.download_kepler_lc">[docs]</a><span class="k">def</span> <span class="nf">download_kepler_lc</span><span class="p">(</span><span class="n">star</span><span class="o">=</span><span class="s1">&#39;Kepler-186&#39;</span><span class="p">,</span>
                        <span class="n">quarter</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
@@ -238,7 +239,7 @@
 
 
 
-<div class="viewcode-block" id="locate_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.locate_transits">[docs]</a><span class="k">def</span> <span class="nf">locate_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<div class="viewcode-block" id="locate_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.locate_transits">[docs]</a><span class="k">def</span> <span class="nf">locate_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
 
     <span class="sd">&#39;&#39;&#39;</span>
 
@@ -246,48 +247,59 @@
 <span class="sd">    period and epoch in order to identify on the plot each expected location</span>
 <span class="sd">    of a transit</span>
 
-<span class="sd">    lc should be a lightkurve object which has (B)JD times and fluxes.</span>
+<span class="sd">    lc should be a lightkurve object which has times and fluxes.</span>
 <span class="sd">    period should be in days</span>
-<span class="sd">    epoch must be in JD or BJD</span>
-
-
-<span class="sd">    It will return the JD times of 200 post-epoch transits</span>
-
+<span class="sd">    t0 should be in BJD</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">199</span><span class="p">,</span><span class="mi">200</span><span class="p">)</span>
-    <span class="n">transit_loc</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">period</span> <span class="o">+</span> <span class="n">epoch</span>
-
+    <span class="c1"># pull out time and flux arrays</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
 
-    <span class="n">avg_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span>
+    <span class="c1"># figure out the right time format</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">lightcurve</span><span class="o">.</span><span class="n">FoldedLightCurve</span><span class="p">):</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;bkjd&#39;</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2bkjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;btjd&#39;</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2btjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">t0</span>
 
-    <span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Transit locations&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (JD)&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="n">flux</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)):</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">amin</span><span class="p">(</span><span class="n">time</span><span class="p">))</span> <span class="ow">and</span> <span class="p">(</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">time</span><span class="p">)):</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="n">xmin</span><span class="o">=</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-            <span class="n">xmax</span><span class="o">=</span><span class="n">transit_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
-            <span class="c1">#circle = plt.Circle((0,0),radius=1,fill=False,color=&#39;purple&#39;,alpha=0.4,linewidth=5)</span>
-    <span class="c1">#ax.add_artist(circle)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="c1"># calculate the integer orbit numbers, and mid-transit locations</span>
+    <span class="n">allorbitnumbers</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">epoch</span><span class="p">)</span><span class="o">/</span><span class="n">period</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">allorbitnumbers</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">allorbitnumbers</span><span class="p">))</span>
+    <span class="n">transit_loc</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">period</span> <span class="o">+</span> <span class="n">epoch</span>
 
+    <span class="c1">#avg_flux = np.median(flux)</span>
+    <span class="c1">#fig,ax = plt.subplots()</span>
+    <span class="c1">#plt.title(&#39;Transit locations&#39;)</span>
+    <span class="c1">#plt.xlabel(&#39;Time (JD)&#39;)</span>
+    <span class="c1">#lt.ylabel(&#39;Flux&#39;)</span>
+    <span class="c1">#plt.xlim(time[0],time[-1])</span>
+    <span class="c1">#plt.scatter(time,flux)</span>
 
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">this_transit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">transit_loc</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">name</span> <span class="ow">or</span> <span class="s1">&#39;</span><span class="si">{period}{multiply}</span><span class="s1">n + </span><span class="si">{epoch:.5f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">multiply</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\times$&#39;</span><span class="p">,</span> <span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">this_transit</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">transit_loc</span></div>
 
 
-<span class="k">def</span> <span class="nf">extract_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">baseline</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.extract_transits">[docs]</a><span class="k">def</span> <span class="nf">extract_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">baseline</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Not yet implemented.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">time</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
 
 
-    <span class="k">return</span> <span class="n">transits</span><span class="p">,</span> <span class="n">notransits</span>
+    <span class="k">return</span> <span class="n">transits</span><span class="p">,</span> <span class="n">notransits</span></div>
 </pre></div>
 
            </div>

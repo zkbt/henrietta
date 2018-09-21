@@ -230,15 +230,20 @@ of the star), as well as lots of methods for analysis and plotting.</dd>
 </dd></dl>
 
 <dl class="function">
+<dt id="henrietta.lightcurves.extract_transits">
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">extract_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>epoch</em>, <em>duration</em>, <em>baseline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#extract_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.extract_transits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Not yet implemented.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="henrietta.lightcurves.locate_transits">
-<code class="descclassname">henrietta.lightcurves.</code><code class="descname">locate_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>epoch</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#locate_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.locate_transits" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">locate_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>t0=0</em>, <em>name=None</em>, <em>color='green'</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#locate_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.locate_transits" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function takes in a lightcurve object along with the planet&#8217;s
 period and epoch in order to identify on the plot each expected location
 of a transit</p>
-<p>lc should be a lightkurve object which has (B)JD times and fluxes.
+<p>lc should be a lightkurve object which has times and fluxes.
 period should be in days
-epoch must be in JD or BJD</p>
-<p>It will return the JD times of 200 post-epoch transits</p>
+t0 should be in BJD</p>
 </dd></dl>
 
 <span class="target" id="module-henrietta.statistics"></span><dl class="function">
