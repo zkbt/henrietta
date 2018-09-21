@@ -60,4 +60,3 @@ def btjd2bjd(t):
     BTJD = BJD - 2457000.0
     '''
     return t + tess_offset
->>>>>>> 0cc7e8d35a7c7c9a016133a278add4c7cdfb5f0e
