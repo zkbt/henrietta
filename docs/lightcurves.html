@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.0
+                0.0.4
               </div>
             
           
@@ -347,18 +347,18 @@ div.nboutput div.output_area.stderr {
 <a class="reference external" href="http://lightkurve.keplerscience.org">lightkurve</a> are really useful
 for understanding all the wonderful ways you can access <em>Kepler</em> data
 via online archives. This very short example demonstrates a
-quick-and-dirty tool that uses <code class="docutils literal"><span class="pre">lightkurve</span></code> to download the entire
+quick-and-dirty tool that uses <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> to download the entire
 <em>Kepler</em> light curve for a particular star.</p>
 <div class="section" id="Download-a-light-curve.">
 <h2>Download a light curve.<a class="headerlink" href="#Download-a-light-curve." title="Permalink to this headline">¶</a></h2>
-<p>Our first step is to download some data. We&#8217;ll import our basic set of
+<p>Our first step is to download some data. We’ll import our basic set of
 tools, and then use them to download a Kepler light curve.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># let&#39;s import some common Python packages we like</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -367,19 +367,19 @@ tools, and then use them to download a Kepler light curve.</p>
 </pre></div>
 </div>
 </div>
-<p>This last command creates an object called <code class="docutils literal"><span class="pre">hsl</span></code> that contains a
-useful function: <code class="docutils literal"><span class="pre">download_kepler_lc</span></code>. This function takes a star name
+<p>This last command creates an object called <code class="docutils literal notranslate"><span class="pre">hsl</span></code> that contains a
+useful function: <code class="docutils literal notranslate"><span class="pre">download_kepler_lc</span></code>. This function takes a star name
 as input, and tries its best to return a <em>Kepler</em> light curve for it.
 There are a few options you can feed it if you want, to know what those
-are, remember that in <code class="docutils literal"><span class="pre">jupyter</span></code> you can type the name of a function,
-and then hit <code class="docutils literal"><span class="pre">&lt;shift&gt;-&lt;tab&gt;</span></code> to see what it does (once for basic info,
+are, remember that in <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> you can type the name of a function,
+and then hit <code class="docutils literal notranslate"><span class="pre">&lt;shift&gt;-&lt;tab&gt;</span></code> to see what it does (once for basic info,
 twice for more). Give it a try!</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_lc</span>
 </pre></div>
 </div>
@@ -388,11 +388,11 @@ twice for more). Give it a try!</p>
 Light curves from Kepler are split into ~90 day quarters; this function
 makes a rough attempt at stitching all of those together.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_lc</span><span class="p">(</span><span class="s1">&#39;Kepler-186&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -400,33 +400,33 @@ makes a rough attempt at stitching all of those together.</p>
 </div>
 <div class="section" id="Plot-your-light-curve.">
 <h2>Plot your light curve.<a class="headerlink" href="#Plot-your-light-curve." title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">lc</span></code> object we just created it is a <code class="docutils literal"><span class="pre">KeplerLightCurve</span></code> object
-(see the documentation for <code class="docutils literal"><span class="pre">lightkurve</span></code>) if you want to know more
+<p>The <code class="docutils literal notranslate"><span class="pre">lc</span></code> object we just created it is a <code class="docutils literal notranslate"><span class="pre">KeplerLightCurve</span></code> object
+(see the documentation for <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code>) if you want to know more
 about what these objects can do). One snazzy feature of a light curve
 object like this is that we can make a simple plot of the data, just by
 running</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>You&#8217;ll notice that the folks who wrote this tool put a bit of thought
+<p>You’ll notice that the folks who wrote this tool put a bit of thought
 into making sure the plot looks pretty good and the axes are labeled in
 a relatively straightforward way.</p>
-<p>However, we might want to play around with things a bit, so let&#8217;s dig
-under the hood of our light curve, and pull out the actual data that&#8217;s
+<p>However, we might want to play around with things a bit, so let’s dig
+under the hood of our light curve, and pull out the actual data that’s
 being plotted.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># this is the time, in something like Julian Date</span>
 <span class="n">time_in_days</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
 
@@ -436,11 +436,11 @@ being plotted.</p>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_in_days</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Our light curve contains </span><span class="si">{}</span><span class="s2"> data points!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
 </pre></div>
@@ -504,6 +504,7 @@ either for Kepler-186 or for any other star you choose!</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

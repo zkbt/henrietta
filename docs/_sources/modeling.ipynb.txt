@@ -66,6 +66,40 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
+    "If we want to access the modeling tool directly, we can use the `BATMAN` function to make an array of model flux values. The inputs to this code are an array of times and the transit model parameters."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np, matplotlib.pyplot as plt\n",
+    "\n",
+    "# make some times that span 0 to 5 days, in 2-minute increments\n",
+    "times = np.arange(0, 1, 2.0/60.0/24.0)\n",
+    "\n",
+    "# use the BATMAN function to make a transit model\n",
+    "modelflux = hsl.BATMAN(times, period=4.2, t0=0.3, radius=0.11, a=9.0, b=0.2)\n",
+    "\n",
+    "# plot the times and model fluxes\n",
+    "plt.scatter(times, modelflux, s=3)\n",
+    "plt.xlabel('Time (days)')\n",
+    "plt.ylabel('Relative Flux');"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "All of the other visualization tools described on this page are calling this `BATMAN` function to make their models."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "## making a simulated transit dataset \n",
     "Sometimes it can be really helpful to be able to make a simulated noisy dataset, starting from some model parameters. The `simulate_transit_data` function can do that for you!"
    ]
@@ -151,7 +185,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.2"
+   "version": "3.6.5"
   }
  },
  "nbformat": 4,

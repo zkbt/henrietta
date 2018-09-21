@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>henrietta.modeling &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.0.4
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>henrietta.modeling</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for henrietta.modeling</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">batman</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    `batman-package` is not installed on this computer.</span>
+
+<span class="s2">    You can use most of the henrietta tools with no problem,</span>
+<span class="s2">    but you will not be able to generate transit models :-(</span>
+
+<span class="s2">    You can try installing it with the command</span>
+<span class="s2">        `pip install batman-package`</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">lightkurve</span>
+<span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">LightCurve</span>
+<span class="kn">from</span> <span class="nn">.statistics</span> <span class="k">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="BATMAN"><a class="viewcode-back" href="../../api.html#henrietta.modeling.BATMAN">[docs]</a><span class="k">def</span> <span class="nf">BATMAN</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>
+           <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#days</span>
+           <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
+           <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
+           <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+           <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii</span>
+           <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#units are whatever your flux units come in</span>
+           <span class="n">ld</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1956</span><span class="p">,</span> <span class="mf">0.3700</span><span class="p">],</span> <span class="c1">#using GJ1132b params</span>
+           <span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function returns a model transit light curve</span>
+<span class="sd">    for a given array of times and set of parameters.</span>
+<span class="sd">    It currently assumes a circular orbit.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : array</span>
+<span class="sd">        An array of times, in units of days.</span>
+
+<span class="sd">    period : float</span>
+<span class="sd">        The orbital period of the planet, in units of days.</span>
+
+<span class="sd">    t0 : float</span>
+<span class="sd">        One mid-transit time, in units of days.</span>
+
+<span class="sd">    radius : float</span>
+<span class="sd">        The radius of the planet, in units of stellar radii.</span>
+<span class="sd">        (This is sometimes also called Rp/R*).</span>
+
+<span class="sd">    a : float</span>
+<span class="sd">        The orbital distance (semimajor axis) of the planet, in stellar radii.</span>
+<span class="sd">        (This is sometimes also called a/R*).</span>
+
+<span class="sd">    b : float</span>
+<span class="sd">        The transit impact parameter of the planet, in stellar radii.</span>
+<span class="sd">        (This is closely related to the inclination.)</span>
+
+<span class="sd">    baseline : float</span>
+<span class="sd">        The out-of-transit flux level, in whatever units you want.</span>
+
+<span class="sd">    ld : list or array of floats</span>
+<span class="sd">        The limb-darkening coefficients, for a quadratic limb-darkening.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># create a batman transit parameter object</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">batman</span><span class="o">.</span><span class="n">TransitParams</span><span class="p">()</span>
+
+    <span class="n">params</span><span class="o">.</span><span class="n">t0</span> <span class="o">=</span> <span class="n">t0</span>                      <span class="c1">#time of inferior conjunction ()</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">per</span> <span class="o">=</span> <span class="n">period</span>             <span class="c1">#period in days</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">rp</span> <span class="o">=</span> <span class="n">radius</span>         <span class="c1">#planet radius (in units of stellar radii)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>                      <span class="c1">#semi-major axis (in units of stellar radii)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">inc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">b</span><span class="o">/</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>                   <span class="c1">#orbital inclination (in degrees)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">ecc</span> <span class="o">=</span> <span class="mf">0.</span>                      <span class="c1">#eccentricity</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">90.</span>                       <span class="c1">#longitude of periastron (in degrees)</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">ld</span>         <span class="c1">#limb darkening coefficients [u1, u2]</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">limb_dark</span> <span class="o">=</span> <span class="s2">&quot;quadratic&quot;</span>       <span class="c1">#limb darkening model</span>
+
+    <span class="c1"># initialize a batman model for the given times</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">batman</span><span class="o">.</span><span class="n">TransitModel</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="c1"># calculate a light curve (at the pre-set times)</span>
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">light_curve</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">*</span><span class="n">baseline</span>
+
+    <span class="c1"># return those light curve values</span>
+    <span class="k">return</span> <span class="n">flux</span></div>
+
+<div class="viewcode-block" id="example_transit_model"><a class="viewcode-back" href="../../api.html#henrietta.modeling.example_transit_model">[docs]</a><span class="k">def</span> <span class="nf">example_transit_model</span><span class="p">(</span> <span class="n">period</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="c1">#days</span>
+                           <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
+                           <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
+                           <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                           <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii,</span>
+                           <span class="n">tmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">,</span>
+                           <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mf">0.985</span><span class="p">,</span> <span class="mf">1.005</span><span class="p">],</span>
+                           <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function makes an example plot of a model transit light curve.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    period : float</span>
+<span class="sd">        The orbital period of the planet, in units of days.</span>
+
+<span class="sd">    t0 : float</span>
+<span class="sd">        One mid-transit time, in units of days.</span>
+
+<span class="sd">    radius : float</span>
+<span class="sd">        The radius of the planet, in units of stellar radii.</span>
+<span class="sd">        (This is sometimes also called Rp/R*).</span>
+
+<span class="sd">    a : float</span>
+<span class="sd">        The orbital distance (semimajor axis) of the planet, in stellar radii.</span>
+<span class="sd">        (This is sometimes also called a/R*).</span>
+
+<span class="sd">    b : float</span>
+<span class="sd">        The transit impact parameter of the planet, in stellar radii.</span>
+<span class="sd">        (This is closely related to the inclination.)</span>
+
+<span class="sd">    tmin : float</span>
+<span class="sd">        The minimum time to plot, in days.</span>
+
+<span class="sd">    tmax : float</span>
+<span class="sd">        The maximum time to plot, in days.</span>
+
+<span class="sd">    cadence : float</span>
+<span class="sd">        The cadence (time-step) to use, in days.</span>
+
+<span class="sd">    ylim : list</span>
+<span class="sd">        The ylimits for the plot.</span>
+
+<span class="sd">    ax : matplotlib.axes object</span>
+<span class="sd">        If an ax is fed in as a keyword argument, the plot</span>
+<span class="sd">        will be added to that existing plot axes. To include</span>
+<span class="sd">        multiple different models on the same plot, say:</span>
+
+<span class="sd">        ax = example_transit_model()</span>
+<span class="sd">        ax = example_transit_model(rp=0.042, ax=ax)</span>
+<span class="sd">        ax = example_transit_model(rp=0.042, b=0.9, ax=ax)</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    plotted_ax : matplotlib.axes object</span>
+<span class="sd">        The axes into which the model was was plotted.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># create an array of times and flux values</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">cadence</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="c1"># make a lightkurve LightCurve object</span>
+    <span class="n">model_lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+
+    <span class="c1"># plot that, and set the ylimits</span>
+    <span class="n">plotted_ax</span> <span class="o">=</span> <span class="n">model_lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">()))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">*</span><span class="n">ylim</span><span class="p">)</span>
+
+    <span class="c1"># return the current axes, in case someone wants to plot into them again</span>
+    <span class="k">return</span> <span class="n">plotted_ax</span></div>
+
+<div class="viewcode-block" id="simulate_transit_data"><a class="viewcode-back" href="../../api.html#henrietta.modeling.simulate_transit_data">[docs]</a><span class="k">def</span> <span class="nf">simulate_transit_data</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function will generate a simulated LightCurve dataset</span>
+<span class="sd">    with a given fractional noise (sigma) and time spacing (cadence),</span>
+<span class="sd">    with a transit injected into it (whose parameters are set by any</span>
+<span class="sd">    extra keyword arguments that you feed in, like `period`, `radius`, ...)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    N : float</span>
+<span class="sd">        The average number of photons expected per exposure, to</span>
+<span class="sd">        set the standard deviation of the noise.</span>
+
+<span class="sd">    cadence : float</span>
+<span class="sd">        The integration time of the measurements, in days.</span>
+
+<span class="sd">    duration : float</span>
+<span class="sd">        The total length of time covered by the light curve.</span>
+
+<span class="sd">    **kw : dict</span>
+<span class="sd">        Any additional keywords will be passed onward to the</span>
+<span class="sd">        batman model to set the parameters of the transit model.</span>
+<span class="sd">        Valid additional keywords are period, t0, radius, a, b, ld.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lc : LightCurve</span>
+<span class="sd">        A simulated lightkurve LightCurve, with a transit injected,</span>
+<span class="sd">        and the specified noise.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="o">*</span><span class="n">noise</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="plot_with_transit_model"><a class="viewcode-back" href="../../api.html#henrietta.modeling.plot_with_transit_model">[docs]</a><span class="k">def</span> <span class="nf">plot_with_transit_model</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span>
+                           <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#days</span>
+                           <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
+                           <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
+                           <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                           <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii</span>
+                           <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#units are whatever your flux units come in</span>
+                           <span class="n">ld</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1956</span><span class="p">,</span> <span class="mf">0.3700</span><span class="p">],</span>
+                           <span class="n">planet_name</span><span class="o">=</span><span class="s1">&#39;Some planet.&#39;</span><span class="p">,</span>
+                           <span class="n">show_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function will take in a lightcurve for a planet</span>
+<span class="sd">    with a given set of transit parameters (period, t0, radius, a, b, baseline)</span>
+<span class="sd">    and will plot a batman light curve model. Limb-darkening coefficients</span>
+<span class="sd">    can also be specified in the form [u1,u2].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lc : LightCurve object</span>
+<span class="sd">        Data contained in a lightkurve LightCurve object.</span>
+
+<span class="sd">    period : float</span>
+<span class="sd">        The orbital period of the planet, in units of days.</span>
+
+<span class="sd">    t0 : float</span>
+<span class="sd">        One mid-transit time, in units of days.</span>
+
+<span class="sd">    radius : float</span>
+<span class="sd">        The radius of the planet, in units of stellar radii.</span>
+<span class="sd">        (This is sometimes also called Rp/R*).</span>
+
+<span class="sd">    a : float</span>
+<span class="sd">        The orbital distance (semimajor axis) of the planet, in stellar radii.</span>
+<span class="sd">        (This is sometimes also called a/R*).</span>
+
+<span class="sd">    b : float</span>
+<span class="sd">        The transit impact parameter of the planet, in stellar radii.</span>
+<span class="sd">        (This is closely related to the inclination.)</span>
+
+<span class="sd">    baseline : float</span>
+<span class="sd">        The out-of-transit flux level, in whatever units you want.</span>
+
+<span class="sd">    ld : list or array of floats</span>
+<span class="sd">        The limb-darkening coefficients, for a quadratic limb-darkening.</span>
+
+<span class="sd">    planet_name : string</span>
+<span class="sd">        The name of the planet, which will be displayed as the</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># create a high-resolution grid of times to plot</span>
+    <span class="n">highres_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">)</span>
+
+    <span class="c1"># figure out the right time format</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">lightkurve</span><span class="o">.</span><span class="n">lightcurve</span><span class="o">.</span><span class="n">FoldedLightCurve</span><span class="p">):</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;bkjd&#39;</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2bkjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;btjd&#39;</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2btjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">t0</span>
+
+    <span class="c1"># craete a model of the flux at the light curve times</span>
+    <span class="n">model_flux</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">baseline</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">,</span>
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
+                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span> <span class="c1">#days</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
+                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
+                <span class="n">ld</span> <span class="o">=</span> <span class="n">ld</span><span class="p">,</span> <span class="c1">#using GJ1132b params</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+    <span class="c1"># create a model of the flux at high resolution</span>
+    <span class="n">model_plot</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">baseline</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">,</span>
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
+                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span> <span class="c1">#days</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
+                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
+                <span class="n">ld</span> <span class="o">=</span> <span class="n">ld</span><span class="p">,</span> <span class="c1">#using GJ1132b params</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">highres_time</span><span class="p">)</span>
+
+    <span class="c1"># calculation the difference between the data and the model</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span> <span class="o">-</span> <span class="n">model_flux</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridspec_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">planet_name</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+    <span class="n">datakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
+        <span class="n">a0</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;Model</span><span class="se">\n</span><span class="s1">&quot;BATMAN(period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">)&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">highres_time</span><span class="p">,</span><span class="n">model_plot</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">summary</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
+        <span class="n">a1</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+    <span class="n">a1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">a1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="o">+</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)),</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)))</span>
+    <span class="n">a1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+    <span class="c1">#a1.legend()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span></div>
+
+    <span class="c1">#return highres_time,model_plot</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

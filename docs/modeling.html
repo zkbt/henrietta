@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.0
+                0.0.4
               </div>
             
           
@@ -88,7 +88,7 @@
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling Basics</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#batman-for-simulating-transits"><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#batman-for-simulating-transits"><code class="docutils literal notranslate"><span class="pre">batman</span></code> for simulating transits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#making-a-simulated-transit-dataset">making a simulated transit dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visually-comparing-a-model-to-data">visually comparing a model to data</a></li>
 </ul>
@@ -347,8 +347,8 @@ div.nboutput div.output_area.stderr {
 <p>Here are a few examples of how to get started modeling transit light
 curves.</p>
 <div class="section" id="batman-for-simulating-transits">
-<h2><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits<a class="headerlink" href="#batman-for-simulating-transits" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">`batman</span></code> &lt;<a class="reference external" href="https://www.cfa.harvard.edu/~lkreidberg/batman/">https://www.cfa.harvard.edu/~lkreidberg/batman/</a>&gt;`__
+<h2><code class="docutils literal notranslate"><span class="pre">batman</span></code> for simulating transits<a class="headerlink" href="#batman-for-simulating-transits" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">`batman</span></code> &lt;<a class="reference external" href="https://www.cfa.harvard.edu/~lkreidberg/batman/">https://www.cfa.harvard.edu/~lkreidberg/batman/</a>&gt;`__
 package is a Python toolkit for generating model transit light curves
 for planets of given parameters. Laura Kreidberg wrote it to make
 transit-modeling with Python easier, and she did a great job documenting
@@ -356,11 +356,11 @@ how it works.</p>
 <p>We wrote some quick wrapper so you can immediately start playing, by
 looking at transit models by themselves:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">henrietta</span> <span class="k">as</span> <span class="nn">hsl</span>
 </pre></div>
 </div>
@@ -368,11 +368,11 @@ looking at transit models by themselves:</p>
 <p>We can make a plot of a model transit light curve for some set of
 parameters.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="n">period</span><span class="o">=</span><span class="mf">0.47</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.05</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -381,28 +381,54 @@ parameters.</p>
 the plotting axes in which the first is plotted, and keep adding new
 curves to the same plot, on the same scale. For example:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="n">period</span><span class="o">=</span><span class="mf">0.47</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.05</span><span class="p">);</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">example_transit_model</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
+<p>If we want to access the modeling tool directly, we can use the
+<code class="docutils literal notranslate"><span class="pre">BATMAN</span></code> function to make an array of model flux values. The inputs to
+this code are an array of times and the transit model parameters.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># make some times that span 0 to 5 days, in 2-minute increments</span>
+<span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">)</span>
+
+<span class="c1"># use the BATMAN function to make a transit model</span>
+<span class="n">modelflux</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">BATMAN</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">4.2</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.11</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">9.0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+
+<span class="c1"># plot the times and model fluxes</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">modelflux</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Flux&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>All of the other visualization tools described on this page are calling
+this <code class="docutils literal notranslate"><span class="pre">BATMAN</span></code> function to make their models.</p>
 </div>
 <div class="section" id="making-a-simulated-transit-dataset">
 <h2>making a simulated transit dataset<a class="headerlink" href="#making-a-simulated-transit-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Sometimes it can be really helpful to be able to make a simulated noisy
 dataset, starting from some model parameters. The
-<code class="docutils literal"><span class="pre">simulate_transit_data</span></code> function can do that for you!</p>
+<code class="docutils literal notranslate"><span class="pre">simulate_transit_data</span></code> function can do that for you!</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">scatter</span><span class="p">()</span>
 </pre></div>
@@ -411,19 +437,19 @@ dataset, starting from some model parameters. The
 </div>
 <div class="section" id="visually-comparing-a-model-to-data">
 <h2>visually comparing a model to data<a class="headerlink" href="#visually-comparing-a-model-to-data" title="Permalink to this headline">¶</a></h2>
-<p>We want to be able to compare our transit model to our data. Here&#8217;s a
-little wrapper called <code class="docutils literal"><span class="pre">plot_with_transit_model</span></code>, which can plot a
+<p>We want to be able to compare our transit model to our data. Here’s a
+little wrapper called <code class="docutils literal notranslate"><span class="pre">plot_with_transit_model</span></code>, which can plot a
 light curve, and then overplot a transit model on top. As inputs, this
-function takes a light curve, and the transit parameters <code class="docutils literal"><span class="pre">period</span></code>,
-<code class="docutils literal"><span class="pre">t0</span></code>, <code class="docutils literal"><span class="pre">radius</span></code>, <code class="docutils literal"><span class="pre">a</span></code>, <code class="docutils literal"><span class="pre">b</span></code> as keyword arguments. The top panel
-shows the light curve data; the bottom panel shows the &#8220;residuals&#8221;,
+function takes a light curve, and the transit parameters <code class="docutils literal notranslate"><span class="pre">period</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t0</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code> as keyword arguments. The top panel
+shows the light curve data; the bottom panel shows the “residuals”,
 which are defined as the data minus the model.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">hsl</span><span class="o">.</span><span class="n">plot_with_transit_model</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
@@ -432,11 +458,11 @@ which are defined as the data minus the model.</p>
 <p>If we plot the wrong model for our data, our residuals show big bumps in
 them!</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">hsl</span><span class="o">.</span><span class="n">plot_with_transit_model</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 </pre></div>
@@ -446,11 +472,11 @@ them!</p>
 in terms of phase instead of time. The x-axis will span only one orbital
 period, with data repeating back on it many times.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">folded</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">fold</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mf">0.1</span><span class="o">/</span><span class="mf">1.23</span><span class="p">)</span>
 <span class="n">hsl</span><span class="o">.</span><span class="n">plot_with_transit_model</span><span class="p">(</span><span class="n">folded</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
@@ -513,6 +539,7 @@ period, with data repeating back on it many times.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.0
+                0.0.4
               </div>
             
           
@@ -347,25 +347,25 @@ div.nboutput div.output_area.stderr {
 noise.</p>
 <div class="section" id="Making-a-Fake-Light-Curve">
 <h2>Making a Fake Light Curve<a class="headerlink" href="#Making-a-Fake-Light-Curve" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s make a really boring light curve, just so we can understand what
+<p>Let’s make a really boring light curve, just so we can understand what
 we should expect for the noise properties of a star of a given
 brightness.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">henrietta</span> <span class="k">as</span> <span class="nn">hsl</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># create a fake light curve, where we expect 100 photons per exposure</span>
 <span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
@@ -377,11 +377,11 @@ brightness.</p>
 <p>Remember, we can always pull out the flux values from a light curve. For
 example, if we want to compute the RMS of the light curve, we can use:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
 </pre></div>
@@ -395,24 +395,24 @@ bucket. It collects photons that are raining down from particular
 locations on the sky. We can simulate how many photons a telescope will
 gather from the sky using the following:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>If we want to use this function without generating a plot (let&#8217;s imagine
+<p>If we want to use this function without generating a plot (let’s imagine
 we want to run it millions of times), then we can call it with the
-<code class="docutils literal"><span class="pre">visualize</span></code> keyword set to <code class="docutils literal"><span class="pre">False</span></code>:</p>
+<code class="docutils literal notranslate"><span class="pre">visualize</span></code> keyword set to <code class="docutils literal notranslate"><span class="pre">False</span></code>:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                                 <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
                                 <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
@@ -477,6 +477,7 @@ we want to run it millions of times), then we can call it with the
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

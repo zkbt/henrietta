@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.0
+                0.0.4
               </div>
             
           
@@ -90,6 +90,8 @@
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.lightcurves">lightcurves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-henrietta.statistics">statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-henrietta.modeling">modeling</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
@@ -178,7 +180,7 @@
 </style>
 <div class="section" id="function-definitions">
 <span id="api"></span><h1>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h1>
-<p>This page details the functions and classes defined in the <code class="docutils literal"><span class="pre">henrietta</span></code> package.</p>
+<p>This page details the functions and classes defined in the <code class="docutils literal notranslate"><span class="pre">henrietta</span></code> package.</p>
 <div class="section" id="module-henrietta.lightcurves">
 <span id="lightcurves"></span><h2>lightcurves<a class="headerlink" href="#module-henrietta.lightcurves" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -192,41 +194,54 @@ for the same star. The goal of this little wrapper is to make it
 easy to get just one single light curve to play with.</p>
 <p>This has been tested only on data from the main Kepler mission.
 For K2 data, you may need to download a TPF.</p>
-<dl class="docutils">
-<dt>star: str, int</dt>
-<dd>The name of the star whose light curve you want to download.
-This can be a name (&#8220;Kepler-42&#8221;, &#8220;KOI-961&#8221;) or a KIC number
-(8561063)</dd>
-<dt>quarter: str, int</dt>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>star: str, int</strong></dt>
+<dd><p class="first last">The name of the star whose light curve you want to download.
+This can be a name (“Kepler-42”, “KOI-961”) or a KIC number
+(8561063)</p>
+</dd>
+<dt><strong>quarter: str, int</strong></dt>
 <dd><dl class="first last docutils">
 <dt>Which Kepler quarter to download?</dt>
-<dd>&#8216;all&#8217; = download the entire mission of data
-1, 2, 3 ... = download a specific quarter</dd>
-</dl>
-</dd>
-<dt>cadence: str</dt>
-<dd>&#8216;long&#8217; for Kepler long cadence
-&#8216;short&#8217; for Kepler short cadence</dd>
-<dt>quality_bitmask: str, int</dt>
-<dd>&#8216;none&#8217; = ignore no data
-&#8216;default&#8217; = ignore data with serious quality issues
-&#8216;hard&#8217; = be a little more cautious in what we call good data
-&#8216;hardest&#8217; = be too cautious about what we call good data</dd>
-<dt>kind: str</dt>
-<dd><p class="first">&#8220;SAP_FLUX&#8221; = simple aperture photometry
-&#8220;PDCSAP_FLUX&#8221; = SAP, with pre-search data conditioning applied,</p>
-<blockquote class="last">
-<div>to get rid of some instrumental systematics
-from the light curves (but watch out! some
-astrophysical signals might be messed up too!)</div></blockquote>
+<dd><p class="first last">‘all’ = download the entire mission of data
+1, 2, 3 … = download a specific quarter</p>
 </dd>
 </dl>
-<dl class="docutils">
-<dt>lc: LightCurve object</dt>
-<dd>This is a <cite>lightkurve</cite>-style LightCurve object, which contains
+</dd>
+<dt><strong>cadence: str</strong></dt>
+<dd><p class="first last">‘long’ for Kepler long cadence
+‘short’ for Kepler short cadence</p>
+</dd>
+<dt><strong>quality_bitmask: str, int</strong></dt>
+<dd><p class="first last">‘none’ = ignore no data
+‘default’ = ignore data with serious quality issues
+‘hard’ = be a little more cautious in what we call good data
+‘hardest’ = be too cautious about what we call good data</p>
+</dd>
+<dt><strong>kind: str</strong></dt>
+<dd><p class="first last">“SAP_FLUX” = simple aperture photometry
+“PDCSAP_FLUX” = SAP, with pre-search data conditioning applied to get
+rid of some instrumental systematics from the light curves (but watch
+out! some astrophysical signals might be messed up too!)</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>lc: LightCurve object</strong></dt>
+<dd><p class="first last">This is a <cite>lightkurve</cite>-style LightCurve object, which contains
 the attributes <cite>lc.time</cite> (times in JD) and <cite>lc.flux</cite> (the brightness
-of the star), as well as lots of methods for analysis and plotting.</dd>
+of the star), as well as lots of methods for analysis and plotting.</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -238,7 +253,7 @@ of the star), as well as lots of methods for analysis and plotting.</dd>
 <dl class="function">
 <dt id="henrietta.lightcurves.locate_transits">
 <code class="descclassname">henrietta.lightcurves.</code><code class="descname">locate_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>t0=0</em>, <em>name=None</em>, <em>color='green'</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#locate_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.locate_transits" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function takes in a lightcurve object along with the planet&#8217;s
+<dd><p>This function takes in a lightcurve object along with the planet’s
 period and epoch in order to identify on the plot each expected location
 of a transit</p>
 <p>lc should be a lightkurve object which has times and fluxes.
@@ -246,26 +261,43 @@ period should be in days
 t0 should be in BJD</p>
 </dd></dl>
 
-<span class="target" id="module-henrietta.statistics"></span><dl class="function">
+</div>
+<div class="section" id="module-henrietta.statistics">
+<span id="statistics"></span><h2>statistics<a class="headerlink" href="#module-henrietta.statistics" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="henrietta.statistics.catch_photons_in_bucket">
 <code class="descclassname">henrietta.statistics.</code><code class="descname">catch_photons_in_bucket</code><span class="sig-paren">(</span><em>rate=1</em>, <em>diameter=1.0</em>, <em>time=1800.0</em>, <em>visualize=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#catch_photons_in_bucket"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.catch_photons_in_bucket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate a telescope catching photons,
 for a given photon flux (photons/s/m**2),
 telescope diameter (m), and exposure time (s).</p>
-<dl class="docutils">
-<dt>rate: float</dt>
-<dd>The rate at which photons are coming towards us,
-expressed in units of (photons/s/m**2).</dd>
-<dt>diameter: float</dt>
-<dd>The effective diameter of a circular telescope,
-expressed in units of (m).</dd>
-<dt>time: float</dt>
-<dd>The exposure duration, expressed in units of (s).</dd>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>rate: float</strong></dt>
+<dd><p class="first last">The rate at which photons are coming towards us,
+expressed in units of (photons/s/m**2).</p>
+</dd>
+<dt><strong>diameter: float</strong></dt>
+<dd><p class="first last">The effective diameter of a circular telescope,
+expressed in units of (m).</p>
+</dd>
+<dt><strong>time: float</strong></dt>
+<dd><p class="first last">The exposure duration, expressed in units of (s).</p>
+</dd>
 </dl>
-<dl class="docutils">
-<dt>N: int</dt>
-<dd>The number of photons that land in the telescope</dd>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>N: int</strong></dt>
+<dd><p class="first last">The number of photons that land in the telescope</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -276,14 +308,25 @@ a particular number of photons per exposure,
 but treating the PDF for photon counts with the
 Gaussian approximation, instead of a true Poisson
 distribution.</p>
-<dl class="docutils">
-<dt>N: float</dt>
-<dd>The average number of photons per exposure.</dd>
-<dt>cadence: float</dt>
-<dd>The time between successive exposures (in days).</dd>
-<dt>duration: float</dt>
-<dd>The total time spanned by the light curve (in days).</dd>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>N: float</strong></dt>
+<dd><p class="first last">The average number of photons per exposure.</p>
+</dd>
+<dt><strong>cadence: float</strong></dt>
+<dd><p class="first last">The time between successive exposures (in days).</p>
+</dd>
+<dt><strong>duration: float</strong></dt>
+<dd><p class="first last">The total time spanned by the light curve (in days).</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -291,14 +334,226 @@ distribution.</p>
 <code class="descclassname">henrietta.statistics.</code><code class="descname">create_photon_lightcurve</code><span class="sig-paren">(</span><em>N=100</em>, <em>cadence=0.020833333333333332</em>, <em>duration=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/statistics.html#create_photon_lightcurve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.statistics.create_photon_lightcurve" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a lightkurve object, assuming we detect
 a particular number of photons per exposure.</p>
-<dl class="docutils">
-<dt>N: float</dt>
-<dd>The average number of photons per exposure.</dd>
-<dt>cadence: float</dt>
-<dd>The time between successive exposures (in days).</dd>
-<dt>duration: float</dt>
-<dd>The total time spanned by the light curve (in days).</dd>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>N: float</strong></dt>
+<dd><p class="first last">The average number of photons per exposure.</p>
+</dd>
+<dt><strong>cadence: float</strong></dt>
+<dd><p class="first last">The time between successive exposures (in days).</p>
+</dd>
+<dt><strong>duration: float</strong></dt>
+<dd><p class="first last">The total time spanned by the light curve (in days).</p>
+</dd>
 </dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-henrietta.modeling">
+<span id="modeling"></span><h2>modeling<a class="headerlink" href="#module-henrietta.modeling" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="henrietta.modeling.BATMAN">
+<code class="descclassname">henrietta.modeling.</code><code class="descname">BATMAN</code><span class="sig-paren">(</span><em>t, period=1.0, t0=0, radius=0.1, a=10.0, b=0.0, baseline=1.0, ld=[0.1956, 0.37]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#BATMAN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.BATMAN" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns a model transit light curve
+for a given array of times and set of parameters.
+It currently assumes a circular orbit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>t</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
+<dd><p class="first last">An array of times, in units of days.</p>
+</dd>
+<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+</dd>
+<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">One mid-transit time, in units of days.</p>
+</dd>
+<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The radius of the planet, in units of stellar radii.
+(This is sometimes also called Rp/R*).</p>
+</dd>
+<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+(This is sometimes also called a/R*).</p>
+</dd>
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+(This is closely related to the inclination.)</p>
+</dd>
+<dt><strong>baseline</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
+</dd>
+<dt><strong>ld</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span></dt>
+<dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="henrietta.modeling.example_transit_model">
+<code class="descclassname">henrietta.modeling.</code><code class="descname">example_transit_model</code><span class="sig-paren">(</span><em>period=0.5, t0=0, radius=0.1, a=10.0, b=0.0, tmin=-0.5, tmax=0.5, cadence=0.0006944444444444445, ylim=[0.985, 1.005], ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#example_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.example_transit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function makes an example plot of a model transit light curve.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+</dd>
+<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">One mid-transit time, in units of days.</p>
+</dd>
+<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The radius of the planet, in units of stellar radii.
+(This is sometimes also called Rp/R*).</p>
+</dd>
+<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+(This is sometimes also called a/R*).</p>
+</dd>
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+(This is closely related to the inclination.)</p>
+</dd>
+<dt><strong>tmin</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The minimum time to plot, in days.</p>
+</dd>
+<dt><strong>tmax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The maximum time to plot, in days.</p>
+</dd>
+<dt><strong>cadence</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The cadence (time-step) to use, in days.</p>
+</dd>
+<dt><strong>ylim</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd><p class="first last">The ylimits for the plot.</p>
+</dd>
+<dt><strong>ax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span></dt>
+<dd><p class="first">If an ax is fed in as a keyword argument, the plot
+will be added to that existing plot axes. To include
+multiple different models on the same plot, say:</p>
+<p class="last">ax = example_transit_model()
+ax = example_transit_model(rp=0.042, ax=ax)
+ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
+…</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>plotted_ax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span></dt>
+<dd><p class="first last">The axes into which the model was was plotted.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="henrietta.modeling.plot_with_transit_model">
+<code class="descclassname">henrietta.modeling.</code><code class="descname">plot_with_transit_model</code><span class="sig-paren">(</span><em>lc, period=1.0, t0=0, radius=0.1, a=10.0, b=0.0, baseline=1.0, ld=[0.1956, 0.37], planet_name='Some planet.', show_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#plot_with_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.plot_with_transit_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will take in a lightcurve for a planet
+with a given set of transit parameters (period, t0, radius, a, b, baseline)
+and will plot a batman light curve model. Limb-darkening coefficients
+can also be specified in the form [u1,u2].</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>lc</strong> <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve object</span></dt>
+<dd><p class="first last">Data contained in a lightkurve LightCurve object.</p>
+</dd>
+<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+</dd>
+<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">One mid-transit time, in units of days.</p>
+</dd>
+<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The radius of the planet, in units of stellar radii.
+(This is sometimes also called Rp/R*).</p>
+</dd>
+<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+(This is sometimes also called a/R*).</p>
+</dd>
+<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+(This is closely related to the inclination.)</p>
+</dd>
+<dt><strong>baseline</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
+</dd>
+<dt><strong>ld</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span></dt>
+<dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
+</dd>
+<dt><strong>planet_name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first last">The name of the planet, which will be displayed as the</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="henrietta.modeling.simulate_transit_data">
+<code class="descclassname">henrietta.modeling.</code><code class="descname">simulate_transit_data</code><span class="sig-paren">(</span><em>N=1000000.0</em>, <em>cadence=0.001388888888888889</em>, <em>duration=3.0</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#simulate_transit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.simulate_transit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will generate a simulated LightCurve dataset
+with a given fractional noise (sigma) and time spacing (cadence),
+with a transit injected into it (whose parameters are set by any
+extra keyword arguments that you feed in, like <cite>period</cite>, <cite>radius</cite>, …)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>N</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The average number of photons expected per exposure, to
+set the standard deviation of the noise.</p>
+</dd>
+<dt><strong>cadence</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The integration time of the measurements, in days.</p>
+</dd>
+<dt><strong>duration</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
+<dd><p class="first last">The total length of time covered by the light curve.</p>
+</dd>
+<dt><strong>**kw</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Any additional keywords will be passed onward to the
+batman model to set the parameters of the transit model.
+Valid additional keywords are period, t0, radius, a, b, ld.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>lc</strong> <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve</span></dt>
+<dd><p class="first last">A simulated lightkurve LightCurve, with a transit injected,
+and the specified noise.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -357,6 +612,7 @@ a particular number of photons per exposure.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
