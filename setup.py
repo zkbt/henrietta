@@ -15,8 +15,8 @@ def readme():
 if "release" in sys.argv[-1]:
     os.system("python setup.py sdist")
     # uncomment this to test out on test.pypi.com/project/tess-zap
-    os.system("twine upload --repository-url https://test.pypi.org/legacy/ dist/*")
-    #os.system("twine upload dist/*")
+    #os.system("twine upload --repository-url https://test.pypi.org/legacy/ dist/*")
+    os.system("twine upload dist/*")
     os.system("rm -rf dist/henrietta*")
     sys.exit()
 
@@ -48,7 +48,7 @@ setup(name = "henrietta",
       'Topic :: Scientific/Engineering :: Astronomy'
       ],
     install_requires=['numpy', 'astropy', 'scipy', 'matplotlib', 'lightkurve'],
-    extras_require={'models':['batman-package']}
+    extras_require={'models':['batman-package']},
     zip_safe=False,
     license='MIT',
 )

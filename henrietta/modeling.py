@@ -9,6 +9,9 @@ except:
 
     You can use most of the henrietta tools with no problem,
     but you will not be able to generate transit models :-(
+
+    You can try installing it with the command
+        `pip install batman-package`
     """)
 import lightkurve
 from lightkurve import LightCurve
