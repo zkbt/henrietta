@@ -155,7 +155,7 @@ def example_transit_model( period = 0.5, #days
     # return the current axes, in case someone wants to plot into them again
     return plotted_ax
 
-def simulate_transit_data(N=1e6, cadence=30.0/60.0/24.0, duration=10.0, **kw):
+def simulate_transit_data(N=1e6, cadence=2.0/60.0/24.0, duration=3.0, **kw):
     '''
     This function will generate a simulated LightCurve dataset
     with a given fractional noise (sigma) and time spacing (cadence),
@@ -301,4 +301,5 @@ def plot_with_transit_model(lc,
 
     plt.xlabel('Time (days)',fontsize=16)
     plt.tight_layout()
-    return highres_time,model_plot
+
+    #return highres_time,model_plot
