@@ -85,6 +85,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightcurves.html#lc.bin()"><code class="docutils literal"><span class="pre">lc.bin()</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
@@ -189,73 +190,73 @@ collaborative coders!)</p>
 <p>We welcome suggestions for enhancements or new features to <strong>henrietta</strong> via GitHub.</p>
 <p>If you want to make a significant change such as adding a new feature, we recommend opening a GitHub issue to discuss the changes.</p>
 <p>Once you are ready to propose the changes, please go ahead and open a pull request.</p>
-<p>If in doubt on how to open a pull request, we recommend Astropy’s
-“<a class="reference external" href="http://docs.astropy.org/en/stable/development/workflow/development_workflow.html">How to make a code contribution</a>” tutorial.
+<p>If in doubt on how to open a pull request, we recommend Astropy&#8217;s
+&#8220;<a class="reference external" href="http://docs.astropy.org/en/stable/development/workflow/development_workflow.html">How to make a code contribution</a>&#8221; tutorial.
 In brief, the steps are as follows:</p>
 <ol class="arabic simple">
 <li>Fork the main <strong>henrietta</strong> repository by logging into GitHub, browsing to
-<code class="docutils literal notranslate"><span class="pre">https://github.com/zkbt/henrietta</span></code> and clicking on <code class="docutils literal notranslate"><span class="pre">Fork</span></code> in the top right corner. This will create your own version of the repository, which you can modify to your heart’s content.</li>
+<code class="docutils literal"><span class="pre">https://github.com/zkbt/henrietta</span></code> and clicking on <code class="docutils literal"><span class="pre">Fork</span></code> in the top right corner. This will create your own version of the repository, which you can modify to your heart&#8217;s content.</li>
 <li>Clone your fork onto your computer, where you can use your code and make edits to it:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/YOUR-GITHUB-USERNAME/henrietta.git
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git clone https://github.com/YOUR-GITHUB-USERNAME/henrietta.git
 </pre></div>
 </div>
 <ol class="arabic simple" start="3">
-<li>Install the development version of henrietta. This means you’ll be able to edit the code and instantaneously see those changes no matter where you <cite>import henrietta</cite> from on your computer:</li>
+<li>Install the development version of henrietta. This means you&#8217;ll be able to edit the code and instantaneously see those changes no matter where you <cite>import henrietta</cite> from on your computer:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> henrietta
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> henrietta
 $ pip install -e .
 </pre></div>
 </div>
 <ol class="arabic simple" start="4">
 <li>Add the zkbt remote to your GitHub environment. This means that your local repository will know to check for changes to the main repository:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git remote add upstream https://github.com/zkbt/henrietta.git
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git remote add upstream https://github.com/zkbt/henrietta.git
 </pre></div>
 </div>
 <ol class="arabic simple" start="5">
-<li>Let’s make sure everything is setup correctly. Execute:</li>
+<li>Let&#8217;s make sure everything is setup correctly. Execute:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git remote -v
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git remote -v
 </pre></div>
 </div>
 <p>You should see something like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>origin      https://github.com/YOUR-GITHUB-USERNAME/henrietta.git <span class="o">(</span>fetch<span class="o">)</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>origin      https://github.com/YOUR-GITHUB-USERNAME/henrietta.git <span class="o">(</span>fetch<span class="o">)</span>
 origin      https://github.com/YOUR-GITHUB-USERNAME/henrietta.git <span class="o">(</span>push<span class="o">)</span>
 upstream    https://github.com/zkbt/henrietta.git <span class="o">(</span>fetch<span class="o">)</span>
 upstream    https://github.com/zkbt/henrietta.git <span class="o">(</span>push<span class="o">)</span>
 </pre></div>
 </div>
 <ol class="arabic simple" start="6">
-<li>Now you are ready to start contributing; make a new branch with a name of your choice and checkout. This means you’re working on a parallel version of the code; you can play with these changes, but they won’t be incorporated for everybody until they are merged into the master branch of the main repository:</li>
+<li>Now you are ready to start contributing; make a new branch with a name of your choice and checkout. This means you&#8217;re working on a parallel version of the code; you can play with these changes, but they won&#8217;t be incorporated for everybody until they are merged into the master branch of the main repository:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git branch name-of-your-branch
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git branch name-of-your-branch
 $ git checkout name-of-your-branch
 </pre></div>
 </div>
 <ol class="arabic simple" start="7">
 <li>Do the changes you want and add them:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git add FILE-YOU-ADDED-OR-MODIFIED
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git add FILE-YOU-ADDED-OR-MODIFIED
 </pre></div>
 </div>
 <ol class="arabic simple" start="8">
 <li>Commit and push your changes:</li>
 </ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ git commit -m <span class="s2">&quot;description of changes&quot;</span>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ git commit -m <span class="s2">&quot;description of changes&quot;</span>
 $ git push origin name-of-my-branch
 </pre></div>
 </div>
 <ol class="arabic simple" start="9">
 <li>Head to <a class="reference external" href="https://github.com/zkbt/henrietta">https://github.com/zkbt/henrietta</a> and you should now see a button
-“Compare and open a pull request”.  Click the button and submit your pull request. This will alert Zach that you have some code you’d like to add, and we can discuss if any changes are needed before it can be merged.</li>
-<li>That’s it! :)</li>
+&#8220;Compare and open a pull request&#8221;.  Click the button and submit your pull request. This will alert Zach that you have some code you&#8217;d like to add, and we can discuss if any changes are needed before it can be merged.</li>
+<li>That&#8217;s it! :)</li>
 </ol>
 </div>
 <div class="section" id="coding-and-documentation-guidelines">
 <h2>Coding and documentation guidelines<a class="headerlink" href="#coding-and-documentation-guidelines" title="Permalink to this headline">¶</a></h2>
-<p>For <strong>henrietta</strong>, let’s try to adopt AstroPy’s coding guidelines and standards,
-as documented in <a class="reference external" href="http://docs.astropy.org/en/stable/index.html#developer-documentation">AstroPy’s Development Documentation</a>.</p>
+<p>For <strong>henrietta</strong>, let&#8217;s try to adopt AstroPy&#8217;s coding guidelines and standards,
+as documented in <a class="reference external" href="http://docs.astropy.org/en/stable/index.html#developer-documentation">AstroPy&#8217;s Development Documentation</a>.</p>
 </div>
 </div>
 
@@ -310,7 +311,6 @@ as documented in <a class="reference external" href="http://docs.astropy.org/en/
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

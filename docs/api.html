@@ -86,6 +86,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightcurves.html#lc.bin()"><code class="docutils literal"><span class="pre">lc.bin()</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
@@ -180,7 +181,7 @@
 </style>
 <div class="section" id="function-definitions">
 <span id="api"></span><h1>Function Definitions<a class="headerlink" href="#function-definitions" title="Permalink to this headline">¶</a></h1>
-<p>This page details the functions and classes defined in the <code class="docutils literal notranslate"><span class="pre">henrietta</span></code> package.</p>
+<p>This page details the functions and classes defined in the <code class="docutils literal"><span class="pre">henrietta</span></code> package.</p>
 <div class="section" id="module-henrietta.lightcurves">
 <span id="lightcurves"></span><h2>lightcurves<a class="headerlink" href="#module-henrietta.lightcurves" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
@@ -201,30 +202,30 @@ For K2 data, you may need to download a TPF.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
 <dt><strong>star: str, int</strong></dt>
 <dd><p class="first last">The name of the star whose light curve you want to download.
-This can be a name (“Kepler-42”, “KOI-961”) or a KIC number
+This can be a name (&#8220;Kepler-42&#8221;, &#8220;KOI-961&#8221;) or a KIC number
 (8561063)</p>
 </dd>
 <dt><strong>quarter: str, int</strong></dt>
 <dd><dl class="first last docutils">
 <dt>Which Kepler quarter to download?</dt>
-<dd><p class="first last">‘all’ = download the entire mission of data
-1, 2, 3 … = download a specific quarter</p>
+<dd><p class="first last">&#8216;all&#8217; = download the entire mission of data
+1, 2, 3 ... = download a specific quarter</p>
 </dd>
 </dl>
 </dd>
 <dt><strong>cadence: str</strong></dt>
-<dd><p class="first last">‘long’ for Kepler long cadence
-‘short’ for Kepler short cadence</p>
+<dd><p class="first last">&#8216;long&#8217; for Kepler long cadence
+&#8216;short&#8217; for Kepler short cadence</p>
 </dd>
 <dt><strong>quality_bitmask: str, int</strong></dt>
-<dd><p class="first last">‘none’ = ignore no data
-‘default’ = ignore data with serious quality issues
-‘hard’ = be a little more cautious in what we call good data
-‘hardest’ = be too cautious about what we call good data</p>
+<dd><p class="first last">&#8216;none&#8217; = ignore no data
+&#8216;default&#8217; = ignore data with serious quality issues
+&#8216;hard&#8217; = be a little more cautious in what we call good data
+&#8216;hardest&#8217; = be too cautious about what we call good data</p>
 </dd>
 <dt><strong>kind: str</strong></dt>
-<dd><p class="first last">“SAP_FLUX” = simple aperture photometry
-“PDCSAP_FLUX” = SAP, with pre-search data conditioning applied to get
+<dd><p class="first last">&#8220;SAP_FLUX&#8221; = simple aperture photometry
+&#8220;PDCSAP_FLUX&#8221; = SAP, with pre-search data conditioning applied to get
 rid of some instrumental systematics from the light curves (but watch
 out! some astrophysical signals might be messed up too!)</p>
 </dd>
@@ -253,7 +254,7 @@ of the star), as well as lots of methods for analysis and plotting.</p>
 <dl class="function">
 <dt id="henrietta.lightcurves.locate_transits">
 <code class="descclassname">henrietta.lightcurves.</code><code class="descname">locate_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>t0=0</em>, <em>name=None</em>, <em>color='green'</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#locate_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.locate_transits" title="Permalink to this definition">¶</a></dt>
-<dd><p>This function takes in a lightcurve object along with the planet’s
+<dd><p>This function takes in a lightcurve object along with the planet&#8217;s
 period and epoch in order to identify on the plot each expected location
 of a transit</p>
 <p>lc should be a lightkurve object which has times and fluxes.
@@ -369,32 +370,32 @@ It currently assumes a circular orbit.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>t</strong> <span class="classifier-delimiter">:</span> <span class="classifier">array</span></dt>
-<dd><p class="first last">An array of times, in units of days.</p>
+<dt><strong>t</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">array</span><dd><p class="first last">An array of times, in units of days.</p>
 </dd>
-<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+<dt><strong>period</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital period of the planet, in units of days.</p>
 </dd>
-<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">One mid-transit time, in units of days.</p>
+<dt><strong>t0</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">One mid-transit time, in units of days.</p>
 </dd>
-<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The radius of the planet, in units of stellar radii.
+<dt><strong>radius</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The radius of the planet, in units of stellar radii.
 (This is sometimes also called Rp/R*).</p>
 </dd>
-<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+<dt><strong>a</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
 (This is sometimes also called a/R*).</p>
 </dd>
-<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+<dt><strong>b</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
 (This is closely related to the inclination.)</p>
 </dd>
-<dt><strong>baseline</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
+<dt><strong>baseline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
 </dd>
-<dt><strong>ld</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span></dt>
-<dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
+<dt><strong>ld</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span><dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
 </dd>
 </dl>
 </td>
@@ -412,51 +413,51 @@ It currently assumes a circular orbit.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+<dt><strong>period</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital period of the planet, in units of days.</p>
 </dd>
-<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">One mid-transit time, in units of days.</p>
+<dt><strong>t0</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">One mid-transit time, in units of days.</p>
 </dd>
-<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The radius of the planet, in units of stellar radii.
+<dt><strong>radius</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The radius of the planet, in units of stellar radii.
 (This is sometimes also called Rp/R*).</p>
 </dd>
-<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+<dt><strong>a</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
 (This is sometimes also called a/R*).</p>
 </dd>
-<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+<dt><strong>b</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
 (This is closely related to the inclination.)</p>
 </dd>
-<dt><strong>tmin</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The minimum time to plot, in days.</p>
+<dt><strong>tmin</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The minimum time to plot, in days.</p>
 </dd>
-<dt><strong>tmax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The maximum time to plot, in days.</p>
+<dt><strong>tmax</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The maximum time to plot, in days.</p>
 </dd>
-<dt><strong>cadence</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The cadence (time-step) to use, in days.</p>
+<dt><strong>cadence</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The cadence (time-step) to use, in days.</p>
 </dd>
-<dt><strong>ylim</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd><p class="first last">The ylimits for the plot.</p>
+<dt><strong>ylim</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd><p class="first last">The ylimits for the plot.</p>
 </dd>
-<dt><strong>ax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span></dt>
-<dd><p class="first">If an ax is fed in as a keyword argument, the plot
+<dt><strong>ax</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span><dd><p class="first">If an ax is fed in as a keyword argument, the plot
 will be added to that existing plot axes. To include
 multiple different models on the same plot, say:</p>
 <p class="last">ax = example_transit_model()
 ax = example_transit_model(rp=0.042, ax=ax)
 ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
-…</p>
+...</p>
 </dd>
 </dl>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>plotted_ax</strong> <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span></dt>
-<dd><p class="first last">The axes into which the model was was plotted.</p>
+<dt><strong>plotted_ax</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">matplotlib.axes object</span><dd><p class="first last">The axes into which the model was was plotted.</p>
 </dd>
 </dl>
 </td>
@@ -477,35 +478,35 @@ can also be specified in the form [u1,u2].</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>lc</strong> <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve object</span></dt>
-<dd><p class="first last">Data contained in a lightkurve LightCurve object.</p>
+<dt><strong>lc</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve object</span><dd><p class="first last">Data contained in a lightkurve LightCurve object.</p>
 </dd>
-<dt><strong>period</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital period of the planet, in units of days.</p>
+<dt><strong>period</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital period of the planet, in units of days.</p>
 </dd>
-<dt><strong>t0</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">One mid-transit time, in units of days.</p>
+<dt><strong>t0</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">One mid-transit time, in units of days.</p>
 </dd>
-<dt><strong>radius</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The radius of the planet, in units of stellar radii.
+<dt><strong>radius</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The radius of the planet, in units of stellar radii.
 (This is sometimes also called Rp/R*).</p>
 </dd>
-<dt><strong>a</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
+<dt><strong>a</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The orbital distance (semimajor axis) of the planet, in stellar radii.
 (This is sometimes also called a/R*).</p>
 </dd>
-<dt><strong>b</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
+<dt><strong>b</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The transit impact parameter of the planet, in stellar radii.
 (This is closely related to the inclination.)</p>
 </dd>
-<dt><strong>baseline</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
+<dt><strong>baseline</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The out-of-transit flux level, in whatever units you want.</p>
 </dd>
-<dt><strong>ld</strong> <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span></dt>
-<dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
+<dt><strong>ld</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span><dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
 </dd>
-<dt><strong>planet_name</strong> <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd><p class="first last">The name of the planet, which will be displayed as the</p>
+<dt><strong>planet_name</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">string</span><dd><p class="first last">The name of the planet, which will be displayed as the</p>
 </dd>
 </dl>
 </td>
@@ -520,24 +521,24 @@ can also be specified in the form [u1,u2].</p>
 <dd><p>This function will generate a simulated LightCurve dataset
 with a given fractional noise (sigma) and time spacing (cadence),
 with a transit injected into it (whose parameters are set by any
-extra keyword arguments that you feed in, like <cite>period</cite>, <cite>radius</cite>, …)</p>
+extra keyword arguments that you feed in, like <cite>period</cite>, <cite>radius</cite>, ...)</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
-<dt><strong>N</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The average number of photons expected per exposure, to
+<dt><strong>N</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The average number of photons expected per exposure, to
 set the standard deviation of the noise.</p>
 </dd>
-<dt><strong>cadence</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The integration time of the measurements, in days.</p>
+<dt><strong>cadence</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The integration time of the measurements, in days.</p>
 </dd>
-<dt><strong>duration</strong> <span class="classifier-delimiter">:</span> <span class="classifier">float</span></dt>
-<dd><p class="first last">The total length of time covered by the light curve.</p>
+<dt><strong>duration</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd><p class="first last">The total length of time covered by the light curve.</p>
 </dd>
-<dt><strong>**kw</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
-<dd><p class="first last">Any additional keywords will be passed onward to the
+<dt><strong>**kw</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">dict</span><dd><p class="first last">Any additional keywords will be passed onward to the
 batman model to set the parameters of the transit model.
 Valid additional keywords are period, t0, radius, a, b, ld.</p>
 </dd>
@@ -545,8 +546,8 @@ Valid additional keywords are period, t0, radius, a, b, ld.</p>
 </td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
-<dt><strong>lc</strong> <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve</span></dt>
-<dd><p class="first last">A simulated lightkurve LightCurve, with a transit injected,
+<dt><strong>lc</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">LightCurve</span><dd><p class="first last">A simulated lightkurve LightCurve, with a transit injected,
 and the specified noise.</p>
 </dd>
 </dl>
@@ -612,7 +613,6 @@ and the specified noise.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
