@@ -4,7 +4,8 @@ in the Fall 2018 session of ASTR3400: Research Methods in Astronomy,
 taught at CU Boulder by Zach Berta-Thompson (https://github.com/zkbt/).
 '''
 
-__version__ = '0.0.4'
+# for ASTR3400, let's use {semester}.{week}.{microversion}
+__version__ = '0.4.1' 
 
 # specify whether we're calling this from within setup.py
 try:
