@@ -5,7 +5,7 @@ taught at CU Boulder by Zach Berta-Thompson (https://github.com/zkbt/).
 '''
 
 # for ASTR3400, let's use {semester}.{week}.{microversion}
-__version__ = '0.4.2' 
+__version__ = '0.5.0' 
 
 # specify whether we're calling this from within setup.py
 try:
