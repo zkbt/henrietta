@@ -90,7 +90,8 @@ def example_transit_model( period = 0.5, #days
                            b = 0.0, #impact parameter in stellar radii,
                            tmin=-0.5, tmax=0.5, cadence=1.0/60.0/24.0,
                            ylim=[0.985, 1.005],
-                           ax=None):
+                           ax=None,
+                           **plotkw):
     '''
     This function makes an example plot of a model transit light curve.
 
@@ -137,6 +138,9 @@ def example_transit_model( period = 0.5, #days
         ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
         ...
 
+    plotkw : dict
+        Any extra keywords will be passed along to `matplotlib.pyplot.plot`
+
     Returns
     -------
 
@@ -149,14 +153,28 @@ def example_transit_model( period = 0.5, #days
     f = BATMAN(t=t, period=period, t0=t0, radius=radius, a=a, b=b)
 
     # make a lightkurve LightCurve object
-    model_lc = LightCurve(time=t, flux=f)
+    # model_lc = LightCurve(time=t, flux=f)
 
-    # plot that, and set the ylimits
-    plotted_ax = model_lc.plot(ax=ax, normalize=False, label='period={period},t0={t0},radius={radius},a={a},b={b}'.format(**locals()))
+    # figure out with ax to plot in
+    if ax is None:
+        ax = plt.gca()
+    else:
+        plt.sca(ax)
+
+    # update the label, if it doesn't already exist
+    if 'label' != plotkw:
+        plotkw['label'] = 'period={period},t0={t0},radius={radius},a={a},b={b}'.format(**locals())
+
+    # make the plot, set the y limits
+    plt.plot(t, f, **plotkw)
     plt.ylim(*ylim)
 
+    # set some ylimits
+    plt.xlabel('Time (days)')
+    plt.ylabel('Relative Flux')
+
     # return the current axes, in case someone wants to plot into them again
-    return plotted_ax
+    return ax
 
 def simulate_transit_data(N=1e6, cadence=2.0/60.0/24.0, duration=3.0, **kw):
     '''
