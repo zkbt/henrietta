@@ -152,7 +152,7 @@ def example_transit_model( period = 0.5, #days
     model_lc = LightCurve(time=t, flux=f)
 
     # plot that, and set the ylimits
-    plotted_ax = model_lc.plot(ax=ax, label='period={period},t0={t0},radius={radius},a={a},b={b}'.format(**locals()))
+    plotted_ax = model_lc.plot(ax=ax, normalize=False, label='period={period},t0={t0},radius={radius},a={a},b={b}'.format(**locals()))
     plt.ylim(*ylim)
 
     # return the current axes, in case someone wants to plot into them again
