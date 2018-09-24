@@ -1,14 +1,17 @@
 import numpy as np, matplotlib.pyplot as plt
-from astropy.modeling.core import Fittable1DModel
+from astropy.modeling.core import Fittable1DModel, custom_model
 from astropy.modeling.parameters import Parameter
-from astropy.modeling.models import custom_model
 from astropy.units import Quantity
+
+from .modeling import BATMAN
 
 class TrapezoidTransit(Fittable1DModel):
     """
     One dimensional Trapezoid Transit model,
     using the symbols defined for a circular
     transit approximation in Winn (2010).
+
+    This is a fittable astropy model.
 
     Parameters
     ----------
@@ -22,7 +25,6 @@ class TrapezoidTransit(Fittable1DModel):
         The duration of the transit (from mid-ingress to mid-egress), in days.
     tau : float
         The duration of ingress/egress, in days.
-
 
     See Also
     --------
@@ -45,7 +47,7 @@ class TrapezoidTransit(Fittable1DModel):
         for x in np.linspace(0.02, 0.2, 4):
             model.delta = x
             model.T = x
-            plt.plot(r, model(r), lw=2)
+            plt.plot(t, model(t), lw=2)
 
         plt.show()
     """
@@ -54,7 +56,7 @@ class TrapezoidTransit(Fittable1DModel):
     outputs = ('y',)
 
     delta = Parameter(default=0.01)
-    P = Parameter(default=1.0)
+    P = Parameter(default=1.0, fixed=True)
     t0 = Parameter(default=0.0)
     T = Parameter(default=0.1)
     tau = Parameter(default=0.01)
@@ -74,10 +76,17 @@ class TrapezoidTransit(Fittable1DModel):
         # Compute the four points where the trapezoid changes slope
         # x1 <= x2 <= x3 <= x4
 
-        x1 = - (T+tau)/2.0
-        x2 = - (T-tau)/2.0
-        x3 = (T-tau)/2.0
-        x4 = (T+tau)/2.0
+        if tau > T:
+            x1 = -tau
+            x2 = 0
+            x3 = 0
+            x4 = tau
+        else:
+            x1 = - (T+tau)/2.0
+            x2 = - (T-tau)/2.0
+            x3 = (T-tau)/2.0
+            x4 = (T+tau)/2.0
+
 
         # Compute model values in pieces between the change points
         range_a = np.logical_and(x >= x1, x < x2)
@@ -113,7 +122,6 @@ class TrapezoidTransit(Fittable1DModel):
         tau = Parameter(default=0.01)
         baseline = Parameter(default=1.0)
 
-
         return OrderedDict([('delta', None),
                             ('P', inputs_unit['x']),
                             ('t0', inputs_unit['x']),
@@ -122,13 +130,34 @@ class TrapezoidTransit(Fittable1DModel):
                             ('baseline', outputs_unit['y'])])
 
 @custom_model
-def customTrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
+def anotherTrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
 
     """
-    This does the same thing as the TrapezoidTransit class above. It's a
-    slightly simpler way of defining a custom model. It's a little less
-    flexible (I think), but for most purposes this should be a reasonable
-    template to work from.
+    [I believe this does exactly the same thing as the TrapezoidTransit class
+    above, and using the @custom_model decorator is a slightly simpler way
+    than defining the new model class myself.)
+
+    One dimensional Trapezoid Transit model,
+    using the symbols defined for a circular
+    transit approximation in Winn (2010).
+
+    Parameters
+    ----------
+    delta : float
+        The depth of the transit, as a fraction of the out-of-transit flux.
+    P : float
+        The perio of the planet, in days.
+    t0 : float
+        Mid-transit time of the transit, in days.
+    T : float
+        The duration of the transit (from mid-ingress to mid-egress), in days.
+    tau : float
+        The duration of ingress/egress, in days.
+
+    See Also
+    --------
+    astropy.modeling.models.Trapezoid1D
+
     """
 
     # calculate a phase-folded time (still in units of days)
@@ -137,10 +166,16 @@ def customTrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1
     # Compute the four points where the trapezoid changes slope
     # x1 <= x2 <= x3 <= x4
 
-    x1 = - (T+tau)/2.0
-    x2 = - (T-tau)/2.0
-    x3 = (T-tau)/2.0
-    x4 = (T+tau)/2.0
+    if tau > T:
+        x1 = -tau
+        x2 = 0
+        x3 = 0
+        x4 = tau
+    else:
+        x1 = - (T+tau)/2.0
+        x2 = - (T-tau)/2.0
+        x3 = (T-tau)/2.0
+        x4 = (T+tau)/2.0
 
     # Compute model values in pieces between the change points
     range_a = np.logical_and(x >= x1, x < x2)
@@ -153,3 +188,5 @@ def customTrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1
     val_c = 1 - slope * (x4 - x)
     result = np.select([range_a, range_b, range_c], [val_a, val_b, val_c], default=1)*baseline
     return result
+
+BatmanTransit = custom_model(BATMAN)
