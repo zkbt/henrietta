@@ -26,7 +26,8 @@ def BATMAN(t,
            a = 10.0, #semi-major axis in a/R*
            b = 0.0, #impact parameter in stellar radii
            baseline = 1.0, #units are whatever your flux units come in
-           ld = [0.1956, 0.3700], #using GJ1132b params
+           ld1 = 0.1,#using a basic limb darkening
+           ld2 = 0.3,
            ):
     '''
     This function returns a model transit light curve
@@ -73,7 +74,7 @@ def BATMAN(t,
     params.inc = np.arccos(b/a)*180/np.pi                   #orbital inclination (in degrees)
     params.ecc = 0.                      #eccentricity
     params.w = 90.                       #longitude of periastron (in degrees)
-    params.u = ld         #limb darkening coefficients [u1, u2]
+    params.u = [ld1, ld2]        #limb darkening coefficients [u1, u2]
     params.limb_dark = "quadratic"       #limb darkening model
 
     # initialize a batman model for the given times
@@ -212,7 +213,7 @@ def simulate_transit_data(N=1e6, cadence=2.0/60.0/24.0, duration=3.0, tmin=0.0, 
     noise = create_photon_lightcurve(N=N, cadence=cadence, duration=duration).normalize()
     noise.time += tmin
     flux = BATMAN(noise.time, **kw)
-    return LightCurve(time=noise.time, flux=flux*noise.flux, flux_err=noise.flux_err)
+    return LightCurve(time=noise.time, flux=flux*noise.flux, flux_err=noise.flux_err, time_format='jd')
 
 def plot_with_transit_model(lc,
                            period = 1.0,
@@ -221,8 +222,8 @@ def plot_with_transit_model(lc,
                            a = 10.0,
                            b = 0.0,
                            baseline = 1.0,
-                           ld = [0.1956, 0.3700],
-                           planet_name='Some planet.',
+                           ld1 = 0.1, ld2 = 0.3,
+                           planet_name='',
                            goodness=None,
                            show_errors=False):
     '''
@@ -276,31 +277,26 @@ def plot_with_transit_model(lc,
         epoch = 0.0
         period = 1.0
     else:
-        if lc.time_format == 'bkjd':
-            epoch = bjd2bkjd(t0)
-        elif lc.time_format == 'btjd':
-            epoch = bjd2btjd(t0)
-        else:
-            epoch = t0
+        epoch = find_appropriate_epoch(lc, t0)
 
     # craete a model of the flux at the light curve times
     model_flux = BATMAN(baseline = baseline,
-                radius = radius, #Rp/R*
-                period = period, #days
-                a = a, #semi-major axis in a/R*
+                radius = radius,
+                period = period,
+                a = a,
                 b = b,
-                t0 = epoch, #time of inferior conjunction
-                ld = ld, #using GJ1132b params
+                t0 = epoch,
+                ld1 = ld1, ld2 = ld2,
                 t = lc.time)
 
     # create a model of the flux at high resolution
     model_plot = BATMAN(baseline = baseline,
-                radius = radius, #Rp/R*
-                period = period, #days
-                a = a, #semi-major axis in a/R*
+                radius = radius,
+                period = period,
+                a = a,
                 b = b,
-                t0 = epoch, #time of inferior conjunction
-                ld = ld, #using GJ1132b params
+                t0 = epoch,
+                ld1 = ld1, ld2 = ld2,
                 t = highres_time)
 
     # calculation the difference between the data and the model
@@ -310,37 +306,39 @@ def plot_with_transit_model(lc,
     f, (a0, a1) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[4,1]},figsize=(10,5),sharex=True)
 
 
-    #a0.set_title(title, fontsize=20)
-    a0.set_ylabel('Flux',fontsize=18)
-    datakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none')
+    a0.set_ylabel('Flux')#,fontsize=18)
+    datakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none', zorder=0)
+
+    summary = 'BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})'.format(**locals())
+    a0.plot(highres_time,model_plot,zorder=1,color='k',label='Model')
 
     if show_errors:
         a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',label='Data', **datakw)
     else:
         a0.plot(lc.time,lc.flux,label='Data', marker='o', linewidth=0, **datakw)
 
-    summary = 'Model\n"BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})"'.format(**locals())
-    a0.plot(highres_time,model_plot,zorder=100,color='k',label=summary)
-    a0.legend(loc='upper left', bbox_to_anchor=(1,1))
+
+    a0.legend()#loc='upper left', bbox_to_anchor=(1,1))
 
     if show_errors:
         a1.errorbar(lc.time,residual,yerr=lc.flux_err,**datakw)
     else:
         a1.plot(lc.time,residual,marker='o',linewidth=0, **datakw)
     a1.axhline(0,color='k', zorder=100)
-    a1.set_ylim(0+1.5*np.max(np.abs(residual)),0-1.5*np.max(np.abs(residual)))
+    a1.set_ylim(0-1.5*np.nanmax(np.abs(residual)),0+1.5*np.nanmax(np.abs(residual)))
     a1.set_ylabel('Residuals')
     #a1.legend()
 
-    plt.xlabel('Time (days)',fontsize=16)
-    plt.tight_layout()
+    plt.xlabel('Time (days)')#,fontsize=16)
+    #plt.tight_layout()
 
     if goodness is None:
-        #title = planet_name
+        title = summary
         gof = None
     else:
         plt.show()
         gof = goodness(residual/lc.flux_err)
-        #title = '{} | {}={:.4}'.format(planet_name, goodness.__name__, gof)
+        title = '{} | {}={:.4}'.format(summary, goodness.__name__, gof)
+    a0.set_title(title, fontsize=10)
 
     return gof

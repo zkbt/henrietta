@@ -23,11 +23,21 @@ def bjd2bkjd(t):
     BKJD (Barycentric Kepler Julian Date)
     via the relationship
     BKJD = BJD - 2454833.0
+
+    Parameters
+    ----------
+    t : float, array
+        Time in BJD (Barycentric Julian Date), with values like 2454123.123.
+
+    Returns
+    -------
+    t_kepler : float, array
+        Time in BKJD (Barycentric Kepler Julian Date).
     '''
     return t - kepler_offset
 
 
-def bkjd2bjd(t):
+def bkjd2bjd(t_kepler):
     '''
     Convert a
     BKJD (Barycentric Kepler Julian Date)
@@ -35,8 +45,18 @@ def bkjd2bjd(t):
     BJD (Barycentric Julian Date)
     via the relationship
     BKJD = BJD - 2454833.0
+
+    Parameters
+    ----------
+    t_kepler : float, array
+        Time in BKJD (Barycentric Kepler Julian Date)
+
+    Returns
+    -------
+    t : float, array
+        Time in BJD (Barycentric Julian Date), with values like 2454123.123.
     '''
-    return t + kepler_offset
+    return t_kepler + kepler_offset
 
 def bjd2btjd(t):
     '''
@@ -46,11 +66,21 @@ def bjd2btjd(t):
     BTJD (Barycentric TESS Julian Date)
     via the relationship
     BTJD = BJD - 2457000.0
+
+    Parameters
+    ----------
+    t : float, array
+        Time in BJD (Barycentric Julian Date), with values like 2454123.123.
+
+    Returns
+    -------
+    t_tess : float, array
+        Time in BTJD (Barycentric TESS Julian Date)
     '''
     return t - tess_offset
 
 
-def btjd2bjd(t):
+def btjd2bjd(t_tess):
     '''
     Convert a
     BTJD (Barycentric TESS Julian Date)
@@ -58,5 +88,44 @@ def btjd2bjd(t):
     BJD (Barycentric Julian Date)
     via the relationship
     BTJD = BJD - 2457000.0
+
+    Parameters
+    ----------
+    t_tess : float, array
+        Time in BTJD (Barycentric TESS Julian Date)
+
+    Returns
+    -------
+    t : float, array
+        Time in BJD (Barycentric Julian Date), with values like 2454123.123.
     '''
-    return t + tess_offset
+    return t_tess + tess_offset
+
+def find_appropriate_epoch(lc, t0=0):
+    '''
+    For a given light curve object, convert a transit epoch (in BJD, with
+    values like 2454123.123) into the right values to match the light curve's
+    time_format. This handles the offsets between BKJD (Kepler) and BTJD (TESS)
+    and BJD (normal Barycentric Julian Dates).
+
+    Parameters
+    ----------
+
+    lc : lightkurve.lightcurve.LightCurve
+        This is any light curve object.
+
+    t0 : float
+        This is a single time of mid-transit, expressed in
+        Barycentric Julian Date (BJD) with values like 2454123.123.
+    '''
+
+    # choose the appropriate offset for the lc's time format
+    if lc.time_format == 'bkjd':
+        epoch = bjd2bkjd(t0)
+    elif lc.time_format == 'btjd':
+        epoch = bjd2btjd(t0)
+    else:
+        epoch = t0
+
+    # return the epoch
+    return epoch
