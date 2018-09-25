@@ -2,6 +2,9 @@ import numpy as np
 
 def mean(residuals):
     '''
+    This is a goodness-of-fit function. It calculate the mean
+    of the residuals.
+
     Parameters
     ----------
     residuals : array
@@ -14,6 +17,24 @@ def mean(residuals):
     '''
 
     return np.mean(residuals)
+
+def chisq(residuals):
+    '''
+    This is a goodness-of-fit function. It calculates the sum of the squares
+    of the residuals. This is commonly called "chi squared".
+
+    Parameters
+    ----------
+    residuals : array
+        Array of residuals = (data - model)/sigma
+
+    Returns
+    -------
+    chisq : float
+        The sum of the squared residuals.
+    '''
+
+    return np.sum(residuals**2)
 
 def votes(residuals=None):
     '''
