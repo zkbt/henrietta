@@ -77,7 +77,10 @@ def TrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
     range_b = np.logical_and(x >= x2, x < x3)
     range_c = np.logical_and(x >= x3, x < x4)
 
-    slope = delta/tau
+    if tau == 0:
+        slope = np.inf
+    else:
+        slope = delta/tau
     val_a = 1 - slope * (x - x1)
     val_b = 1 - delta
     val_c = 1 - slope * (x4 - x)
