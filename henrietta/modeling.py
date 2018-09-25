@@ -306,12 +306,11 @@ def plot_with_transit_model(lc,
     f, (a0, a1) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[4,1]},figsize=(10,5),sharex=True)
 
 
-    #a0.set_title(title, fontsize=20)
-    a0.set_ylabel('Flux',fontsize=18)
+    a0.set_ylabel('Flux')#,fontsize=18)
     datakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none', zorder=0)
 
-    summary = 'Model = BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})'.format(**locals())
-    a0.plot(highres_time,model_plot,zorder=1,color='k',label=summary)
+    summary = 'BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})'.format(**locals())
+    a0.plot(highres_time,model_plot,zorder=1,color='k',label='Model')
 
     if show_errors:
         a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',label='Data', **datakw)
@@ -319,7 +318,7 @@ def plot_with_transit_model(lc,
         a0.plot(lc.time,lc.flux,label='Data', marker='o', linewidth=0, **datakw)
 
 
-    a0.legend(loc='upper center')#loc='upper left', bbox_to_anchor=(1,1))
+    a0.legend()#loc='upper left', bbox_to_anchor=(1,1))
 
     if show_errors:
         a1.errorbar(lc.time,residual,yerr=lc.flux_err,**datakw)
@@ -330,15 +329,16 @@ def plot_with_transit_model(lc,
     a1.set_ylabel('Residuals')
     #a1.legend()
 
-    plt.xlabel('Time (days)',fontsize=16)
-    plt.tight_layout()
+    plt.xlabel('Time (days)')#,fontsize=16)
+    #plt.tight_layout()
 
     if goodness is None:
-        #title = planet_name
+        title = summary
         gof = None
     else:
         plt.show()
         gof = goodness(residual/lc.flux_err)
-        #title = '{} | {}={:.4}'.format(planet_name, goodness.__name__, gof)
+        title = '{} | {}={:.4}'.format(summary, goodness.__name__, gof)
+    a0.set_title(title, fontsize=10)
 
     return gof
