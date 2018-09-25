@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.5.1
               </div>
             
           
@@ -153,6 +153,8 @@
   <h1>Source code for henrietta.modeling</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">.goodnesses</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">batman</span>
@@ -243,7 +245,8 @@
                            <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii,</span>
                            <span class="n">tmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">tmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">,</span>
                            <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mf">0.985</span><span class="p">,</span> <span class="mf">1.005</span><span class="p">],</span>
-                           <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                           <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                           <span class="o">**</span><span class="n">plotkw</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function makes an example plot of a model transit light curve.</span>
 
@@ -290,6 +293,9 @@
 <span class="sd">        ax = example_transit_model(rp=0.042, b=0.9, ax=ax)</span>
 <span class="sd">        ...</span>
 
+<span class="sd">    plotkw : dict</span>
+<span class="sd">        Any extra keywords will be passed along to `matplotlib.pyplot.plot`</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 
@@ -302,16 +308,30 @@
     <span class="n">f</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
 
     <span class="c1"># make a lightkurve LightCurve object</span>
-    <span class="n">model_lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="c1"># model_lc = LightCurve(time=t, flux=f)</span>
 
-    <span class="c1"># plot that, and set the ylimits</span>
-    <span class="n">plotted_ax</span> <span class="o">=</span> <span class="n">model_lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">()))</span>
+    <span class="c1"># figure out with ax to plot in</span>
+    <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+
+    <span class="c1"># update the label, if it doesn&#39;t already exist</span>
+    <span class="k">if</span> <span class="s1">&#39;label&#39;</span> <span class="o">!=</span> <span class="n">plotkw</span><span class="p">:</span>
+        <span class="n">plotkw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+
+    <span class="c1"># make the plot, set the y limits</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="o">**</span><span class="n">plotkw</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">*</span><span class="n">ylim</span><span class="p">)</span>
 
-    <span class="c1"># return the current axes, in case someone wants to plot into them again</span>
-    <span class="k">return</span> <span class="n">plotted_ax</span></div>
+    <span class="c1"># set some ylimits</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Relative Flux&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="simulate_transit_data"><a class="viewcode-back" href="../../api.html#henrietta.modeling.simulate_transit_data">[docs]</a><span class="k">def</span> <span class="nf">simulate_transit_data</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="c1"># return the current axes, in case someone wants to plot into them again</span>
+    <span class="k">return</span> <span class="n">ax</span></div>
+
+<div class="viewcode-block" id="simulate_transit_data"><a class="viewcode-back" href="../../api.html#henrietta.modeling.simulate_transit_data">[docs]</a><span class="k">def</span> <span class="nf">simulate_transit_data</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">60.0</span><span class="o">/</span><span class="mf">24.0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">tmin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will generate a simulated LightCurve dataset</span>
 <span class="sd">    with a given fractional noise (sigma) and time spacing (cadence),</span>
@@ -343,18 +363,20 @@
 <span class="sd">        and the specified noise.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">noise</span> <span class="o">=</span> <span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+    <span class="n">noise</span><span class="o">.</span><span class="n">time</span> <span class="o">+=</span> <span class="n">tmin</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="o">*</span><span class="n">noise</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="plot_with_transit_model"><a class="viewcode-back" href="../../api.html#henrietta.modeling.plot_with_transit_model">[docs]</a><span class="k">def</span> <span class="nf">plot_with_transit_model</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span>
-                           <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#days</span>
-                           <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
-                           <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
-                           <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
-                           <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii</span>
-                           <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#units are whatever your flux units come in</span>
+                           <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+                           <span class="n">t0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                           <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+                           <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+                           <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                           <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
                            <span class="n">ld</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1956</span><span class="p">,</span> <span class="mf">0.3700</span><span class="p">],</span>
                            <span class="n">planet_name</span><span class="o">=</span><span class="s1">&#39;Some planet.&#39;</span><span class="p">,</span>
+                           <span class="n">goodness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">show_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will take in a lightcurve for a planet</span>
@@ -392,7 +414,11 @@
 <span class="sd">        The limb-darkening coefficients, for a quadratic limb-darkening.</span>
 
 <span class="sd">    planet_name : string</span>
-<span class="sd">        The name of the planet, which will be displayed as the</span>
+<span class="sd">        The name of the planet, which will be displayed as the title</span>
+
+<span class="sd">    goodness : function</span>
+<span class="sd">        A function that takes an array of values for (data-model),</span>
+<span class="sd">        and returns a goodness of fit metric.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># create a high-resolution grid of times to plot</span>
@@ -433,8 +459,11 @@
     <span class="c1"># calculation the difference between the data and the model</span>
     <span class="n">residual</span> <span class="o">=</span> <span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span> <span class="o">-</span> <span class="n">model_flux</span><span class="p">)</span>
 
-    <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridspec_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">a0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">planet_name</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+    <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridspec_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="c1">#a0.set_title(title, fontsize=20)</span>
     <span class="n">a0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
     <span class="n">datakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
 
@@ -457,9 +486,17 @@
     <span class="c1">#a1.legend()</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span></div>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
-    <span class="c1">#return highres_time,model_plot</span>
+    <span class="k">if</span> <span class="n">goodness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#title = planet_name</span>
+        <span class="n">gof</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">gof</span> <span class="o">=</span> <span class="n">goodness</span><span class="p">(</span><span class="n">residual</span><span class="o">/</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span>
+        <span class="c1">#title = &#39;{} | {}={:.4}&#39;.format(planet_name, goodness.__name__, gof)</span>
+
+    <span class="k">return</span> <span class="n">gof</span></div>
 </pre></div>
 
            </div>

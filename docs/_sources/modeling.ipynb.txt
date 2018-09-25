@@ -15,7 +15,7 @@
    "source": [
     "## `batman` for simulating transits\n",
     "\n",
-    "The [`batman`](https://www.cfa.harvard.edu/~lkreidberg/batman/) package is a Python toolkit for generating model transit light curves for planets of given parameters. Laura Kreidberg wrote it to make transit-modeling with Python easier, and she did a great job documenting how it works.\n",
+    "The [batman](https://www.cfa.harvard.edu/~lkreidberg/batman/) package is a Python toolkit for generating model transit light curves for planets of given parameters. Laura Kreidberg wrote it to make transit-modeling with Python easier, and she did a great job documenting how it works.\n",
     "\n",
     "We wrote some quick wrapper so you can immediately start playing, by looking at transit models by themselves:"
    ]
@@ -167,6 +167,34 @@
     "folded = lc.fold(period=1.23, phase=0.1/1.23)\n",
     "hsl.plot_with_transit_model(folded, period=1.23, t0=0.1, radius=0.1, a=10, b=0.5)"
    ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## keeping times straight\n",
+    "\n",
+    "One tricky thing might be how to match up a mid-transit time you take off the NASA Exoplanet Archive (in BJD) with the times in your light curves. Remember that most Kepler light curves store their time as BKJD (Barycentric Kepler Julian Date), which is offset from actual BJD (Barycentric Julian Date) by 2454833 days. We've added a couple of small tools to help with this conversion:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# print the original t0, in BJD\n",
+    "t0 = 2455678.1234\n",
+    "print(t0, \"is the BJD.\")\n",
+    "\n",
+    "# convert to BKJD (to match Kepler light curves)\n",
+    "t0_bkjd = hsl.bjd2bkjd(t0)\n",
+    "print(t0_bkjd, \"is the BKJD.\")\n",
+    "\n",
+    "# convert back again\n",
+    "t0_bjd = hsl.bkjd2bjd(t0_bkjd)\n",
+    "print(t0_bjd, \"is the BJD, after converting back and forth to BKJD.\")"
+   ]
   }
  ],
  "metadata": {
@@ -185,7 +213,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.5"
+   "version": "3.6.3"
   }
  },
  "nbformat": 4,

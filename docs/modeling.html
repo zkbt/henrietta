@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.5.1
               </div>
             
           
@@ -86,12 +86,12 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lightcurves.html#lc.bin()"><code class="docutils literal"><span class="pre">lc.bin()</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling Basics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#batman-for-simulating-transits"><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#making-a-simulated-transit-dataset">making a simulated transit dataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#visually-comparing-a-model-to-data">visually comparing a model to data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#keeping-times-straight">keeping times straight</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
@@ -349,9 +349,9 @@ div.nboutput div.output_area.stderr {
 curves.</p>
 <div class="section" id="batman-for-simulating-transits">
 <h2><code class="docutils literal"><span class="pre">batman</span></code> for simulating transits<a class="headerlink" href="#batman-for-simulating-transits" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">`batman</span></code> &lt;<a class="reference external" href="https://www.cfa.harvard.edu/~lkreidberg/batman/">https://www.cfa.harvard.edu/~lkreidberg/batman/</a>&gt;`__
-package is a Python toolkit for generating model transit light curves
-for planets of given parameters. Laura Kreidberg wrote it to make
+<p>The <a class="reference external" href="https://www.cfa.harvard.edu/~lkreidberg/batman/">batman</a> package
+is a Python toolkit for generating model transit light curves for
+planets of given parameters. Laura Kreidberg wrote it to make
 transit-modeling with Python easier, and she did a great job documenting
 how it works.</p>
 <p>We wrote some quick wrapper so you can immediately start playing, by
@@ -481,6 +481,35 @@ period, with data repeating back on it many times.</p>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 <span class="n">folded</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">fold</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mf">0.1</span><span class="o">/</span><span class="mf">1.23</span><span class="p">)</span>
 <span class="n">hsl</span><span class="o">.</span><span class="n">plot_with_transit_model</span><span class="p">(</span><span class="n">folded</span><span class="p">,</span> <span class="n">period</span><span class="o">=</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="keeping-times-straight">
+<h2>keeping times straight<a class="headerlink" href="#keeping-times-straight" title="Permalink to this headline">¶</a></h2>
+<p>One tricky thing might be how to match up a mid-transit time you take
+off the NASA Exoplanet Archive (in BJD) with the times in your light
+curves. Remember that most Kepler light curves store their time as BKJD
+(Barycentric Kepler Julian Date), which is offset from actual BJD
+(Barycentric Julian Date) by 2454833 days. We&#8217;ve added a couple of small
+tools to help with this conversion:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># print the original t0, in BJD</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="mf">2455678.1234</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="s2">&quot;is the BJD.&quot;</span><span class="p">)</span>
+
+<span class="c1"># convert to BKJD (to match Kepler light curves)</span>
+<span class="n">t0_bkjd</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">bjd2bkjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t0_bkjd</span><span class="p">,</span> <span class="s2">&quot;is the BKJD.&quot;</span><span class="p">)</span>
+
+<span class="c1"># convert back again</span>
+<span class="n">t0_bjd</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">bkjd2bjd</span><span class="p">(</span><span class="n">t0_bkjd</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t0_bjd</span><span class="p">,</span> <span class="s2">&quot;is the BJD, after converting back and forth to BKJD.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.0.4
+                0.5.1
               </div>
             
           
@@ -86,7 +86,6 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lightcurves.html#lc.bin()"><code class="docutils literal"><span class="pre">lc.bin()</span></code></a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
@@ -406,7 +405,7 @@ It currently assumes a circular orbit.</p>
 
 <dl class="function">
 <dt id="henrietta.modeling.example_transit_model">
-<code class="descclassname">henrietta.modeling.</code><code class="descname">example_transit_model</code><span class="sig-paren">(</span><em>period=0.5, t0=0, radius=0.1, a=10.0, b=0.0, tmin=-0.5, tmax=0.5, cadence=0.0006944444444444445, ylim=[0.985, 1.005], ax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#example_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.example_transit_model" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.modeling.</code><code class="descname">example_transit_model</code><span class="sig-paren">(</span><em>period=0.5, t0=0, radius=0.1, a=10.0, b=0.0, tmin=-0.5, tmax=0.5, cadence=0.0006944444444444445, ylim=[0.985, 1.005], ax=None, **plotkw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#example_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.example_transit_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function makes an example plot of a model transit light curve.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -452,6 +451,9 @@ ax = example_transit_model(rp=0.042, ax=ax)
 ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
 ...</p>
 </dd>
+<dt><strong>plotkw</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">dict</span><dd><p class="first last">Any extra keywords will be passed along to <cite>matplotlib.pyplot.plot</cite></p>
+</dd>
 </dl>
 </td>
 </tr>
@@ -468,7 +470,7 @@ ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
 
 <dl class="function">
 <dt id="henrietta.modeling.plot_with_transit_model">
-<code class="descclassname">henrietta.modeling.</code><code class="descname">plot_with_transit_model</code><span class="sig-paren">(</span><em>lc, period=1.0, t0=0, radius=0.1, a=10.0, b=0.0, baseline=1.0, ld=[0.1956, 0.37], planet_name='Some planet.', show_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#plot_with_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.plot_with_transit_model" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.modeling.</code><code class="descname">plot_with_transit_model</code><span class="sig-paren">(</span><em>lc, period=1.0, t0=0, radius=0.1, a=10.0, b=0.0, baseline=1.0, ld=[0.1956, 0.37], planet_name='Some planet.', goodness=None, show_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#plot_with_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.plot_with_transit_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will take in a lightcurve for a planet
 with a given set of transit parameters (period, t0, radius, a, b, baseline)
 and will plot a batman light curve model. Limb-darkening coefficients
@@ -506,7 +508,11 @@ can also be specified in the form [u1,u2].</p>
  <span class="classifier-delimiter">:</span> <span class="classifier">list or array of floats</span><dd><p class="first last">The limb-darkening coefficients, for a quadratic limb-darkening.</p>
 </dd>
 <dt><strong>planet_name</strong></dt>
- <span class="classifier-delimiter">:</span> <span class="classifier">string</span><dd><p class="first last">The name of the planet, which will be displayed as the</p>
+ <span class="classifier-delimiter">:</span> <span class="classifier">string</span><dd><p class="first last">The name of the planet, which will be displayed as the title</p>
+</dd>
+<dt><strong>goodness</strong></dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">function</span><dd><p class="first last">A function that takes an array of values for (data-model),
+and returns a goodness of fit metric.</p>
 </dd>
 </dl>
 </td>
@@ -517,7 +523,7 @@ can also be specified in the form [u1,u2].</p>
 
 <dl class="function">
 <dt id="henrietta.modeling.simulate_transit_data">
-<code class="descclassname">henrietta.modeling.</code><code class="descname">simulate_transit_data</code><span class="sig-paren">(</span><em>N=1000000.0</em>, <em>cadence=0.001388888888888889</em>, <em>duration=3.0</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#simulate_transit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.simulate_transit_data" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.modeling.</code><code class="descname">simulate_transit_data</code><span class="sig-paren">(</span><em>N=1000000.0</em>, <em>cadence=0.001388888888888889</em>, <em>duration=3.0</em>, <em>tmin=0.0</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#simulate_transit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.simulate_transit_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will generate a simulated LightCurve dataset
 with a given fractional noise (sigma) and time spacing (cadence),
 with a transit injected into it (whose parameters are set by any
