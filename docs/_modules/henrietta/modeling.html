@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                0.5.1
+                0.5.2
               </div>
             
           
@@ -179,7 +179,8 @@
            <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
            <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="c1">#impact parameter in stellar radii</span>
            <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="c1">#units are whatever your flux units come in</span>
-           <span class="n">ld</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1956</span><span class="p">,</span> <span class="mf">0.3700</span><span class="p">],</span> <span class="c1">#using GJ1132b params</span>
+           <span class="n">ld1</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="c1">#using a basic limb darkening</span>
+           <span class="n">ld2</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
            <span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function returns a model transit light curve</span>
@@ -226,7 +227,7 @@
     <span class="n">params</span><span class="o">.</span><span class="n">inc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">b</span><span class="o">/</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>                   <span class="c1">#orbital inclination (in degrees)</span>
     <span class="n">params</span><span class="o">.</span><span class="n">ecc</span> <span class="o">=</span> <span class="mf">0.</span>                      <span class="c1">#eccentricity</span>
     <span class="n">params</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">90.</span>                       <span class="c1">#longitude of periastron (in degrees)</span>
-    <span class="n">params</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="n">ld</span>         <span class="c1">#limb darkening coefficients [u1, u2]</span>
+    <span class="n">params</span><span class="o">.</span><span class="n">u</span> <span class="o">=</span> <span class="p">[</span><span class="n">ld1</span><span class="p">,</span> <span class="n">ld2</span><span class="p">]</span>        <span class="c1">#limb darkening coefficients [u1, u2]</span>
     <span class="n">params</span><span class="o">.</span><span class="n">limb_dark</span> <span class="o">=</span> <span class="s2">&quot;quadratic&quot;</span>       <span class="c1">#limb darkening model</span>
 
     <span class="c1"># initialize a batman model for the given times</span>
@@ -365,7 +366,7 @@
     <span class="n">noise</span> <span class="o">=</span> <span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
     <span class="n">noise</span><span class="o">.</span><span class="n">time</span> <span class="o">+=</span> <span class="n">tmin</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="o">*</span><span class="n">noise</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="o">*</span><span class="n">noise</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span> <span class="n">flux_err</span><span class="o">=</span><span class="n">noise</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;jd&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="plot_with_transit_model"><a class="viewcode-back" href="../../api.html#henrietta.modeling.plot_with_transit_model">[docs]</a><span class="k">def</span> <span class="nf">plot_with_transit_model</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span>
                            <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
@@ -374,8 +375,8 @@
                            <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
                            <span class="n">b</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                            <span class="n">baseline</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-                           <span class="n">ld</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1956</span><span class="p">,</span> <span class="mf">0.3700</span><span class="p">],</span>
-                           <span class="n">planet_name</span><span class="o">=</span><span class="s1">&#39;Some planet.&#39;</span><span class="p">,</span>
+                           <span class="n">ld1</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ld2</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+                           <span class="n">planet_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
                            <span class="n">goodness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                            <span class="n">show_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
@@ -429,31 +430,26 @@
         <span class="n">epoch</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">period</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;bkjd&#39;</span><span class="p">:</span>
-            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2bkjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">lc</span><span class="o">.</span><span class="n">time_format</span> <span class="o">==</span> <span class="s1">&#39;btjd&#39;</span><span class="p">:</span>
-            <span class="n">epoch</span> <span class="o">=</span> <span class="n">bjd2btjd</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">epoch</span> <span class="o">=</span> <span class="n">t0</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">find_appropriate_epoch</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
 
     <span class="c1"># craete a model of the flux at the light curve times</span>
     <span class="n">model_flux</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">baseline</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">,</span>
-                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
-                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span> <span class="c1">#days</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span>
+                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
-                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
-                <span class="n">ld</span> <span class="o">=</span> <span class="n">ld</span><span class="p">,</span> <span class="c1">#using GJ1132b params</span>
+                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span>
+                <span class="n">ld1</span> <span class="o">=</span> <span class="n">ld1</span><span class="p">,</span> <span class="n">ld2</span> <span class="o">=</span> <span class="n">ld2</span><span class="p">,</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
 
     <span class="c1"># create a model of the flux at high resolution</span>
     <span class="n">model_plot</span> <span class="o">=</span> <span class="n">BATMAN</span><span class="p">(</span><span class="n">baseline</span> <span class="o">=</span> <span class="n">baseline</span><span class="p">,</span>
-                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span> <span class="c1">#Rp/R*</span>
-                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span> <span class="c1">#days</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span> <span class="c1">#semi-major axis in a/R*</span>
+                <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="p">,</span>
+                <span class="n">period</span> <span class="o">=</span> <span class="n">period</span><span class="p">,</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="p">,</span>
                 <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span>
-                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span> <span class="c1">#time of inferior conjunction</span>
-                <span class="n">ld</span> <span class="o">=</span> <span class="n">ld</span><span class="p">,</span> <span class="c1">#using GJ1132b params</span>
+                <span class="n">t0</span> <span class="o">=</span> <span class="n">epoch</span><span class="p">,</span>
+                <span class="n">ld1</span> <span class="o">=</span> <span class="n">ld1</span><span class="p">,</span> <span class="n">ld2</span> <span class="o">=</span> <span class="n">ld2</span><span class="p">,</span>
                 <span class="n">t</span> <span class="o">=</span> <span class="n">highres_time</span><span class="p">)</span>
 
     <span class="c1"># calculation the difference between the data and the model</span>
@@ -463,38 +459,40 @@
     <span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">a0</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="n">gridspec_kw</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:[</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">]},</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span><span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-    <span class="c1">#a0.set_title(title, fontsize=20)</span>
-    <span class="n">a0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-    <span class="n">datakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">)</span><span class="c1">#,fontsize=18)</span>
+    <span class="n">datakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;BATMAN(period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">highres_time</span><span class="p">,</span><span class="n">model_plot</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
         <span class="n">a0</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
 
-    <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;Model</span><span class="se">\n</span><span class="s1">&quot;BATMAN(period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">)&quot;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
-    <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">highres_time</span><span class="p">,</span><span class="n">model_plot</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">summary</span><span class="p">)</span>
-    <span class="n">a0</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">a0</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="c1">#loc=&#39;upper left&#39;, bbox_to_anchor=(1,1))</span>
 
     <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
         <span class="n">a1</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">a1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
     <span class="n">a1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">a1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="o">+</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)),</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)))</span>
+    <span class="n">a1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)),</span><span class="mi">0</span><span class="o">+</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)))</span>
     <span class="n">a1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
     <span class="c1">#a1.legend()</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span><span class="c1">#,fontsize=16)</span>
+    <span class="c1">#plt.tight_layout()</span>
 
     <span class="k">if</span> <span class="n">goodness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1">#title = planet_name</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">summary</span>
         <span class="n">gof</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">gof</span> <span class="o">=</span> <span class="n">goodness</span><span class="p">(</span><span class="n">residual</span><span class="o">/</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span>
-        <span class="c1">#title = &#39;{} | {}={:.4}&#39;.format(planet_name, goodness.__name__, gof)</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1">=</span><span class="si">{:.4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">goodness</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">gof</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">gof</span></div>
 </pre></div>
