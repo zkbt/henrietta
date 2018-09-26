@@ -1,11 +1,29 @@
+from __future__ import print_function
 import matplotlib.pyplot as plt, numpy as np
 import matplotlib.animation as ani
-
+import warnings
 from astropy.modeling import models, fitting, optimizers, statistic, custom_model
 from .modeling import BATMAN
-from tqdm import tqdm
+from .optimizers import *
 
-
+def decide_writer(filename, **kw):
+    '''
+    Decide which animation writer to use, given a desired output filename.
+    '''
+    # figure out the writers to use
+    if '.gif' in filename:
+        try:
+            writer = ani.writers['pillow'](**kw)
+        except (RuntimeError, KeyError):
+            writer = ani.writers['imagemagick'](**kw)
+        except:
+            raise RuntimeError('This python seems unable to make an animated gif.')
+    else:
+        try:
+            writer = ani.writers['ffmpeg'](**kw)
+        except (RuntimeError,KeyError):
+            raise RuntimeError('This computer seems unable to ffmpeg.')
+    return writer
 
 BatmanTransit = custom_model(BATMAN)
 
@@ -91,6 +109,43 @@ def TrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
     return result
 
 
+def setup_transit_model(period=1.58,
+                        t0=0.0,
+                        radius=[0.0, 0.5],
+                        a=[3.0, 50.0],
+                        b=0.385,
+                        baseline=1.0,
+                        ld1=0.1, ld2=0.3):
+    '''
+    This function sets up an astropy transit model, which can then be used for fitting.
+
+    Parameters that are fed in as single values will be held fixed.
+
+    Parameters that are fed in as two-element lists will be varied,
+    using the two values as their allowable bounds.
+
+    Parameters
+    ----------
+    (same as we've seen in other transit modeling)
+    '''
+    inputs = {}
+    names = ['period', 't0', 'radius', 'a', 'b', 'baseline', 'ld1', 'ld2']
+
+    # set up the initial values
+    for k in names:
+        inputs[k] = np.mean(locals()[k])
+
+    # decide which parameters are fixed and which are not
+    model = BatmanTransit(**inputs)
+    for k in names:
+        if len(np.atleast_1d(locals()[k])) == 2:
+            model.fixed[k] = False
+            model.bounds[k] = locals()[k]
+        else:
+            model.fixed[k] = True
+
+    return model
+
 def sumofsquares(residuals):
     '''
     This calculates a goodness-of-fit from an array of residuals.
@@ -114,14 +169,18 @@ class VisualizedStatistic:
     Objects that inherit from VisualizedStatistic should be a drop-in
     replacement for the astropy.modeling.statistic.leastsq. The simplest
     class definiton that modifies this would simply be to redefine the
-    `.name` attribute and the `.gof()` method.
+    `.name` attribute and the `.goodness()` method.
     '''
 
     # this may appear in labels
-    name = 'sumofsquares'
+    #name = 'sumofsquares'
 
-    def __init__(self, gof=sumofsquares, fitter=None):
-        self.gof = gof
+    def __init__(self, goodness=sumofsquares, fitter=None):
+        '''
+        Initialize a visualized statistic, which is connected to a fitter.
+        '''
+        self.goodness = goodness
+        self.name = goodness.__name__
         self.fitter = fitter
 
     def __call__(self, measured_vals, updated_model, weights, x, y=None):
@@ -147,6 +206,7 @@ class VisualizedStatistic:
             The sum of least squares.
         """
 
+
         if y is None:
             model_vals = updated_model(x)
         else:
@@ -156,32 +216,47 @@ class VisualizedStatistic:
         else:
             residuals = (weights * (model_vals - measured_vals))
 
-        gof = self.gof(residuals)
+        gof = self.goodness(residuals)
 
         #print(self.fitter._iterations, gof)
 
         # plot the updated model on the data
         plt.sca(self.fitter.ax['data'])
 
-        # make the previous model fade
-        self.fitter.plotted['data']['models'][-1].set_alpha(0.3)
-        self.fitter.plotted['data']['models'][-1].set_linewidth(1)
-        self.fitter.plotted['data']['models'][-1].set_color('gray')
-
-
-        # draw a new model line
-        newline = plt.plot(x, updated_model(x), color='mediumseagreen', alpha=1, linewidth=3)[0]
+        # make the previous models fade more, then add a new model
+        for l in self.fitter.plotted['data']['models']:
+            l.set_alpha(0.95*l.get_alpha())
+        newline = plt.plot(x, updated_model(x), zorder=-1, color=l.get_color(), alpha=l.get_alpha(), linewidth=l.get_linewidth())[0]
         self.fitter.plotted['data']['models'].append(newline)
 
-        plt.title('{} = {:.4}'.format(self.name, gof))
+        if len(self.fitter._gof) == 0:
+            best = True
+        else:
+            best = gof < np.min(self.fitter._gof)
+
+        if best:
+
+            # update the best model
+            self.fitter.plotted['data']['best'].set_data(x, updated_model(x))
+
+            # update the title
+            plt.suptitle('Best Model ({} = {:.4})\n{}'.format(self.name, gof, repr(updated_model)))
+
+            # update the goodness plot
+            self.fitter.plotted['gof']['best'].set_data(self.fitter._iterations, gof)
+
+
 
         # plot the current step number and goodness of fit
         plt.sca(self.fitter.ax['gof'])
         self.fitter._iterations += 1
         self.fitter._gof.append(gof)
-        self.fitter.plotted['gof'].set_data(np.arange(self.fitter._iterations), self.fitter._gof)
-        self.fitter.ax['gof'].set_xlim(0, self.fitter._iterations+1)
-        self.fitter.ax['gof'].set_ylim(np.min(self.fitter._gof), np.max(self.fitter._gof))
+        self.fitter.plotted['gof']['all'].set_data(np.arange(self.fitter._iterations), self.fitter._gof)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            self.fitter.ax['gof'].set_xlim(0, self.fitter._iterations+1)
+            self.fitter.ax['gof'].set_ylim(np.min(self.fitter._gof), np.max(self.fitter._gof))
 
         # update the parameters (kludge?)
         interesting = list(self.fitter.plotted['params'].keys())
@@ -200,96 +275,120 @@ class VisualizedStatistic:
                     #print(pj, x)
                     #print(pi, y)
                     #print('---')
-                    self.fitter.plotted['params'][pi][pj].set_data((x, y))
+                    self.fitter.plotted['params'][pi][pj]['all'].set_data((x, y))
+                    if best:
+                        self.fitter.plotted['params'][pi][pj]['best'].set_data((x[-1], y[-1]))
+
                     if pi == self.name:
-                        self.fitter.ax['params'][pi][pj].set_ylim(np.nanmin(y), np.nanmax(y))
+                        with warnings.catch_warnings():
+                            warnings.simplefilter("ignore")
+                            self.fitter.ax['params'][pi][pj].set_ylim(np.nanmin(y), np.nanmax(y))
 
 
-        self.fitter.writer.grab_frame()
-        print('Saving frame {} to {}.'.format(self.fitter._iterations, self.fitter.writer.outfile))
 
-        return self.gof(residuals)
-
+        if self.fitter.animate:
+            self.fitter.writer.grab_frame()
+            print('Saving frame {} to {}.'.format(self.fitter._iterations, self.fitter.writer.outfile), end='\r')
+        else:
+            print('Calculating test model #{}.'.format(self.fitter._iterations), end='\r')
+        return self.goodness(residuals)
 
 class VisualizedFitter(fitting.Fitter):
     '''
     Objects that inherit from a VisualizedFitter can do the normal
     stuff an astropy.fitting.Fitter can do, but they also visualize
-    the process with panels that show:
+    the process with panels that show what's happening.
     '''
+    name = 'fitter'
 
-    def __init__(self, optimizer=None, **kwargs):
+    """
+    def __init__(self, optimizer=optimizers.Simplex, goodness=sumofsquares, **kwargs):
 
-        self.statistic = VisualizedStatistic(fitter=self)
-        super().__init__(optimizer=optimizer, statistic=self.statistic)
+        # shortcuts to make it easier to keep track of the optimizer and statistic
+        self.optimizer = optimizer
+        self.statistic = VisualizedStatistic(fitter=self, goodness=goodness)
+        super().__init__(optimizer=self.optimizer, statistic=self.statistic)
+    """
 
+    def visualize(self, model, x, y, filename=None, animate=True, **kwargs):
+        '''
+        Yo
+        '''
 
-
-    def visualize(self, model, x, y, filename='exploration.mp4', *args, **kwargs):
-
-        fps = 30
-        dpi = 200
-        # figure out the writers to use
-        if '.gif' in filename:
-            try:
-                writer = ani.writers['pillow'](fps=fps)
-            except (RuntimeError, KeyError):
-                writer = ani.writers['imagemagick'](fps=fps)
-            except:
-                raise RuntimeError('This python seems unable to make an animated gif.')
-        else:
-            try:
-                writer = ani.writers['ffmpeg'](fps=fps)
-            except (RuntimeError,KeyError):
-                raise RuntimeError('This computer seems unable to ffmpeg.')
-        self.writer = writer
+        self.animate = animate
+        label = '{}-{}'.format(self.name, self.statistic.name)
+        if self.animate:
+            # make sure we have a filename set
+            if filename is None:
+                filename = '{}.mp4'.format(label)
+            # figure out which animation writer to use
+            self.writer = decide_writer(filename, fps=10)
+            dpi = 200
 
 
-        # restart our counter
+
+        # restart our counter and goodness of fit score
         self._iterations = 0
         self._gof = []
 
         # set up a figure and some axes
         self.fi = plt.figure(figsize=(10, 7))
-        gs = plt.matplotlib.gridspec.GridSpec(2, 2, height_ratios=[3, 1], hspace=0.25, wspace=0.2)
+        gs = plt.matplotlib.gridspec.GridSpec(2, 2, height_ratios=[3, 1], hspace=0.25, wspace=0.25)
 
         # create some axes for our plot, and populate them with empty plots
         self.ax, self.plotted = {}, {}
 
         # create a space to plot the data vs. the model
         self.ax['data'] = plt.subplot(gs[0,0])
+
+        allcolor = 'gray'
+        bestcolor='mediumseagreen'
+        self.plotted['data'] = dict(data=plt.plot(x, y, '.k', zorder=0),
+                                    models=[plt.plot(x, model(x), zorder=-1, color=allcolor, alpha=1, linewidth=1)[0]],
+                                    best=plt.plot(x, model(x), color=bestcolor, linewidth=3)[0])
+        # (fuss with the axes)
+        span = np.nanmax(y) - np.nanmin(y)
+        self.ax['data'].set_ylim(np.nanmin(y)-span/2, np.nanmax(y)+span/2)
         self.ax['data'].set_xlabel('x')
         self.ax['data'].set_ylabel('y')
-        self.plotted['data'] = dict(data=plt.plot(x, y, '.k', zorder=0),
-                                    models=[plt.plot(x, model(x))[0]], zorder=-1)
-        span = np.nanmax(y) - np.nanmin(y)
-
-        self.ax['data'].set_ylim(np.nanmin(y)-span/2, np.nanmax(y)+span/2)
 
 
         # create a space to plot the goodness-of-fit vs time
         self.ax['gof'] = plt.subplot(gs[1,:])
-        self.ax['gof'].set_xlabel('Iteration')
+
+        allkw = dict(marker='o', markersize=5, markeredgecolor='none', color=allcolor)
+        bestkw = dict(marker='o', markersize=15, markeredgecolor='none', alpha=0.5, color=bestcolor)
+        self.plotted['gof'] = dict(all=plt.plot([],[], **allkw)[0],
+                                   best=plt.plot([],[], **bestkw)[0])
+        # (fuss with the axes)
+        self.ax['gof'].set_xlabel('# of Model Calculations')
         self.ax['gof'].set_ylabel('Goodness-of-Fit\n({})'.format(self._stat_method.name))
-        self.plotted['gof'] = plt.plot([],[], marker='o', color='mediumseagreen')[0]
 
         # create a space for plotting the parameters
         interesting = [p for p in model.param_names if model.fixed[p] == False]
+        # (include the goodness of fit values)
         interesting += [self._stat_method.name]
-
         N = len(interesting)-1
+        # (grid a triangle of axes)
         gs_param = plt.matplotlib.gridspec.GridSpecFromSubplotSpec(N, N, gs[0,1])
         self.ax['params'] = {p:{} for p in interesting}
         self.plotted['params'] = {p:{} for p in interesting}
-        limits = dict( **model.bounds)
-        limits[self._stat_method.name] = (0,1)
+
+        # (decide the x/y limits for each box)
+        limits = dict(**model.bounds)
+        limits[self._stat_method.name] = (None, None)
+
+        # loop through the triangle of parameter pairs
         for i, pi in enumerate(interesting):
             for j, pj in enumerate(interesting):
                 if i>j:
+                    # (create ax at this row/column)
                     ax = plt.subplot(gs_param[i-1,j])
                     self.ax['params'][pi][pj] = ax
-                    ax.set_xlim(*limits[pj])
-                    ax.set_ylim(*limits[pi])
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        ax.set_xlim(*limits[pj])
+                        ax.set_ylim(*limits[pi])
 
                     #print(limits[pj], limits[pi])
                     if j == 0:
@@ -301,95 +400,59 @@ class VisualizedFitter(fitting.Fitter):
                     else:
                         plt.setp(ax.get_xticklabels(), visible=False)
 
-                    self.plotted['params'][pi][pj] = plt.plot([],[], '.', color='mediumseagreen')[0]
+                    self.plotted['params'][pi][pj] = dict(all=plt.plot([],[], '.', **allkw)[0],
+                                                          best=plt.plot([],[], '.', **bestkw)[0])
 
+        # create a dictionary to store the parameter arrays in
         self._parameters = {p:[] for p in interesting}
 
-        with self.writer.saving(self.fi, filename, dpi or figure.get_dpi()):
-
-            # actually do the fit (and populate the plots)
-            fitted = self.__call__(model, x=x, y=y, *args, **kwargs)
-
+        if self.animate:
+            with self.writer.saving(self.fi, filename, dpi or figure.get_dpi()):
+                fitted = self.__call__(model, x=x, y=y, **kwargs)
+        else:
+            fitted = self.__call__(model, x=x, y=y, **kwargs)
         return fitted
 
+
 class VisualizedSimplexFitter(fitting.SimplexLSQFitter, VisualizedFitter):
-    pass
+    name = 'simplex'
+    def __init__(self, goodness=sumofsquares, **kwargs):
 
-fitter = test()
-model.ld1.fixed = True
-model.ld2.fixed = True
-model.period.fixed = True
-model.t0.fixed = True
+        super().__init__(**kwargs)
 
+        # shortcut to keep track of the optimizer and statistic
+        self.optimizer = optimizers.Simplex
+        self.statistic = VisualizedStatistic(goodness=goodness, fitter=self)
 
-model.baseline.fixed = True
-model.b.fixed=False
-model.b.bounds = (0,1)
-model.baseline.bounds = (0.99, 1.01)
-model.a.bounds = (5, 15)
-model.radius.bounds = (0.05, 0.15)
+        # tell the optimizer which statistic to try to minimize
+        self._stat_method = self.statistic
 
-model.radius = 0.2
-model.a = 5
-model.b = 0.2
-fitter.visualize(model, x, y)
-fitter.ax['params']
-
-
-def guessncheck(objfunc, model, N=100):
-
-    best = model.parameters
-
-    # create a best model
-    tester = model.copy()
-
-
-    # create empty array
-    gof = np.ones(N)*np.inf
-
-    # do a bunch of iterations
-    for i in tqdm(range(N)):
-
-        # set the parameters
-        for w, p in enumerate(model.param_names):
-
-            # only randomize bounded variables
-            if None in model.bounds[p]:
-                pass
-            else:
-                tester.parameters[w] = np.random.uniform(*model.bounds[p])
-
-        # a little kludgy, but should work?
-        gof[i] = objfunc(measured_vals=y,
-                         updated_model=tester,
-                         weights=None,
-                         x=x)
-
-        # store the best
-        if gof[i] <= np.nanmin(gof):
-            best = tester.parameters
-            print(gof[i], tester.radius)
-
-    return best
 
 class VisualizedGuessNCheckFitter(VisualizedFitter):
+    name = 'guessncheck'
+    def __init__(self,  goodness=sumofsquares, **kwargs):
 
-    def __init__(self):
-        super().__init__(optimizer=guessncheck, statistic=VisualizedStatistic)
+        # shortcut to keep track of the optimizer and statistic
+        self.optimizer = guessncheck
+        self.statistic = VisualizedStatistic(goodness=goodness, fitter=self)
+        super().__init__(optimizer=self.optimizer, statistic=self.statistic, **kwargs)
+
+
 
     def __call__(self, model, x, y, N=100):
+        '''
+        Run the guess-n-check "optimization."
+        '''
 
         # create a copy of the model
         model_copy = model.copy()
 
         # get the best fit parameters
-        fitparams = self._opt_method(self._stat_method, model, N=N)
+        fitparams = self._opt_method(self._stat_method, model, x, y, N=N)
         model_copy.parameters = fitparams
 
         return model_copy
 
-# make animate an option
-# show the current best model every time
 # write documentation that makes clear goodness must want to be minimized
 # write wrapper that sets model bounds + fixed or not
 # log axis for gof
