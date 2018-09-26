@@ -6,6 +6,9 @@
 # the tests for lightkurve will make this directory, don't track it
 mastDownload
 
+# these are from pytest
+.pytest_cache
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
