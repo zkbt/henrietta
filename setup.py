@@ -94,7 +94,8 @@ setup(
                       'scipy',
                       'ipython',
                       'matplotlib',
-                      'lightkurve'],
+                      'lightkurve',
+                      'tqdm'],
     # the packages in `key` will be installed if folks run `pip install henrietta[key]`
     extras_require={'models':['batman-package'],
                     'docs':['sphinx', 'nbsphinx', 'sphinx_rtd_theme', 'numpydoc']},

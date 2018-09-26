@@ -1,9 +1,3 @@
-
-# coding: utf-8
-
-# In[47]:
-
-
 from astropy.modeling import models, fitting, optimizers, statistic
 import matplotlib.pyplot as plt, numpy as np
 
@@ -43,23 +37,23 @@ class VisualizedStatistic:
     class definiton that modifies this would simply be to redefine the
     `.name` attribute and the `.gof()` method.
     '''
-    
+
     # this may appear in labels
     name = 'chisq'
-    
+
     def __init__(self, fitter=None):
         self.fitter = fitter
-        
+
     def gof(self, residuals):
         '''
         This calculates a goodness-of-fit from an array of residuals.
         (a lower value implies a better fit)
-        
+
         Parameters
         ----------
         residuals : `~numpy.ndarray`
             Array of values for (data-model)/sigma
-        
+
         Returns
         -------
         gof : float
@@ -67,7 +61,7 @@ class VisualizedStatistic:
             (in this case, sum of squares)
         '''
         return np.sum(residuals**2)
-    
+
     def __call__(self, measured_vals, updated_model, weights, x, y=None):
         """
         Generic goodness-of-fit statistic.
@@ -96,29 +90,28 @@ class VisualizedStatistic:
         else:
             model_vals = updated_model(x, y)
         if weights is None:
-            residuals = (model_vals - measured_vals) 
+            residuals = (model_vals - measured_vals)
         else:
             residuals = (weights * (model_vals - measured_vals))
-  
+
         gof = self.gof(residuals)
-        
+
         # plot the updated model on the data
         plt.sca(self.fitter.ax['data'])
-        plt.plot(x, updated_model(x), color=color, alpha=alpha, **kw)
+        self.plotted['data']['models'].append(plt.plot(x, updated_model(x), color=color, alpha=alpha, **kw))
         plt.title('{} = {}'.format(self.name, gof))
-        
-        # plot the current step number and goodness of fit 
+
+        # plot the current step number and goodness of fit
         plt.sca(self.fitter.ax['gof'])
         self.fitter.steps += 1
         self.fitter.gof.append(gof)
-        plt.scatter(self.fitter.steps, self.fitter.gof[-1])
-        
-        # plot the current set of parameters on 
+        self.plotted['gof'].set_data(np.arange(self.fitter.steps), self.fitter.gof)
+
+        # plot the current set of parameters on
         #plt.sca(self.fitter.ax['parameters'])
-        
-        
+
         return self.gof(residuals)
-    
+
 class VisualizedFitter(fitting.Fitter):
     '''
     Objects that inherit from a VisualizedFitter can do the normal
@@ -127,31 +120,29 @@ class VisualizedFitter(fitting.Fitter):
     '''
     def visualize(self, model, x, y, *args, **kwargs):
 
-        
+
         # set up a figure and some axes
         self.fi = plt.figure(figsize=(8, 5))
         self.gs = plt.matplotlib.gridspec.GridSpec(2, 2, height_ratios=[1, 2])
-        
+
         # create some axes for our plot, and populate them with empty plots
         self.ax, self.plotted = {}, {}
-        
+
         # create a space to plot the data vs. the model
         self.ax['data'] = plt.subplot(gs[1,0])
         self.ax['data'].set_xlabel('x')
         self.ax['data'].set_ylabel('y')
         self.plotted['data'] = dict(data=plt.scatter(x, y),
                                     intiial=plt.plot(x, model(x)))
-        
+
         # create a space to plot the goodness-of-fit vs time
         self.ax['gof'] = plt.subplot(gs[1,1])
         self.ax['gof'].set_xlabel('Iteration')
-        self.ax['gof'].set_ylabel('Goodness-of-Fit ({})'.format(self._stat_method.name))    
+        self.ax['gof'].set_ylabel('Goodness-of-Fit ({})'.format(self._stat_method.name))
         self.plotted['gof'] = plt.scatter([],[])
 
         return self.__call__(model, x=x, y=y, *args, **kwargs)
-        
-        
-        
+
 class test(fitting.SimplexLSQFitter, VisualizedFitter):
     pass
 
@@ -181,4 +172,3 @@ get_ipython().run_line_magic('pinfo2', 'stat.leastsquare')
 
 
 g.param_names
-
