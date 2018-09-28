@@ -1,30 +1,17 @@
+'''
+This module contains functions and class definitions to extend the
+astropy.modeling toolkit to be visualizeable.
+'''
+
 from __future__ import print_function
-import matplotlib.pyplot as plt, numpy as np
-import matplotlib.animation as ani
-import warnings
-from astropy.modeling import models, fitting, optimizers, statistic, custom_model
-from .modeling import BATMAN
+from .imports import *
 from .optimizers import *
+from .modeling import BATMAN
+from .utilities import decide_writer
+from astropy.modeling import models, fitting, optimizers, statistic, custom_model
 
-def decide_writer(filename, **kw):
-    '''
-    Decide which animation writer to use, given a desired output filename.
-    '''
-    # figure out the writers to use
-    if '.gif' in filename:
-        try:
-            writer = ani.writers['pillow'](**kw)
-        except (RuntimeError, KeyError):
-            writer = ani.writers['imagemagick'](**kw)
-        except:
-            raise RuntimeError('This python seems unable to make an animated gif.')
-    else:
-        try:
-            writer = ani.writers['ffmpeg'](**kw)
-        except (RuntimeError,KeyError):
-            raise RuntimeError('This computer seems unable to ffmpeg.')
-    return writer
 
+# define a custom model, based off our BATMAN function
 BatmanTransit = custom_model(BATMAN)
 
 @custom_model
@@ -107,7 +94,6 @@ def TrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
     val_c = 1 - slope * (x4 - x)
     result = np.select([range_a, range_b, range_c], [val_a, val_b, val_c], default=1)*baseline
     return result
-
 
 def setup_transit_model(period=1.58,
                         t0=0.0,
