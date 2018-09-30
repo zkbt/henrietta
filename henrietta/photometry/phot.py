@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import photutils
 import pdb
-from phot import *
+
 
 def photometry(ax,image,pos,ap_size=10):
 
@@ -31,7 +31,7 @@ def photometry(ax,image,pos,ap_size=10):
     name_stars = []
     for i in nstars:
         name_stars.append('Star {}'.format(i))
-    print name_stars
+    print(name_stars)
 
     aperture = photutils.CircularAperture(pos,r=ap_size)
 
@@ -46,8 +46,8 @@ def photometry(ax,image,pos,ap_size=10):
         plt.axhline(pos[i,1],xmin=pos[i,0]/100.-.01,xmax=pos[i,0]/100.+.02,color='black')
         plt.axvline(pos[i,0],ymin=pos[i,1]/100.-.01,ymax=pos[i,1]/100.+.02,color='black')
         plt.text(pos[i,0]+ap_size+1, pos[i,1], name_stars[i])
-        print pos[i,1]
-        print pos[i,0]
+        print(pos[i,1])
+        print(pos[i,0])
 
     #aperture.plot(origin=(0,0),indices=None,ax=ax,fill=False)
     plt.show()
