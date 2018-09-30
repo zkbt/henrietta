@@ -38,7 +38,7 @@ def photometry(ax,image,pos,ap_size=10):
     pos = np.array(pos)
 
 
-    plt.imshow(image,origin='lower')
+    #plt.imshow(image,origin='lower')
 
     for i in range(len(name_stars)):
         circle1 = plt.Circle((pos[i,0], pos[i,1]), ap_size, color='black',fill=False,zorder=100)
