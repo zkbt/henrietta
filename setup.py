@@ -48,21 +48,14 @@ if "release" in sys.argv[-1]:
     sys.exit()
 
 # a little kludge to get the version number from __init__.py
-import sys
-if sys.version_info[0] < 3:
-    import __builtin__ as builtins
-else:
-    import builtins
-builtins.__HENRIETTASETUP__ = True
-import henrietta
-version = henrietta.__version__
+from henrietta.version import __version__
 
 # run the setup function
 setup(
     # people can type `import henrietta` to access this package
     name = "henrietta",
     # this package will only be installed if the current version doesn't exist
-    version = version,
+    version = __version__,
     # what's a short description of the package?
     description = "Python toolkit playing with stellar brightness measurements, for ASTR3400 at CU Boulder.",
     # what's a more detailed description?
