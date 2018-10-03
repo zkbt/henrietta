@@ -9,7 +9,7 @@ def download_kepler_lc(star='Kepler-186',
                        quality_bitmask='hard',
                        kind='PDCSAP_FLUX'):
     '''
-    This function is a wrapper to download a single quarter of Kepler
+    This function is a wrapper to download one or more quarters of Kepler
     lightcurve data, and extract a LightCurve object from it.
 
     When downloading a Kepler LightCurveFile from online, we get lots

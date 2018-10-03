@@ -1,30 +1,19 @@
+'''
+This module contains functions and class definitions to extend the
+astropy.modeling toolkit to be visualizeable.
+'''
+
 from __future__ import print_function
-import matplotlib.pyplot as plt, numpy as np
-import matplotlib.animation as ani
-import warnings
-from astropy.modeling import models, fitting, optimizers, statistic, custom_model
-from .modeling import BATMAN
+from .imports import *
 from .optimizers import *
+from .modeling import BATMAN
+from .utilities import decide_writer
+from .goodnesses import *
 
-def decide_writer(filename, **kw):
-    '''
-    Decide which animation writer to use, given a desired output filename.
-    '''
-    # figure out the writers to use
-    if '.gif' in filename:
-        try:
-            writer = ani.writers['pillow'](**kw)
-        except (RuntimeError, KeyError):
-            writer = ani.writers['imagemagick'](**kw)
-        except:
-            raise RuntimeError('This python seems unable to make an animated gif.')
-    else:
-        try:
-            writer = ani.writers['ffmpeg'](**kw)
-        except (RuntimeError,KeyError):
-            raise RuntimeError('This computer seems unable to ffmpeg.')
-    return writer
+from astropy.modeling import models, fitting, optimizers, statistic, custom_model
 
+
+# define a custom model, based off our BATMAN function
 BatmanTransit = custom_model(BATMAN)
 
 @custom_model
@@ -108,7 +97,6 @@ def TrapezoidTransit(t, delta=0.01, P=1, t0=0, T=0.1, tau=0.01, baseline=1.0):
     result = np.select([range_a, range_b, range_c], [val_a, val_b, val_c], default=1)*baseline
     return result
 
-
 def setup_transit_model(period=1.58,
                         t0=0.0,
                         radius=[0.0, 0.5],
@@ -146,23 +134,39 @@ def setup_transit_model(period=1.58,
 
     return model
 
-def sumofsquares(residuals):
+def setup_line_model(slope=[0, 5], intercept=[-10, 10]):
     '''
-    This calculates a goodness-of-fit from an array of residuals.
-    (a lower value implies a better fit)
+    This function sets up an astropy line model, which can then be used for fitting.
+
+    Parameters that are fed in as single values will be held fixed.
+
+    Parameters that are fed in as two-element lists will be varied,
+    using the two values as their allowable bounds.
 
     Parameters
     ----------
-    residuals : `~numpy.ndarray`
-        Array of values for (data-model)/sigma
-
-    Returns
-    -------
-    gof : float
-        A single goodness-of-fit metric
-        (in this case, sum of squares)
+    slope : float, or 2-element list
+        The
+    
     '''
-    return np.sum(residuals**2)
+    inputs = {}
+    names = ['slope', 'intercept']
+
+    # set up the initial values
+    for k in names:
+        inputs[k] = np.mean(locals()[k])
+
+    # decide which parameters are fixed and which are not
+    model = models.Linear1D(**inputs)
+    for k in names:
+        if len(np.atleast_1d(locals()[k])) == 2:
+            model.fixed[k] = False
+            model.bounds[k] = locals()[k]
+        else:
+            model.fixed[k] = True
+
+    return model
+
 
 class VisualizedStatistic:
     '''

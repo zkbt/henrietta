@@ -22,3 +22,5 @@ from .statistics import *
 from .modeling import *
 from .tools import *
 from .fitting import *
+from .tpf import *
+from .imaging.animations import *
