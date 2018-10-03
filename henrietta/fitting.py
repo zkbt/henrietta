@@ -8,6 +8,8 @@ from .imports import *
 from .optimizers import *
 from .modeling import BATMAN
 from .utilities import decide_writer
+from .goodnesses import *
+
 from astropy.modeling import models, fitting, optimizers, statistic, custom_model
 
 
@@ -132,23 +134,39 @@ def setup_transit_model(period=1.58,
 
     return model
 
-def sumofsquares(residuals):
+def setup_line_model(slope=[0, 5], intercept=[-10, 10]):
     '''
-    This calculates a goodness-of-fit from an array of residuals.
-    (a lower value implies a better fit)
+    This function sets up an astropy line model, which can then be used for fitting.
+
+    Parameters that are fed in as single values will be held fixed.
+
+    Parameters that are fed in as two-element lists will be varied,
+    using the two values as their allowable bounds.
 
     Parameters
     ----------
-    residuals : `~numpy.ndarray`
-        Array of values for (data-model)/sigma
-
-    Returns
-    -------
-    gof : float
-        A single goodness-of-fit metric
-        (in this case, sum of squares)
+    slope : float, or 2-element list
+        The
+    
     '''
-    return np.sum(residuals**2)
+    inputs = {}
+    names = ['slope', 'intercept']
+
+    # set up the initial values
+    for k in names:
+        inputs[k] = np.mean(locals()[k])
+
+    # decide which parameters are fixed and which are not
+    model = models.Linear1D(**inputs)
+    for k in names:
+        if len(np.atleast_1d(locals()[k])) == 2:
+            model.fixed[k] = False
+            model.bounds[k] = locals()[k]
+        else:
+            model.fixed[k] = True
+
+    return model
+
 
 class VisualizedStatistic:
     '''
