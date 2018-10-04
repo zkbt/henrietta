@@ -6,6 +6,23 @@ try:
 except NameError:
     pass
 
+def sumofsquares(residuals):
+    '''
+    This calculates a goodness-of-fit from an array of residuals.
+    (a lower value implies a better fit)
+
+    Parameters
+    ----------
+    residuals : `~numpy.ndarray`
+        Array of values for (data-model)/sigma
+
+    Returns
+    -------
+    gof : float
+        A single goodness-of-fit metric
+        (in this case, sum of squares)
+    '''
+    return np.sum(residuals**2)
 
 def mean(residuals):
     '''

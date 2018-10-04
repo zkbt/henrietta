@@ -8,8 +8,8 @@ def guessncheck(objfunc, model, x, y, N=100):
     Parameters
     ----------
     objfunc : function
-        The function that tells us our good a fit is, based on the model
-        and the data (this is fed automitically by our fits).
+        The function that tells us how good a fit is, based on the model
+        and the data (this is fed automitically by our "fitter").
 
     model : astropy.model
         The astropy model we're trying to fit.

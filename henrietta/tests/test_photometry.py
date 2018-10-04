@@ -1,7 +1,8 @@
 from henrietta.photometry import *
-from henrietta.phot.cartoons import *
 import numpy as np
 import matplotlib.pyplot as plt
+import illumination as il
+
 
 ax = plt.subplot(111)
 im = create_test_array(N=1, xsize=100, ysize=100, nstars=10, single=False,seed=7)
