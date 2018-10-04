@@ -1,0 +1,678 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>henrietta.fitting &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modeling.html">Modeling Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fitting.html">Fitting a Model to Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../simulating.html">Simulating Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>henrietta.fitting</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for henrietta.fitting</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">This module contains functions and class definitions to extend the</span>
+<span class="sd">astropy.modeling toolkit to be visualizeable.</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">.imports</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.optimizers</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">.modeling</span> <span class="k">import</span> <span class="n">BATMAN</span>
+<span class="kn">from</span> <span class="nn">.utilities</span> <span class="k">import</span> <span class="n">decide_writer</span>
+<span class="kn">from</span> <span class="nn">.goodnesses</span> <span class="k">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="k">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">fitting</span><span class="p">,</span> <span class="n">optimizers</span><span class="p">,</span> <span class="n">statistic</span><span class="p">,</span> <span class="n">custom_model</span>
+
+
+<span class="c1"># define a custom model, based off our BATMAN function</span>
+<span class="n">BatmanTransit</span> <span class="o">=</span> <span class="n">custom_model</span><span class="p">(</span><span class="n">BATMAN</span><span class="p">)</span>
+
+<span class="nd">@custom_model</span>
+<span class="k">def</span> <span class="nf">TrapezoidTransit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">baseline</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Trapezoid Transit model,</span>
+<span class="sd">    using the symbols defined for a circular</span>
+<span class="sd">    transit approximation in Winn (2010).</span>
+
+<span class="sd">    This is a fittable astropy model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    delta : float</span>
+<span class="sd">        The depth of the transit, as a fraction of the out-of-transit flux.</span>
+<span class="sd">    P : float</span>
+<span class="sd">        The perio of the planet, in days.</span>
+<span class="sd">    t0 : float</span>
+<span class="sd">        Mid-transit time of the transit, in days.</span>
+<span class="sd">    T : float</span>
+<span class="sd">        The duration of the transit (from mid-ingress to mid-egress), in days.</span>
+<span class="sd">    tau : float</span>
+<span class="sd">        The duration of ingress/egress, in days.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    astropy.modeling.models.Trapezoid1D</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. plot::</span>
+<span class="sd">        :include-source:</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        import matplotlib.pyplot as plt</span>
+
+<span class="sd">        from henrietta.fitting import TrapezoidTransit</span>
+
+<span class="sd">        plt.figure()</span>
+<span class="sd">        model = TrapezoidTransit()</span>
+<span class="sd">        t = np.arange(-5, 5, .01)</span>
+
+<span class="sd">        for x in np.linspace(0.02, 0.2, 4):</span>
+<span class="sd">            model.delta = x</span>
+<span class="sd">            model.T = x</span>
+<span class="sd">            plt.plot(t, model(t), lw=2)</span>
+
+<span class="sd">        plt.show()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># calculate a phase-folded time (still in units of days)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t0</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">P</span><span class="p">)</span> <span class="o">%</span> <span class="n">P</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">P</span>
+
+    <span class="c1"># Compute the four points where the trapezoid changes slope</span>
+    <span class="c1"># x1 &lt;= x2 &lt;= x3 &lt;= x4</span>
+
+    <span class="k">if</span> <span class="n">tau</span> <span class="o">&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="o">-</span><span class="n">tau</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">x3</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">x4</span> <span class="o">=</span> <span class="n">tau</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">T</span><span class="o">+</span><span class="n">tau</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="o">-</span> <span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+        <span class="n">x3</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span><span class="o">-</span><span class="n">tau</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+        <span class="n">x4</span> <span class="o">=</span> <span class="p">(</span><span class="n">T</span><span class="o">+</span><span class="n">tau</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+
+    <span class="c1"># Compute model values in pieces between the change points</span>
+    <span class="n">range_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x2</span><span class="p">)</span>
+    <span class="n">range_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x3</span><span class="p">)</span>
+    <span class="n">range_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x3</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x4</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tau</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">slope</span> <span class="o">=</span> <span class="n">delta</span><span class="o">/</span><span class="n">tau</span>
+    <span class="n">val_a</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+    <span class="n">val_b</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">delta</span>
+    <span class="n">val_c</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">x4</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">range_a</span><span class="p">,</span> <span class="n">range_b</span><span class="p">,</span> <span class="n">range_c</span><span class="p">],</span> <span class="p">[</span><span class="n">val_a</span><span class="p">,</span> <span class="n">val_b</span><span class="p">,</span> <span class="n">val_c</span><span class="p">],</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">baseline</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="setup_transit_model"><a class="viewcode-back" href="../../api.html#henrietta.fitting.setup_transit_model">[docs]</a><span class="k">def</span> <span class="nf">setup_transit_model</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.58</span><span class="p">,</span>
+                        <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="n">radius</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+                        <span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">],</span>
+                        <span class="n">b</span><span class="o">=</span><span class="mf">0.385</span><span class="p">,</span>
+                        <span class="n">baseline</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="n">ld1</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">ld2</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function sets up an astropy transit model, which can then be used for fitting.</span>
+
+<span class="sd">    Parameters that are fed in as single values will be held fixed.</span>
+
+<span class="sd">    Parameters that are fed in as two-element lists will be varied,</span>
+<span class="sd">    using the two values as their allowable bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    (same as we&#39;ve seen in other transit modeling)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">,</span> <span class="s1">&#39;t0&#39;</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;baseline&#39;</span><span class="p">,</span> <span class="s1">&#39;ld1&#39;</span><span class="p">,</span> <span class="s1">&#39;ld2&#39;</span><span class="p">]</span>
+
+    <span class="c1"># set up the initial values</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">])</span>
+
+    <span class="c1"># decide which parameters are fixed and which are not</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">BatmanTransit</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="setup_line_model"><a class="viewcode-back" href="../../api.html#henrietta.fitting.setup_line_model">[docs]</a><span class="k">def</span> <span class="nf">setup_line_model</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="n">intercept</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">]):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This function sets up an astropy line model, which can then be used for fitting.</span>
+
+<span class="sd">    Parameters that are fed in as single values will be held fixed.</span>
+
+<span class="sd">    Parameters that are fed in as two-element lists will be varied,</span>
+<span class="sd">    using the two values as their allowable bounds.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    slope : float, or 2-element list</span>
+<span class="sd">        The</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;slope&#39;</span><span class="p">,</span> <span class="s1">&#39;intercept&#39;</span><span class="p">]</span>
+
+    <span class="c1"># set up the initial values</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="n">inputs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">])</span>
+
+    <span class="c1"># decide which parameters are fixed and which are not</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Linear1D</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">]))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="VisualizedStatistic"><a class="viewcode-back" href="../../api.html#henrietta.fitting.VisualizedStatistic">[docs]</a><span class="k">class</span> <span class="nc">VisualizedStatistic</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Objects that inherit from VisualizedStatistic should be a drop-in</span>
+<span class="sd">    replacement for the astropy.modeling.statistic.leastsq. The simplest</span>
+<span class="sd">    class definiton that modifies this would simply be to redefine the</span>
+<span class="sd">    `.name` attribute and the `.goodness()` method.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># this may appear in labels</span>
+    <span class="c1">#name = &#39;sumofsquares&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goodness</span><span class="o">=</span><span class="n">sumofsquares</span><span class="p">,</span> <span class="n">fitter</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Initialize a visualized statistic, which is connected to a fitter.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goodness</span> <span class="o">=</span> <span class="n">goodness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">goodness</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span> <span class="o">=</span> <span class="n">fitter</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">measured_vals</span><span class="p">,</span> <span class="n">updated_model</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generic goodness-of-fit statistic.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        measured_vals : `~numpy.ndarray`</span>
+<span class="sd">            Measured data values.</span>
+<span class="sd">        updated_model : `~astropy.modeling.Model`</span>
+<span class="sd">            Model with parameters set by the current iteration of the optimizer.</span>
+<span class="sd">        weights : `~numpy.ndarray`</span>
+<span class="sd">            Array of weights to apply to each residual.</span>
+<span class="sd">        x : `~numpy.ndarray`</span>
+<span class="sd">            Independent variable &quot;x&quot; to evaluate the model on.</span>
+<span class="sd">        y : `~numpy.ndarray`, optional</span>
+<span class="sd">            Independent variable &quot;y&quot; to evaluate the model on, for 2D models.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        res : float</span>
+<span class="sd">            The sum of least squares.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_vals</span> <span class="o">=</span> <span class="n">updated_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model_vals</span> <span class="o">=</span> <span class="n">updated_model</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">residuals</span> <span class="o">=</span> <span class="p">(</span><span class="n">model_vals</span> <span class="o">-</span> <span class="n">measured_vals</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">residuals</span> <span class="o">=</span> <span class="p">(</span><span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="n">model_vals</span> <span class="o">-</span> <span class="n">measured_vals</span><span class="p">))</span>
+
+        <span class="n">gof</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">goodness</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span>
+
+        <span class="c1">#print(self.fitter._iterations, gof)</span>
+
+        <span class="c1"># plot the updated model on the data</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">])</span>
+
+        <span class="c1"># make the previous models fade more, then add a new model</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;models&#39;</span><span class="p">]:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.95</span><span class="o">*</span><span class="n">l</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">())</span>
+        <span class="n">newline</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">updated_model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span> <span class="n">alpha</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">get_alpha</span><span class="p">(),</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">l</span><span class="o">.</span><span class="n">get_linewidth</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;models&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newline</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="n">gof</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">best</span><span class="p">:</span>
+
+            <span class="c1"># update the best model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;best&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">updated_model</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+            <span class="c1"># update the title</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Best Model (</span><span class="si">{}</span><span class="s1"> = </span><span class="si">{:.4}</span><span class="s1">)</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">gof</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">updated_model</span><span class="p">)))</span>
+
+            <span class="c1"># update the goodness plot</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">][</span><span class="s1">&#39;best&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span><span class="p">,</span> <span class="n">gof</span><span class="p">)</span>
+
+
+
+        <span class="c1"># plot the current step number and goodness of fit</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gof</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">][</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span><span class="p">))</span>
+
+        <span class="c1"># update the parameters (kludge?)</span>
+        <span class="n">interesting</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">updated_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">interesting</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">updated_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="c1"># update the goodness</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_gof</span>
+
+        <span class="c1"># update the plots</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">interesting</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">interesting</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">pj</span><span class="p">]</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span><span class="n">j</span><span class="p">:</span>
+                    <span class="c1">#print(pj, x)</span>
+                    <span class="c1">#print(pi, y)</span>
+                    <span class="c1">#print(&#39;---&#39;)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">pi</span><span class="p">][</span><span class="n">pj</span><span class="p">][</span><span class="s1">&#39;all&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+                    <span class="k">if</span> <span class="n">best</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">pi</span><span class="p">][</span><span class="n">pj</span><span class="p">][</span><span class="s1">&#39;best&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_data</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+                    <span class="k">if</span> <span class="n">pi</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">pi</span><span class="p">][</span><span class="n">pj</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">animate</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">grab_frame</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving frame </span><span class="si">{}</span><span class="s1"> to </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">outfile</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Calculating test model #</span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitter</span><span class="o">.</span><span class="n">_iterations</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goodness</span><span class="p">(</span><span class="n">residuals</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="VisualizedFitter"><a class="viewcode-back" href="../../api.html#henrietta.fitting.VisualizedFitter">[docs]</a><span class="k">class</span> <span class="nc">VisualizedFitter</span><span class="p">(</span><span class="n">fitting</span><span class="o">.</span><span class="n">Fitter</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Objects that inherit from a VisualizedFitter can do the normal</span>
+<span class="sd">    stuff an astropy.fitting.Fitter can do, but they also visualize</span>
+<span class="sd">    the process with panels that show what&#39;s happening.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;fitter&#39;</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    def __init__(self, optimizer=optimizers.Simplex, goodness=sumofsquares, **kwargs):</span>
+
+<span class="sd">        # shortcuts to make it easier to keep track of the optimizer and statistic</span>
+<span class="sd">        self.optimizer = optimizer</span>
+<span class="sd">        self.statistic = VisualizedStatistic(fitter=self, goodness=goodness)</span>
+<span class="sd">        super().__init__(optimizer=self.optimizer, statistic=self.statistic)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="VisualizedFitter.visualize"><a class="viewcode-back" href="../../api.html#henrietta.fitting.VisualizedFitter.visualize">[docs]</a>    <span class="k">def</span> <span class="nf">visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">animate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Yo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">animate</span> <span class="o">=</span> <span class="n">animate</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">-</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">animate</span><span class="p">:</span>
+            <span class="c1"># make sure we have a filename set</span>
+            <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.mp4&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+            <span class="c1"># figure out which animation writer to use</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="o">=</span> <span class="n">decide_writer</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+            <span class="n">dpi</span> <span class="o">=</span> <span class="mi">200</span>
+
+
+
+        <span class="c1"># restart our counter and goodness of fit score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iterations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gof</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># set up a figure and some axes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fi</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+        <span class="n">gs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+
+        <span class="c1"># create some axes for our plot, and populate them with empty plots</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span> <span class="o">=</span> <span class="p">{},</span> <span class="p">{}</span>
+
+        <span class="c1"># create a space to plot the data vs. the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">allcolor</span> <span class="o">=</span> <span class="s1">&#39;gray&#39;</span>
+        <span class="n">bestcolor</span><span class="o">=</span><span class="s1">&#39;mediumseagreen&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;.k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">models</span><span class="o">=</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">zorder</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">allcolor</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]],</span>
+                                    <span class="n">best</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="n">bestcolor</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># (fuss with the axes)</span>
+        <span class="n">span</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">-</span><span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="o">+</span><span class="n">span</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+
+
+        <span class="c1"># create a space to plot the goodness-of-fit vs time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,:])</span>
+
+        <span class="n">allkw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">allcolor</span><span class="p">)</span>
+        <span class="n">bestkw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">bestcolor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],[],</span> <span class="o">**</span><span class="n">allkw</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                                   <span class="n">best</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],[],</span> <span class="o">**</span><span class="n">bestkw</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># (fuss with the axes)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;# of Model Calculations&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;gof&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Goodness-of-Fit</span><span class="se">\n</span><span class="s1">(</span><span class="si">{}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat_method</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="c1"># create a space for plotting the parameters</span>
+        <span class="n">interesting</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span> <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>
+        <span class="c1"># (include the goodness of fit values)</span>
+        <span class="n">interesting</span> <span class="o">+=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat_method</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">interesting</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="c1"># (grid a triangle of axes)</span>
+        <span class="n">gs_param</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">matplotlib</span><span class="o">.</span><span class="n">gridspec</span><span class="o">.</span><span class="n">GridSpecFromSubplotSpec</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:{}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">interesting</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:{}</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">interesting</span><span class="p">}</span>
+
+        <span class="c1"># (decide the x/y limits for each box)</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+        <span class="n">limits</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat_method</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># loop through the triangle of parameter pairs</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">pi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">interesting</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">pj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">interesting</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">&gt;</span><span class="n">j</span><span class="p">:</span>
+                    <span class="c1"># (create ax at this row/column)</span>
+                    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="n">gs_param</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ax</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">pi</span><span class="p">][</span><span class="n">pj</span><span class="p">]</span> <span class="o">=</span> <span class="n">ax</span>
+                    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">*</span><span class="n">limits</span><span class="p">[</span><span class="n">pj</span><span class="p">])</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">*</span><span class="n">limits</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span>
+
+                    <span class="c1">#print(limits[pj], limits[pi])</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">pi</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="n">N</span><span class="p">:</span>
+                        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">pj</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">visible</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">plotted</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">pi</span><span class="p">][</span><span class="n">pj</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],[],</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">allkw</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
+                                                          <span class="n">best</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([],[],</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">bestkw</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># create a dictionary to store the parameter arrays in</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:[]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">interesting</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">animate</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">saving</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fi</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">dpi</span> <span class="ow">or</span> <span class="n">figure</span><span class="o">.</span><span class="n">get_dpi</span><span class="p">()):</span>
+                <span class="n">fitted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fitted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fitted</span></div></div>
+
+
+<div class="viewcode-block" id="VisualizedSimplexFitter"><a class="viewcode-back" href="../../api.html#henrietta.fitting.VisualizedSimplexFitter">[docs]</a><span class="k">class</span> <span class="nc">VisualizedSimplexFitter</span><span class="p">(</span><span class="n">fitting</span><span class="o">.</span><span class="n">SimplexLSQFitter</span><span class="p">,</span> <span class="n">VisualizedFitter</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;simplex&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goodness</span><span class="o">=</span><span class="n">sumofsquares</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># shortcut to keep track of the optimizer and statistic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizers</span><span class="o">.</span><span class="n">Simplex</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">VisualizedStatistic</span><span class="p">(</span><span class="n">goodness</span><span class="o">=</span><span class="n">goodness</span><span class="p">,</span> <span class="n">fitter</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># tell the optimizer which statistic to try to minimize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stat_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span></div>
+
+
+<div class="viewcode-block" id="VisualizedGuessNCheckFitter"><a class="viewcode-back" href="../../api.html#henrietta.fitting.VisualizedGuessNCheckFitter">[docs]</a><span class="k">class</span> <span class="nc">VisualizedGuessNCheckFitter</span><span class="p">(</span><span class="n">VisualizedFitter</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;guessncheck&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">goodness</span><span class="o">=</span><span class="n">sumofsquares</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c1"># shortcut to keep track of the optimizer and statistic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">guessncheck</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">VisualizedStatistic</span><span class="p">(</span><span class="n">goodness</span><span class="o">=</span><span class="n">goodness</span><span class="p">,</span> <span class="n">fitter</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">statistic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistic</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run the guess-n-check &quot;optimization.&quot;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1"># create a copy of the model</span>
+        <span class="n">model_copy</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># get the best fit parameters</span>
+        <span class="n">fitparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opt_method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stat_method</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+        <span class="n">model_copy</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">fitparams</span>
+
+        <span class="k">return</span> <span class="n">model_copy</span></div>
+
+<span class="c1"># write documentation that makes clear goodness must want to be minimized</span>
+<span class="c1"># write wrapper that sets model bounds + fixed or not</span>
+<span class="c1"># log axis for gof</span>
+<span class="c1"># better default filename</span>
+<span class="c1"># display mp4 in browswer</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

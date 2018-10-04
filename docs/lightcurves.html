@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.6.2
               </div>
             
           
@@ -88,20 +88,22 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Light Curve Basics</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Download-a-light-curve.">Download a light curve.</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Plot-your-light-curve.">Plot your light curve.</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Using-lightkurve-functions.">Using <code class="docutils literal"><span class="pre">lightkurve</span></code> functions.</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#lc.plot()"><code class="docutils literal"><span class="pre">lc.plot()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.scatter()"><code class="docutils literal"><span class="pre">lc.scatter()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.flatten()"><code class="docutils literal"><span class="pre">lc.flatten()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.fold()"><code class="docutils literal"><span class="pre">lc.fold()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.bin()"><code class="docutils literal"><span class="pre">lc.bin()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.remove_outliers()"><code class="docutils literal"><span class="pre">lc.remove_outliers()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#lc.yourownfunction()"><code class="docutils literal"><span class="pre">lc.yourownfunction()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Using-lightkurve-functions.">Using <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> functions.</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#lc.plot()"><code class="docutils literal notranslate"><span class="pre">lc.plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.scatter()"><code class="docutils literal notranslate"><span class="pre">lc.scatter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.flatten()"><code class="docutils literal notranslate"><span class="pre">lc.flatten()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.fold()"><code class="docutils literal notranslate"><span class="pre">lc.fold()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.bin()"><code class="docutils literal notranslate"><span class="pre">lc.bin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.remove_outliers()"><code class="docutils literal notranslate"><span class="pre">lc.remove_outliers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lc.yourownfunction()"><code class="docutils literal notranslate"><span class="pre">lc.yourownfunction()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting.html">Fitting a Model to Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -357,18 +359,18 @@ div.nboutput div.output_area.stderr {
 <a class="reference external" href="http://lightkurve.keplerscience.org">lightkurve</a> are really useful
 for understanding all the wonderful ways you can access <em>Kepler</em> data
 via online archives. This very short example demonstrates a
-quick-and-dirty tool that uses <code class="docutils literal"><span class="pre">lightkurve</span></code> to download the entire
+quick-and-dirty tool that uses <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> to download the entire
 <em>Kepler</em> light curve for a particular star.</p>
 <div class="section" id="Download-a-light-curve.">
 <h2>Download a light curve.<a class="headerlink" href="#Download-a-light-curve." title="Permalink to this headline">¶</a></h2>
-<p>Our first step is to download some data. We&#8217;ll import our basic set of
+<p>Our first step is to download some data. We’ll import our basic set of
 tools, and then use them to download a Kepler light curve.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># let&#39;s import some common Python packages we like</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -377,19 +379,19 @@ tools, and then use them to download a Kepler light curve.</p>
 </pre></div>
 </div>
 </div>
-<p>This last command creates an object called <code class="docutils literal"><span class="pre">hsl</span></code> that contains a
-useful function: <code class="docutils literal"><span class="pre">download_kepler_lc</span></code>. This function takes a star name
+<p>This last command creates an object called <code class="docutils literal notranslate"><span class="pre">hsl</span></code> that contains a
+useful function: <code class="docutils literal notranslate"><span class="pre">download_kepler_lc</span></code>. This function takes a star name
 as input, and tries its best to return a <em>Kepler</em> light curve for it.
 There are a few options you can feed it if you want, to know what those
-are, remember that in <code class="docutils literal"><span class="pre">jupyter</span></code> you can type the name of a function,
-and then hit <code class="docutils literal"><span class="pre">&lt;shift&gt;-&lt;tab&gt;</span></code> to see what it does (once for basic info,
+are, remember that in <code class="docutils literal notranslate"><span class="pre">jupyter</span></code> you can type the name of a function,
+and then hit <code class="docutils literal notranslate"><span class="pre">&lt;shift&gt;-&lt;tab&gt;</span></code> to see what it does (once for basic info,
 twice for more). Give it a try!</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_lc</span>
 </pre></div>
 </div>
@@ -398,11 +400,11 @@ twice for more). Give it a try!</p>
 Light curves from Kepler are split into ~90 day quarters; this function
 makes a rough attempt at stitching all of those together.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_lc</span><span class="p">(</span><span class="s1">&#39;Kepler-186&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -410,33 +412,33 @@ makes a rough attempt at stitching all of those together.</p>
 </div>
 <div class="section" id="Plot-your-light-curve.">
 <h2>Plot your light curve.<a class="headerlink" href="#Plot-your-light-curve." title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal"><span class="pre">lc</span></code> object we just created it is a <code class="docutils literal"><span class="pre">KeplerLightCurve</span></code> object
-(see the documentation for <code class="docutils literal"><span class="pre">lightkurve</span></code>) if you want to know more
+<p>The <code class="docutils literal notranslate"><span class="pre">lc</span></code> object we just created it is a <code class="docutils literal notranslate"><span class="pre">KeplerLightCurve</span></code> object
+(see the documentation for <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code>) if you want to know more
 about what these objects can do). One snazzy feature of a light curve
 object like this is that we can make a simple plot of the data, just by
 running</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<p>You&#8217;ll notice that the folks who wrote this tool put a bit of thought
+<p>You’ll notice that the folks who wrote this tool put a bit of thought
 into making sure the plot looks pretty good and the axes are labeled in
 a relatively straightforward way.</p>
-<p>However, we might want to play around with things a bit, so let&#8217;s dig
-under the hood of our light curve, and pull out the actual data that&#8217;s
+<p>However, we might want to play around with things a bit, so let’s dig
+under the hood of our light curve, and pull out the actual data that’s
 being plotted.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># this is the time, in something like Julian Date</span>
 <span class="n">time_in_days</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
 
@@ -446,11 +448,11 @@ being plotted.</p>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time_in_days</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Our light curve contains </span><span class="si">{}</span><span class="s2"> data points!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
 </pre></div>
@@ -460,27 +462,27 @@ being plotted.</p>
 either for Kepler-186 or for any other star you choose!</p>
 </div>
 <div class="section" id="Using-lightkurve-functions.">
-<h2>Using <code class="docutils literal"><span class="pre">lightkurve</span></code> functions.<a class="headerlink" href="#Using-lightkurve-functions." title="Permalink to this headline">¶</a></h2>
-<p>You just saw the light curve <code class="docutils literal"><span class="pre">.plot()</span></code> function. Beyond just that one,
+<h2>Using <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> functions.<a class="headerlink" href="#Using-lightkurve-functions." title="Permalink to this headline">¶</a></h2>
+<p>You just saw the light curve <code class="docutils literal notranslate"><span class="pre">.plot()</span></code> function. Beyond just that one,
 there are oodles of built-in functions that we can call directly from
-that <code class="docutils literal"><span class="pre">lc</span></code> object. Some are listed below, with explanations from
-ASTR3400 students! You can also check out the original <code class="docutils literal"><span class="pre">lightkurve</span></code>
+that <code class="docutils literal notranslate"><span class="pre">lc</span></code> object. Some are listed below, with explanations from
+ASTR3400 students! You can also check out the original <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code>
 documentation over
 <a class="reference external" href="http://lightkurve.keplerscience.org/tutorials/1.03-what-are-lightcurves.html">here</a>.</p>
 <div class="section" id="lc.plot()">
-<h3><code class="docutils literal"><span class="pre">lc.plot()</span></code><a class="headerlink" href="#lc.plot()" title="Permalink to this headline">¶</a></h3>
-<p>Chris says &#8220;<code class="docutils literal"><span class="pre">.plot()</span></code> plots the light curve with the normalised flux
-on the y-axis and the time in days on the x-axis.&#8221;</p>
-<p>Sebastian added that &#8220;it acts much like <code class="docutils literal"><span class="pre">matplotlib.pyplot.plot</span></code>
+<h3><code class="docutils literal notranslate"><span class="pre">lc.plot()</span></code><a class="headerlink" href="#lc.plot()" title="Permalink to this headline">¶</a></h3>
+<p>Chris says “<code class="docutils literal notranslate"><span class="pre">.plot()</span></code> plots the light curve with the normalised flux
+on the y-axis and the time in days on the x-axis.”</p>
+<p>Sebastian added that “it acts much like <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.plot</span></code>
 works, which we are all more than familiar with due to ASTR2600. Any
 kwargs that you could pass into matplotlib.pylot.plot also work with
-<code class="docutils literal"><span class="pre">.plot()</span></code>.&#8221;</p>
+<code class="docutils literal notranslate"><span class="pre">.plot()</span></code>.”</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;mediumseagreen&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -494,21 +496,21 @@ kwargs that you could pass into matplotlib.pylot.plot also work with
 </div>
 </div>
 <div class="section" id="lc.scatter()">
-<h3><code class="docutils literal"><span class="pre">lc.scatter()</span></code><a class="headerlink" href="#lc.scatter()" title="Permalink to this headline">¶</a></h3>
-<p>Zach says &#8220;<code class="docutils literal"><span class="pre">.scatter()</span></code> is almost the same as plot, but instead of
+<h3><code class="docutils literal notranslate"><span class="pre">lc.scatter()</span></code><a class="headerlink" href="#lc.scatter()" title="Permalink to this headline">¶</a></h3>
+<p>Zach says “<code class="docutils literal notranslate"><span class="pre">.scatter()</span></code> is almost the same as plot, but instead of
 connecting each data point with a line, the data are plotted as discrete
-points.&#8221;</p>
+points.”</p>
 <p>Jon points out that it also takes keyword arguments to change the
-plotting style, just like <code class="docutils literal"><span class="pre">matplotlib.pyplot.scatter</span></code>.</p>
-<p>These keywords act slightly differently than the ones for <code class="docutils literal"><span class="pre">plot</span></code>.
-Notably, with <code class="docutils literal"><span class="pre">scatter</span></code> the <code class="docutils literal"><span class="pre">c=</span></code> and <code class="docutils literal"><span class="pre">s=</span></code> keywords allow you to
+plotting style, just like <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot.scatter</span></code>.</p>
+<p>These keywords act slightly differently than the ones for <code class="docutils literal notranslate"><span class="pre">plot</span></code>.
+Notably, with <code class="docutils literal notranslate"><span class="pre">scatter</span></code> the <code class="docutils literal notranslate"><span class="pre">c=</span></code> and <code class="docutils literal notranslate"><span class="pre">s=</span></code> keywords allow you to
 set the color or size of different points with an array, as shown here.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">lc</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">c</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;autumn&#39;</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -522,28 +524,28 @@ set the color or size of different points with an array, as shown here.</p>
 </div>
 </div>
 <div class="section" id="lc.flatten()">
-<h3><code class="docutils literal"><span class="pre">lc.flatten()</span></code><a class="headerlink" href="#lc.flatten()" title="Permalink to this headline">¶</a></h3>
-<p>Diego says &#8220;The <code class="docutils literal"><span class="pre">.flatten()</span></code> function does exactly as one would
+<h3><code class="docutils literal notranslate"><span class="pre">lc.flatten()</span></code><a class="headerlink" href="#lc.flatten()" title="Permalink to this headline">¶</a></h3>
+<p>Diego says “The <code class="docutils literal notranslate"><span class="pre">.flatten()</span></code> function does exactly as one would
 expect. Two graphs are shown for comparison. One is the regular one and
 the other is flattened. This is helpful because flattening the graph can
 get rid of the factors that influence the light curve that comes from
 the star. Stars look brighter or dimmer depending on where its spots
 are. This function makes it so the light curve does not reflect that
-fact.&#8221;</p>
-<p>Shae adds that <code class="docutils literal"><span class="pre">.flatten()</span></code> gets rid of wiggles in the light curve
-&#8220;using a Savitzky–Golay filter (a smoothing technique)&#8221;.</p>
-<p>Chris noticed that for his transits, &#8220;there seems to be a &#8216;lead up&#8217; to
+fact.”</p>
+<p>Shae adds that <code class="docutils literal notranslate"><span class="pre">.flatten()</span></code> gets rid of wiggles in the light curve
+“using a Savitzky–Golay filter (a smoothing technique)”.</p>
+<p>Chris noticed that for his transits, “there seems to be a ‘lead up’ to
 the transit coming from both sides like the
-<a class="reference external" href="https://en.wikipedia.org/wiki/Caldera">caldera</a> of a volcano.&#8221; This
-can be caused by the <code class="docutils literal"><span class="pre">.flatten()</span></code> function, because it tries to smooth
-out everything as best it can and doesn&#8217;t know where your transits are,
+<a class="reference external" href="https://en.wikipedia.org/wiki/Caldera">caldera</a> of a volcano.” This
+can be caused by the <code class="docutils literal notranslate"><span class="pre">.flatten()</span></code> function, because it tries to smooth
+out everything as best it can and doesn’t know where your transits are,
 it can sometimes overcorrect near transits.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># scatter a light curve</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;original&#39;</span><span class="p">)</span>
 
@@ -561,21 +563,21 @@ it can sometimes overcorrect near transits.</p>
 </div>
 </div>
 <div class="section" id="lc.fold()">
-<h3><code class="docutils literal"><span class="pre">lc.fold()</span></code><a class="headerlink" href="#lc.fold()" title="Permalink to this headline">¶</a></h3>
-<p>Shae says &#8220;<code class="docutils literal"><span class="pre">.fold()</span></code> takes the data and folds it on itself, depending
+<h3><code class="docutils literal notranslate"><span class="pre">lc.fold()</span></code><a class="headerlink" href="#lc.fold()" title="Permalink to this headline">¶</a></h3>
+<p>Shae says “<code class="docutils literal notranslate"><span class="pre">.fold()</span></code> takes the data and folds it on itself, depending
 on the specified period given. The y-axis remains as the normalized
 flux, whereas the x-axis is the phase which represents the time within a
-single period.&#8221;</p>
-<p>Diego adds &#8220;The <code class="docutils literal"><span class="pre">.fold()</span></code> function takes all the data points and
-shifts them all over to a certain time period. It is &#8216;folding&#8217; in the
-sense that the data is all piled into one &#8216;area&#8217;. This helps to show its
-transit around its host star.&#8221;</p>
+single period.”</p>
+<p>Diego adds “The <code class="docutils literal notranslate"><span class="pre">.fold()</span></code> function takes all the data points and
+shifts them all over to a certain time period. It is ‘folding’ in the
+sense that the data is all piled into one ‘area’. This helps to show its
+transit around its host star.”</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># parameters for Kepler-186b</span>
 <span class="n">period</span> <span class="o">=</span> <span class="mf">3.8867907</span>
 <span class="n">t0</span> <span class="o">=</span> <span class="mf">2454966.3304</span>
@@ -595,24 +597,24 @@ transit around its host star.&#8221;</p>
 </div>
 </div>
 <div class="section" id="lc.bin()">
-<h3><code class="docutils literal"><span class="pre">lc.bin()</span></code><a class="headerlink" href="#lc.bin()" title="Permalink to this headline">¶</a></h3>
-<p>Zach says &#8220;The function <code class="docutils literal"><span class="pre">.bin(binsize=int)</span></code> takes a given number of
+<h3><code class="docutils literal notranslate"><span class="pre">lc.bin()</span></code><a class="headerlink" href="#lc.bin()" title="Permalink to this headline">¶</a></h3>
+<p>Zach says “The function <code class="docutils literal notranslate"><span class="pre">.bin(binsize=int)</span></code> takes a given number of
 data points and averages them together, returning a new lightcurve with
 fewer data points. It can be applied to a curve that has already been
-processed by other functions like <code class="docutils literal"><span class="pre">.fold()</span></code>.</p>
-<p>Dana explains how it works &#8220;If you want a bin size of 50, this takes the
+processed by other functions like <code class="docutils literal notranslate"><span class="pre">.fold()</span></code>.</p>
+<p>Dana explains how it works “If you want a bin size of 50, this takes the
 first 50 flux measurements and averages them to give one data point, the
 second point is the second 50, and so on until the function reaches the
-end of the data.&#8221;</p>
-<p>Sebastian adds &#8220;The process of binning leads to less noise in the data,
+end of the data.”</p>
+<p>Sebastian adds “The process of binning leads to less noise in the data,
 allowing us to focus much more intensely on the actual patterns in the
-data that we care about.&#8221;</p>
+data that we care about.”</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">folded</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">fold</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="n">period</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">t0_in_bkjd</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
 
 <span class="c1"># flatten, fold, and scatter a light curve</span>
@@ -632,22 +634,22 @@ data that we care about.&#8221;</p>
 </div>
 </div>
 <div class="section" id="lc.remove_outliers()">
-<h3><code class="docutils literal"><span class="pre">lc.remove_outliers()</span></code><a class="headerlink" href="#lc.remove_outliers()" title="Permalink to this headline">¶</a></h3>
-<p>Tyler says &#8220;<code class="docutils literal"><span class="pre">.remove_outliers(sigma=5.0)</span></code> removes the outliers from
+<h3><code class="docutils literal notranslate"><span class="pre">lc.remove_outliers()</span></code><a class="headerlink" href="#lc.remove_outliers()" title="Permalink to this headline">¶</a></h3>
+<p>Tyler says “<code class="docutils literal notranslate"><span class="pre">.remove_outliers(sigma=5.0)</span></code> removes the outliers from
 the data set based on how many standard deviations the value is from the
-trend. If done incorrectly it can remove transit data.&#8221; Setting
-<code class="docutils literal"><span class="pre">sigma</span></code> to a larger value means that an outlier must be more extreme
+trend. If done incorrectly it can remove transit data.” Setting
+<code class="docutils literal notranslate"><span class="pre">sigma</span></code> to a larger value means that an outlier must be more extreme
 to be removed.</p>
-<p>Dana provides a nice example: &#8220;Say you have a list of numbers
+<p>Dana provides a nice example: “Say you have a list of numbers
 (3,5,7,2,45,7,9), and you use this function on that set of numbers, it
 would remove that 45 because it is an outlier and not close to the other
-numbers.&#8221;</p>
+numbers.”</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none"><div class="highlight"><pre>
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># make a flattened light curve</span>
 <span class="n">flattened</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
@@ -668,9 +670,9 @@ numbers.&#8221;</p>
 </div>
 </div>
 <div class="section" id="lc.yourownfunction()">
-<h3><code class="docutils literal"><span class="pre">lc.yourownfunction()</span></code><a class="headerlink" href="#lc.yourownfunction()" title="Permalink to this headline">¶</a></h3>
+<h3><code class="docutils literal notranslate"><span class="pre">lc.yourownfunction()</span></code><a class="headerlink" href="#lc.yourownfunction()" title="Permalink to this headline">¶</a></h3>
 <p>Imagine about what other functions you might like to apply to a light
-curve. We could write our own <code class="docutils literal"><span class="pre">lightkurve</span></code> functions. What would they
+curve. We could write our own <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> functions. What would they
 do? If you have an idea, share it with the class!</p>
 </div>
 </div>
@@ -729,6 +731,7 @@ do? If you have an idea, share it with the class!</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

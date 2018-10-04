@@ -58,7 +58,7 @@
             
             
               <div class="version">
-                0.5.2
+                0.6.2
               </div>
             
           
@@ -92,6 +92,8 @@
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting.html">Fitting a Model to Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -179,37 +181,37 @@
 </style>
 <div class="section" id="Installation">
 <h1>Installation<a class="headerlink" href="#Installation" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal"><span class="pre">henrietta</span></code> is a Python package. It&#8217;s already installed on
-<code class="docutils literal"><span class="pre">scorpius</span></code>, but you may want to install it on your own computer. These
+<p><code class="docutils literal notranslate"><span class="pre">henrietta</span></code> is a Python package. It’s already installed on
+<code class="docutils literal notranslate"><span class="pre">scorpius</span></code>, but you may want to install it on your own computer. These
 are instructions to help do that. If you have any questions, please come
 talk to Will or Zach!</p>
 <div class="section" id="Installing-on-scorpius">
 <h2>Installing on scorpius<a class="headerlink" href="#Installing-on-scorpius" title="Permalink to this headline">¶</a></h2>
 <p>The latest versions of these tools will always already be available on
-the <code class="docutils literal"><span class="pre">scorpius</span></code> machines at CU Boulder. To access them, simply run the
+the <code class="docutils literal notranslate"><span class="pre">scorpius</span></code> machines at CU Boulder. To access them, simply run the
 command</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">henrietta</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="n">henrietta</span>
 </pre></div>
 </div>
 <p>from the UNIX prompt. This will activate an environment that has all the
 basic tools you need for playing with Kepler and TESS light curve data,
-as well as the tools in our <code class="docutils literal"><span class="pre">henrietta</span></code> package. This not only
+as well as the tools in our <code class="docutils literal notranslate"><span class="pre">henrietta</span></code> package. This not only
 includes the specific Python package described here, it also activates a
 whole environment full of useful tools.</p>
-<p>If you don&#8217;t want to run this command every time you open a terminal,
+<p>If you don’t want to run this command every time you open a terminal,
 you can include it as a shortcut that opens automatically. To do so,
-edit the file called <code class="docutils literal"><span class="pre">~/.bashrc</span></code> in your home directory on
-<code class="docutils literal"><span class="pre">scorpius</span></code>, and add the line <code class="docutils literal"><span class="pre">source</span> <span class="pre">henrietta</span></code> to the bottom of the
+edit the file called <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> in your home directory on
+<code class="docutils literal notranslate"><span class="pre">scorpius</span></code>, and add the line <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">henrietta</span></code> to the bottom of the
 file. Save it, and then next time you open a terminal, you should start
 out in the henrietta environment.</p>
 </div>
 <div class="section" id="Installing-on-your-own-computer">
 <h2>Installing on your own computer<a class="headerlink" href="#Installing-on-your-own-computer" title="Permalink to this headline">¶</a></h2>
-<p>If you want to install on <code class="docutils literal"><span class="pre">henrietta</span></code> on your own computer, please
+<p>If you want to install on <code class="docutils literal notranslate"><span class="pre">henrietta</span></code> on your own computer, please
 skip on over to the <a class="reference external" href="https://github.com/zkbt/henrietta">github
 repository</a>, and follow the
-installation instructions listed there. We&#8217;ll be updating the
-<code class="docutils literal"><span class="pre">henrietta</span></code> package throughout the semester. To get the latest, you&#8217;ll
+installation instructions listed there. We’ll be updating the
+<code class="docutils literal notranslate"><span class="pre">henrietta</span></code> package throughout the semester. To get the latest, you’ll
 need to upgrade the package periodically.</p>
 </div>
 </div>
@@ -267,6 +269,7 @@ need to upgrade the package periodically.</p>
       <script type="text/javascript" src="_static/jquery.js"></script>
       <script type="text/javascript" src="_static/underscore.js"></script>
       <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 

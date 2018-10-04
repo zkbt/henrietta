@@ -1,0 +1,603 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Fitting a Model to Data &mdash; henrietta 0.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Simulating Images" href="simulating.html" />
+    <link rel="prev" title="Modeling Basics" href="modeling.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> henrietta
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Fitting a Model to Data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Linear-Least-Squares">Linear Least Squares</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#General-Fitting-Problems">General Fitting Problems</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Exploration-#1:-Guess-and-Check">Exploration #1: Guess and Check</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Exploration-#2:-Simplex">Exploration #2: Simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">henrietta</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Fitting a Model to Data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/fitting.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast,
+.nboutput.nblast {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast + .nbinput {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+</style>
+<div class="section" id="Fitting-a-Model-to-Data">
+<h1>Fitting a Model to Data<a class="headerlink" href="#Fitting-a-Model-to-Data" title="Permalink to this headline">¶</a></h1>
+<p>In class we talked about two key ingredients for writing a computer
+recipe for optimizing a model to match data. We need a goodness-of-fit
+metric, and we need a way to explore the range of parameters that are
+out there.</p>
+<div class="section" id="Linear-Least-Squares">
+<h2>Linear Least Squares<a class="headerlink" href="#Linear-Least-Squares" title="Permalink to this headline">¶</a></h2>
+<p>For some classes of model fitting problems (“linear least squares”
+problems), there are some tools that can identify the best-fit
+parameters almost instantaneously. For example, <code class="docutils literal notranslate"><span class="pre">np.polyfit</span></code> does some
+magical matrix math to instantly fit a polynomial to (x,y) data.</p>
+</div>
+<div class="section" id="General-Fitting-Problems">
+<h2>General Fitting Problems<a class="headerlink" href="#General-Fitting-Problems" title="Permalink to this headline">¶</a></h2>
+<p>You won’t always have a tidy “linear” problem, so it’s useful to
+understand how fitting might work more abstractly. Here are a few
+examples that help visualize the exploration and optimization process.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span><span class="o">,</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">henrietta</span> <span class="k">as</span> <span class="nn">hsl</span>
+</pre></div>
+</div>
+</div>
+<p>First, let’s generate a simulated transit. It’s useful to know the
+parameters we injected, so we can see how good our fits look in the end.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># create a simulated light curve</span>
+<span class="n">actual</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.58</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.116</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mf">15.2</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.385</span><span class="p">)</span>
+<span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">simulate_transit_data</span><span class="p">(</span><span class="n">tmin</span><span class="o">=-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">cadence</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="mi">60</span><span class="o">/</span><span class="mf">24.</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="o">**</span><span class="n">actual</span><span class="p">)</span>
+<span class="n">lc</span><span class="o">.</span><span class="n">scatter</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<p>We’re going to use some of the
+<a class="reference external" href="http://docs.astropy.org/en/stable/modeling/">astropy.modeling</a>
+tools. You don’t need to know much about them now, but the basic step we
+need to take is to set up a “model” object that we can play with. We
+wrote a wrapper to help with this:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">model</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">setup_transit_model</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="mf">1.58</span><span class="p">,</span>
+                                <span class="n">radius</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+                                <span class="n">a</span><span class="o">=</span><span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">],</span>
+                                <span class="n">b</span><span class="o">=</span><span class="mf">0.385</span><span class="p">,</span>
+                                <span class="n">baseline</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>If you give the <code class="docutils literal notranslate"><span class="pre">setup_transit_model</span></code> function one value for a
+parameter, it will treat that parameter as fixed. If you give it a range
+of parameters, it will treat that parameter as unknown but within that
+range. All of these are stored inside of our model object.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">fixed</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">bounds</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>An astropy <code class="docutils literal notranslate"><span class="pre">model</span></code> can store parameters inside them, but it can also
+be called as a function to generate a model curve:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">x</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;.k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+<p>Hmmmm…that wasn’t a great match. To play with fitting our model to
+improve its parameters, we need to define a goodness of fit function.
+Let’s try a common one:</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">sumofsquares</span><span class="p">(</span><span class="n">residuals</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This calculates a goodness-of-fit from an array of residuals.</span>
+<span class="sd">    (a lower value implies a better fit)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    residuals : `~numpy.ndarray`</span>
+<span class="sd">        Array of values for (data-model)/sigma</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gof : float</span>
+<span class="sd">        A single goodness-of-fit metric</span>
+<span class="sd">        (in this case, sum of squares)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">residuals</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>With this, we can set up a “fitter”, which will help us figure out good
+values for our parameters. By setting the <code class="docutils literal notranslate"><span class="pre">goodness</span></code> keyword, we can
+tell the fitter what function to use for calculating the goodness of fit
+from the residuals. The fitter will try to <em>minimize</em> the goodness
+values, so make sure you’re aware of that in your definition of the
+<code class="docutils literal notranslate"><span class="pre">goodness</span></code> function. (You could make a reasonable argument we should
+be calling this “badness” instead. That’s fair.)</p>
+<div class="section" id="Exploration-#1:-Guess-and-Check">
+<h3>Exploration #1: Guess and Check<a class="headerlink" href="#Exploration-#1:-Guess-and-Check" title="Permalink to this headline">¶</a></h3>
+<p>Let’s start with an inefficient, but conceptually simple, algorithm.
+We’ll just try random sets of parameters, and see which one looks best.
+First, we create a “fitter” object, that handles this exploration.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">fitter</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">VisualizedGuessNCheckFitter</span><span class="p">(</span><span class="n">goodness</span><span class="o">=</span><span class="n">sumofsquares</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we can run this fitter to see what happens. It will return the
+best model, but it will also make an animation that shows us the process
+it took to get there.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">bestmodel</span> <span class="o">=</span> <span class="n">fitter</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>This will save an animation out to the file
+<code class="docutils literal notranslate"><span class="pre">guessncheck-sumofsquares.mp4</span></code>. Open it up to take a look!</p>
+</div>
+<div class="section" id="Exploration-#2:-Simplex">
+<h3>Exploration #2: Simplex<a class="headerlink" href="#Exploration-#2:-Simplex" title="Permalink to this headline">¶</a></h3>
+<p>Our guessing and checking method seems a little inefficient. Here’s an
+example of the <code class="docutils literal notranslate"><span class="pre">simplex</span></code> method for minimizing functions (in this case
+our goodness of fit). What’s going on with this one?</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">faster</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">VisualizedSimplexFitter</span><span class="p">(</span><span class="n">goodness</span><span class="o">=</span><span class="n">sumofsquares</span><span class="p">)</span>
+<span class="n">bestmodel</span> <span class="o">=</span> <span class="n">faster</span><span class="o">.</span><span class="n">visualize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">simplex</span></code> will do a better job of fitting some parameters than others.
+Play around with which parameters you allow to vary in
+<code class="docutils literal notranslate"><span class="pre">setup_transit_model</span></code>, and by what ranges. Does <code class="docutils literal notranslate"><span class="pre">simplex</span></code> do a good
+job of fitting all of them? Based on your animations, do have any ideas
+why or what not?</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="simulating.html" class="btn btn-neutral float-right" title="Simulating Images" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="modeling.html" class="btn btn-neutral" title="Modeling Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Zach Berta-Thompson and students at CU Boulder.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.0.0',
+            LANGUAGE:'None',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
