@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import photutils
 import pdb
-from phot import *
 plt.ion()
 
 def photometry(ax,image,pos,ap_size=10,r_in=20,r_out=30,back_photo=True):

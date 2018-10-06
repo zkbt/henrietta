@@ -1,1 +1,2 @@
-from .phot import *
+from .photometry import *
+from .cartoons import *
