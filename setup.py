@@ -47,8 +47,8 @@ if "release" in sys.argv[-1]:
     os.system("rm -rf dist/henrietta*")
     sys.exit()
 
-# a little kludge to get the version number from __init__.py
-from henrietta.version import __version__
+# a little kludge to get the version number from __version__
+exec(open('henrietta/version.py').read())
 
 # run the setup function
 setup(
@@ -89,7 +89,9 @@ setup(
                       'matplotlib',
                       'lightkurve',
                       'tqdm',
-                      'thefriendlystars'],
+                      'thefriendlystars>=0.0.2',
+                      'illumination>=0.0.0'],
+
     # the packages in `key` will be installed if folks run `pip install henrietta[key]`
     extras_require={'models':['batman-package'],
                     'docs':['sphinx', 'nbsphinx', 'sphinx_rtd_theme', 'numpydoc']},

@@ -17,10 +17,10 @@ def whoisthisawesomelady():
     [her papers](https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22leavitt%2C%20henrietta%20swan).
     ''')
 
+from .version import __version__
 from .lightcurves import *
 from .statistics import *
 from .modeling import *
 from .tools import *
 from .fitting import *
 from .tpf import *
-from .imaging.animations import *

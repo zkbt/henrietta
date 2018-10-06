@@ -19,3 +19,8 @@ modeling
 --------
 .. automodule:: henrietta.modeling
   :members:
+
+fitting
+--------
+.. automodule:: henrietta.fitting
+  :members:
