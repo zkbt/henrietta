@@ -22,3 +22,18 @@ def decide_writer(filename, **kw):
         except (RuntimeError,KeyError):
             raise RuntimeError('This computer seems unable to ffmpeg.')
     return writer
+
+def mkdir(path):
+    '''
+    Make a directory. Don't complain if the directory already exists.
+
+    Parameters
+    ----------
+    path : str
+        The path of the directory to make.
+    '''
+    try:
+        os.mkdir(path)
+        print("made {}".format(path))
+    except:
+        pass

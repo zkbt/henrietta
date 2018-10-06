@@ -5,3 +5,4 @@ from .test_fitting import *
 from .test_tools import *
 from .test_photometry import *
 from .test_tpf import *
+from .test_imaging import *
