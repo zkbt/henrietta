@@ -18,7 +18,7 @@ def read_fits(path, ext_image=1):
     # extract the image data from the FITs file
     image = hdu_list[ext_image].data
 
-    print('read a {} grayscale image from {}'.format(image.shape, filename))
+    print('read a {} grayscale image from {}'.format(image.shape, path))
 
     # return the image
     return image
@@ -48,7 +48,7 @@ def read_rgb(path):
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
 
     # print an update
-    print('read a {} RGB image from {}'.format(rgb.shape, filename))
+    print('read a {} RGB image from {}'.format(rgb.shape, path))
 
     # return the three separate images
     return r, g, b
@@ -77,7 +77,7 @@ def read_gray(path):
     image = io.imread(path, as_gray=True)
 
     # print an update
-    print('read a {} grayscale image from {}'.format(image.shape, filename))
+    print('read a {} grayscale image from {}'.format(image.shape, path))
 
     # return the image
     return image
