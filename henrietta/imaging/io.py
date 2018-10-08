@@ -1,7 +1,5 @@
-
-
 from ..imports import *
-from skimage import io
+import skimage.io
 from astropy.io import fits
 
 def read_fits(path, ext_image=1):
@@ -42,7 +40,7 @@ def read_rgb(path):
     '''
 
     # read a (rows x cols x 3) image
-    rgb = io.imread(path)
+    rgb = skimage.io.imread(path)
 
     # pull out the red, green, blue channels
     r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
@@ -74,7 +72,7 @@ def read_gray(path):
     '''
 
     # load the image as gray-scale
-    image = io.imread(path, as_gray=True)
+    image = skimage.io.imread(path, as_gray=True)
 
     # print an update
     print('read a {} grayscale image from {}'.format(image.shape, path))
@@ -91,8 +89,15 @@ def write_image(image, filename='image.jpg'):
     print('saved {} image to {}'.format(image.shape, filename))
 
     # save the image
-    io.imsave(filename, image)
+    skimage.io.imsave(filename, image)
 
+def compile_rgb(red, green, blue):
+    incolor = np.zeros_like(red)[:,:,np.newaxis]*np.ones(3).astype(np.int)
+    incolor[:,:,0] = red
+    incolor[:,:,1] = green
+    incolor[:,:,2] = blue
+    return incolor
+    
 # read different image file types (png, tiff, giff)
 # write a guesser to read an arbitrary image (based on filename)
 # read a movies as a sequence of images (?)

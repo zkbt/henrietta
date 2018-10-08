@@ -5,6 +5,9 @@ import ipywidgets as widgets
 from .apertures import *
 from astropy.table import vstack
 
+# https://github.com/matplotlib/jupyter-matplotlib might be good for widgets!
+
+
 class Loupe(il.IllustrationBase):
     '''
     An interactive Illustration, that allows us to do
