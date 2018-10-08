@@ -40,10 +40,17 @@ def read_rgb(path):
     '''
 
     # read a (rows x cols x 3) image
-    rgb = skimage.io.imread(path)
+    rgb = skimage.io.imread(path, as_gray=False)
 
-    # pull out the red, green, blue channels
-    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    if len(rgb.shape) == 2:
+        # if grayscale already, set the red, green, blue channels to be equal
+        r = rgb
+        g = rgb
+        b = rgb
+
+    else:
+        # pull out the red, green, blue channels
+        r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
 
     # print an update
     print('read a {} RGB image from {}'.format(rgb.shape, path))
@@ -80,16 +87,49 @@ def read_gray(path):
     # return the image
     return image
 
+def read_image(path, **kw):
+    '''
+    Read an image, being flexible about what kind of image it is.
+
+    Parameters
+    ----------
+    path : str
+        The filename of the image to read.
+
+    Returns
+    -------
+    gray : array
+        The brightness of the image, as a 2D numpy array.
+    '''
+
+    if '.fit' in path:
+        return read_fits(path, **kw)
+    else:
+        return read_gray(path, **kw)
+
 def write_image(image, filename='image.jpg'):
     '''
-    Write a numpy a array to an image file.
+    Write a numpy array to an image file.
+
+    Parameters
+    ----------
+    image : array
+        The image to save.
+    filename : str
+        The filename where the image should be saved.
     '''
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+
+        # save the image
+        if '.fit' in filename:
+            hdu = fits.PrimaryHDU(data=image).writeto(filename, overwrite=True)
+        else:
+            skimage.io.imsave(filename, image)
 
     # print an update
     print('saved {} image to {}'.format(image.shape, filename))
-
-    # save the image
-    skimage.io.imsave(filename, image)
 
 def compile_rgb(red, green, blue):
     incolor = np.zeros_like(red)[:,:,np.newaxis]*np.ones(3).astype(np.int)
@@ -97,7 +137,7 @@ def compile_rgb(red, green, blue):
     incolor[:,:,1] = green
     incolor[:,:,2] = blue
     return incolor
-    
+
 # read different image file types (png, tiff, giff)
 # write a guesser to read an arbitrary image (based on filename)
 # read a movies as a sequence of images (?)

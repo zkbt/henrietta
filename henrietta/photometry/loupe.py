@@ -3,6 +3,7 @@ import illumination as il
 from IPython.display import display
 import ipywidgets as widgets
 from .apertures import *
+from ..imaging import io
 from astropy.table import vstack
 
 # https://github.com/matplotlib/jupyter-matplotlib might be good for widgets!
@@ -17,14 +18,13 @@ class Loupe(il.IllustrationBase):
 
     def __init__(self, image,
                        aperture_radius=3.0,
-                       subtract_background=False,
                        **framekw):
         '''
         Parameters
         ----------
 
-        image : 2D array
-            An image.
+        image : 2D array, str
+            An image or a path to a filename containing an image.
 
         aperture_radius : float
             The default radius for the photometric aperture
@@ -36,6 +36,13 @@ class Loupe(il.IllustrationBase):
 
         **framekw passed to CameraFrame
         '''
+
+        # kludge
+        subtract_background = False
+
+        # load an image if given a filename
+        if type(image) == str:
+            image = io.read_image(image)
 
         # don't let this illustration talk
         self._pithy = True

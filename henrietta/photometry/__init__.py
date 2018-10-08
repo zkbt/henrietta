@@ -1,2 +1,2 @@
-from .photometry import *
 from .cartoons import *
+from .loupe import *

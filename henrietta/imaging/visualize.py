@@ -35,7 +35,7 @@ def animate_tpf(tpf, howmanydays=None):
     illustration.animate(filename=filename, cadence=seq.cadence(), maxtimespan=maxtimespan)
 
 
-def display_rgb(red=None, green=None, blue=None, origin='upper'):
+def display_rgb(red=None, green=None, blue=None, size = 8, origin='upper'):
     '''
     Make a pediagogical plot showing how monochromatic red, green, and blue
     images can be combined to make a single color image.
@@ -73,7 +73,7 @@ def display_rgb(red=None, green=None, blue=None, origin='upper'):
 
     # set up the geometry for the figure
     aspectratio = red.shape[1]/float(red.shape[0])
-    size = 5
+
     if aspectratio <= 1.0:
         figsize = (size*aspectratio, 5.0/3.0*size)
     else:

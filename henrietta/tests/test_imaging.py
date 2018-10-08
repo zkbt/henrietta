@@ -25,6 +25,7 @@ def test_io():
         filename = os.path.join(directory, 'image-gray.{}'.format(suffix))
         io.write_image(image, filename=filename)
         gray = io.read_gray(filename)
+        r, g, b = io.read_rgb(filename)
         filename = os.path.join(directory, 'image-rgb.{}'.format(suffix))
         io.write_image(rgb, filename=filename)
         r, g, b = io.read_rgb(filename)
