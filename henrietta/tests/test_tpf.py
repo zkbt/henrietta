@@ -1,4 +1,4 @@
-from ..imaging.animations import *
+from ..imaging.visualize import *
 from ..tpf import *
 
 def test_animation(howmanydays=1.0):

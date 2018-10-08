@@ -2,7 +2,7 @@ import thefriendlystars as tfs
 import astropy.units as u
 from ..imports import *
 
-def simulate_optics(target='Kepler-42', collectingarea=1.0, pixelscale=21.0, fov=3*60, background=0.0):
+def simulate_optics(target='Kepler-42', collectingarea=1.0, pixelscale=21.0, fov=3*60, background=0.0, **kw):
     '''
 
     Parameters
@@ -68,9 +68,11 @@ def simulate_optics(target='Kepler-42', collectingarea=1.0, pixelscale=21.0, fov
     # create a model images
     model = (background + stars)#[np.newaxis, :, :] * np.ones(N).reshape((N, 1, 1))
 
+    if type(model) == np.ma.core.MaskedArray:
+        model = model.data
     return model
 
-def simulate_detector(image, exptime=1.0, quantumefficiency=1.0, readnoise=10.0):
+def simulate_detector(image, exptime=1.0, quantumefficiency=1.0, readnoise=10.0, **kw):
     '''
     Create a simulate image indicating the total number of
     photons that a detector will record per pixel, in a
@@ -116,3 +118,21 @@ def simulate_detector(image, exptime=1.0, quantumefficiency=1.0, readnoise=10.0)
     noise = np.sqrt(expectation + readnoise**2)
 
     return np.random.normal(expectation, noise)
+
+def simulate_image(*args, **kwargs):
+    '''
+    Make an end-to-end simulation of an astronomical image,
+    combining the steps of `simulate_optics` with `simulate_detector`.
+
+    Parameters
+    ----------
+        (anything that can be fed into `simulate_optics` or `simulate_detector`)
+
+    Returns
+    -------
+    sim : array
+        A simulated image.
+    '''
+    optics = simulate_optics(*args, **kwargs)
+    exposure = simulate_detector(optics, **kwargs)
+    return exposure

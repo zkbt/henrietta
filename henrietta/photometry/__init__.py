@@ -1,1 +1,2 @@
-from .phot import *
+from .cartoons import *
+from .loupe import *

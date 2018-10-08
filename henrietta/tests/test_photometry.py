@@ -4,8 +4,7 @@ import matplotlib.pyplot as plt
 import illumination as il
 
 def test_photometry():
-    seq = il.make_image_sequence(il.create_test_array(N=1, xsize=100, ysize=100, nstars=1, single=True, seed=0))
-    illustration = il.imshowIllustration(seq)
-    illustration.plot()
-    ax = illustration.frames['image'].ax
-    test = photometry(ax,seq[0],[[50,40]],ap_size=5)
+    ax = plt.subplot(111)
+    im = create_test_array(N=1, xsize=100, ysize=100, nstars=10, single=False,seed=7)
+    test = photometry(ax,im[0],[[54,91],[44,38]],ap_size=3,r_in=8,r_out=12,back_photo=True)
+    return test
