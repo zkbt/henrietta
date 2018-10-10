@@ -58,7 +58,7 @@ def simulate_optics(target='Kepler-42', collectingarea=1.0, pixelscale=21.0, fov
     sigma = 1.0
 
     def gauss(x, y, x0, y0):
-        return 1.0/np.sqrt(2*np.pi)/sigma*np.exp(-0.5 * ((x - x0)**2 + (y - y0)**2) / sigma**2)
+        return 1.0/2*np.pi/sigma**2*np.exp(-0.5 * ((x - x0)**2 + (y - y0)**2) / sigma**2)
 
     # create a cube with an image for each star, and sum them together into one image
     stars = (photonfluxes * gauss(x[:, :, np.newaxis],
@@ -70,7 +70,7 @@ def simulate_optics(target='Kepler-42', collectingarea=1.0, pixelscale=21.0, fov
 
     if type(model) == np.ma.core.MaskedArray:
         model = model.data
-    return model
+    return model*collectingarea
 
 def simulate_detector(image, exptime=1.0, quantumefficiency=1.0, readnoise=10.0, **kw):
     '''
