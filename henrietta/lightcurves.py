@@ -2,6 +2,7 @@ from lightkurve import KeplerLightCurveFile, lightcurve
 import matplotlib.pyplot as plt
 import numpy as np
 from .tools import *
+from lightkurve.lightcurve import LightCurve
 
 def download_kepler_lc(star='Kepler-186',
                        quarter='all',
