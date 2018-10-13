@@ -29,3 +29,18 @@ def test_locate():
 
     plt.legend(bbox_to_anchor=(1,1), loc='upper left')
     plt.tight_layout()
+
+def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.15):
+
+    # create a simulated light curve
+    lc = simulate_transit_data(period=period, t0=t0)
+
+    # split into two light curves, one with transits, one without
+    transits, notransits = extract_transits(period, epoch, window)
+
+    # make sure the sizes of these light curves make sense
+    assert(len(transits.flux) + len(notransits).flux == len(lc.flux))
+
+    # make sure we can plot both of them (and)
+    ax = transits.scatter(c='gray')
+    notransits.scatter(ax=ax, c='darkorange')
