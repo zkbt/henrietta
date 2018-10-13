@@ -137,13 +137,45 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
     return transit_loc
 
 
-def extract_transits(lc, period, epoch, duration, baseline):
+def extract_transits(lc, period, epoch, duration):
     '''
     Not yet implemented.
     '''
 
     time = lc.time
     flux = lc.flux
+    error = lc.flux_err
 
+    n = np.linspace(0,999,1000)
+    mid_transit_times = (period*n + epoch)
+
+    for i in range(len(n)):
+        if (mid_transit_times[i] >= lc.time[0]):
+            if (mid_transit_times[i] <= lc.time[-1]):
+
+                expected_t0 = mid_transit_times[i]
+
+    ingress = expected_t0 - duration/2.0
+    egress = expected_t0 + duration/2.0
+
+    transit_indices = []
+
+    j = 0
+    for i in range(len(time)):
+        if time[i] >= ingress:
+            if time[i] <= egress:
+                transit_indices[j] = i
+                j += 1
+
+    transit_time = time[transit_indices]
+    transit_flux = flux[transit_indices]
+    transit_error = error[transit_indices]
+
+    oot_time = np.delete(time,transit_indices)
+    oot_flux = np.delete(flux,transit_indices)
+    oot_error = np.delete(error,transit_indices)
+
+    transits = LightCurve(transit_time, transit_flux, transit_error)
+    notransits = LightCurve(oot_time, oot_flux, oot_error)
 
     return transits, notransits
