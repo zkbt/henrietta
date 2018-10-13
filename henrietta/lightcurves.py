@@ -152,12 +152,10 @@ def extract_transits(lc, period, t0, window):
 
     transit_indices = []
 
-    j = 0
     for i in range(len(time)):
         if time[i] >= ingress:
             if time[i] <= egress:
-                transit_indices[j] = i
-                j += 1
+                transit_indices.append(i)
 
     transit_time = time[transit_indices]
     transit_flux = flux[transit_indices]
