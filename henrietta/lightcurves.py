@@ -138,7 +138,7 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
     return transit_loc
 
 
-def extract_transits(lc, period, t0, window):
+def extract_transits(lc, t0, window):
     '''
     Not yet implemented.
     '''
