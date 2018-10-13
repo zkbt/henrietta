@@ -225,7 +225,9 @@ def plot_with_transit_model(lc,
                            ld1 = 0.1, ld2 = 0.3,
                            planet_name='',
                            goodness=None,
-                           show_errors=False):
+                           show_errors=False,
+                           datakw={},
+                           modelkw={}):
     '''
     This function will take in a lightcurve for a planet
     with a given set of transit parameters (period, t0, radius, a, b, baseline)
@@ -267,6 +269,14 @@ def plot_with_transit_model(lc,
     goodness : function
         A function that takes an array of values for (data-model),
         and returns a goodness of fit metric.
+
+    datakw : dictionary
+        A dictionary with keywords that will be passed to the plt.plot()
+        command that displays the actual data points.
+
+    modelkw : dictionary
+        A dictionary with keywords that will be passed to the plt.plot()
+        command that displays the actual the smooth model.
     '''
 
     # create a high-resolution grid of times to plot
@@ -307,38 +317,44 @@ def plot_with_transit_model(lc,
 
 
     a0.set_ylabel('Flux')#,fontsize=18)
-    datakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none', zorder=0)
+    actualdatakw = dict( alpha=0.5, color='royalblue',markersize='5', markeredgecolor='none', zorder=0)
+    actualdatakw.update(**datakw)
+
+    actualmodelkw = dict(zorder=1,color='k')
+    actualmodelkw.update(**modelkw)
 
     summary = 'BATMAN(period={period},t0={t0},radius={radius},a={a},b={b})'.format(**locals())
-    a0.plot(highres_time,model_plot,zorder=1,color='k',label='Model')
+    a0.plot(highres_time,model_plot,label='Model', **actualmodelkw)
 
     if show_errors:
-        a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',label='Data', **datakw)
+        a0.errorbar(lc.time,lc.flux,yerr=lc.flux_err,fmt='o',label='Data', **actualdatakw)
     else:
-        a0.plot(lc.time,lc.flux,label='Data', marker='o', linewidth=0, **datakw)
+        a0.plot(lc.time,lc.flux,label='Data', marker='o', linewidth=0, **actualdatakw)
 
 
     a0.legend()#loc='upper left', bbox_to_anchor=(1,1))
 
     if show_errors:
-        a1.errorbar(lc.time,residual,yerr=lc.flux_err,**datakw)
+        a1.errorbar(lc.time,residual,yerr=lc.flux_err, **actualdatakw)
     else:
-        a1.plot(lc.time,residual,marker='o',linewidth=0, **datakw)
-    a1.axhline(0,color='k', zorder=100)
+        a1.plot(lc.time,residual,marker='o',linewidth=0, **actualdatakw)
+    a1.axhline(0, **actualmodelkw)
     a1.set_ylim(0-1.5*np.nanmax(np.abs(residual)),0+1.5*np.nanmax(np.abs(residual)))
     a1.set_ylabel('Residuals')
-    #a1.legend()
+    plt.xlabel('Time (days)')
 
-    plt.xlabel('Time (days)')#,fontsize=16)
-    #plt.tight_layout()
+    if planet_name is '':
+        title = ''
+    else:
+        title = '{} | '.format(planet_name)
 
     if goodness is None:
-        title = summary
+        title += summary
         gof = None
     else:
         plt.show()
         gof = goodness(residual/lc.flux_err)
-        title = '{} | {}={:.4}'.format(summary, goodness.__name__, gof)
+        title += '{} | {}={:.4}'.format(summary, goodness.__name__, gof)
     a0.set_title(title, fontsize=10)
 
     return gof
