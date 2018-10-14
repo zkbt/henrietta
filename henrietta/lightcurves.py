@@ -138,7 +138,7 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
     return transit_loc
 
 
-def extract_transits(lc, t0, window):
+def extract_transits(lc, period, epoch, window):
     '''
     Not yet implemented.
     '''
@@ -147,15 +147,27 @@ def extract_transits(lc, t0, window):
     flux = lc.flux
     error = lc.flux_err
 
-    ingress = t0 - window
-    egress = t0 + window
+    n = np.linspace(0,9999,10000)
+    mid_transit_times = (period*n + epoch)
+
+    ingress = []
+    egress = []
+
+    for i in range(len(n)):
+        if (mid_transit_times[i] >= lc.time[0]):
+            if (mid_transit_times[i] <= lc.time[-1]):
+
+                t0 = mid_transit_times[i]
+                ingress.append(t0 - window)
+                egress.append(t0 + window)
 
     transit_indices = []
 
     for i in range(len(time)):
-        if time[i] >= ingress:
-            if time[i] <= egress:
-                transit_indices.append(i)
+        for j in range(len(ingress)):
+            if time[i] >= ingress[j]:
+                if time[i] <= egress[j]:
+                    transit_indices.append(i)
 
     transit_time = time[transit_indices]
     transit_flux = flux[transit_indices]

@@ -36,7 +36,7 @@ def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.15):
     lc = simulate_transit_data(period=period, t0=t0)
 
     # split into two light curves, one with transits, one without
-    transits, notransits = extract_transits(lc, t0, window)
+    transits, notransits = extract_transits(lc, period, epoch=t0, window)
 
     # make sure the sizes of these light curves make sense
     assert(len(transits.flux) + len(notransits.flux) == len(lc.flux))
