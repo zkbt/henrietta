@@ -138,9 +138,51 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
     return transit_loc
 
 
-def extract_transits(lc, period, epoch, window):
+def extract_transits(lc, period, epoch, window=0.05):
     '''
-    Not yet implemented.
+    This function is a wrapper to download a single quarter of Kepler
+    lightcurve data, and extract a LightCurve object from it.
+
+    When downloading a Kepler LightCurveFile from online, we get lots
+    of information, including multiple different kinds of light curves
+    for the same star. The goal of this little wrapper is to make it
+    easy to get just one single light curve to play with.
+
+    This has been tested only on data from the main Kepler mission.
+    For K2 data, you may need to download a TPF.
+
+    Parameters
+    ----------
+
+    lc: object
+        The 'lightkurve' object which contains transit data (time, flux) that
+        we are analyzing.
+
+    period: float
+        The period (days) of the planet's orbit.
+
+    epoch: float
+        The JD value reported for the mid-transit time of this planet. Epoch
+        is used to find other transits in the data.
+
+    window: float
+        The transit duration (in days), used here to specify a window of data
+        points to extract as the in-transit data.
+
+    Returns
+    -------
+
+    transits: LightCurve object
+        This is a `lightkurve`-style LightCurve object, which contains
+        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
+        of the star). This object contains the data points between ingress
+        egress of a transit.
+
+    notransits: LightCurve object
+        This is a `lightkurve`-style LightCurve object, which contains
+        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
+        of the star). This object contains the data points outside of a transit.
+
     '''
 
     time = lc.time
@@ -158,8 +200,8 @@ def extract_transits(lc, period, epoch, window):
             if (mid_transit_times[i] <= lc.time[-1]):
 
                 t0 = mid_transit_times[i]
-                ingress.append(t0 - window)
-                egress.append(t0 + window)
+                ingress.append(t0 - window/2.0)
+                egress.append(t0 + window/2.0)
 
     transit_indices = []
 
