@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Working with Images" href="images.html" /> 
+    <link rel="prev" title="Target Pixel Files" href="tpf.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                0.6.2
+                0.8.0
               </div>
             
           
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="fitting.html">Fitting a Model to Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="images.html">Working with Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tpf.html">Target Pixel Files</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.lightcurves">lightcurves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.statistics">statistics</a></li>
@@ -190,7 +191,7 @@
 <span id="lightcurves"></span><h2>lightcurves<a class="headerlink" href="#module-henrietta.lightcurves" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="henrietta.lightcurves.download_kepler_lc">
-<code class="descclassname">henrietta.lightcurves.</code><code class="descname">download_kepler_lc</code><span class="sig-paren">(</span><em>star='Kepler-186'</em>, <em>quarter='all'</em>, <em>cadence='long'</em>, <em>quality_bitmask='hard'</em>, <em>kind='PDCSAP_FLUX'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#download_kepler_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.download_kepler_lc" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">download_kepler_lc</code><span class="sig-paren">(</span><em>star='Kepler-186'</em>, <em>quarter='all'</em>, <em>cadence='long'</em>, <em>quality_bitmask='hard'</em>, <em>kind='PDCSAP_FLUX'</em>, <em>**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#download_kepler_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.download_kepler_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function is a wrapper to download one or more quarters of Kepler
 lightcurve data, and extract a LightCurve object from it.</p>
 <p>When downloading a Kepler LightCurveFile from online, we get lots
@@ -232,6 +233,9 @@ This can be a name (“Kepler-42”, “KOI-961”) or a KIC number
 “PDCSAP_FLUX” = SAP, with pre-search data conditioning applied to get
 rid of some instrumental systematics from the light curves (but watch
 out! some astrophysical signals might be messed up too!)</p>
+</dd>
+<dt><strong>kw</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dict</span></dt>
+<dd><p class="first last">Additional keywords will be passed to <cite>.from_archive</cite>.</p>
 </dd>
 </dl>
 </td>
@@ -475,7 +479,7 @@ ax = example_transit_model(rp=0.042, b=0.9, ax=ax)
 
 <dl class="function">
 <dt id="henrietta.modeling.plot_with_transit_model">
-<code class="descclassname">henrietta.modeling.</code><code class="descname">plot_with_transit_model</code><span class="sig-paren">(</span><em>lc</em>, <em>period=1.0</em>, <em>t0=0</em>, <em>radius=0.1</em>, <em>a=10.0</em>, <em>b=0.0</em>, <em>baseline=1.0</em>, <em>ld1=0.1</em>, <em>ld2=0.3</em>, <em>planet_name=''</em>, <em>goodness=None</em>, <em>show_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#plot_with_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.plot_with_transit_model" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">henrietta.modeling.</code><code class="descname">plot_with_transit_model</code><span class="sig-paren">(</span><em>lc</em>, <em>period=1.0</em>, <em>t0=0</em>, <em>radius=0.1</em>, <em>a=10.0</em>, <em>b=0.0</em>, <em>baseline=1.0</em>, <em>ld1=0.1</em>, <em>ld2=0.3</em>, <em>planet_name=''</em>, <em>goodness=None</em>, <em>show_errors=False</em>, <em>datakw={}</em>, <em>modelkw={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/modeling.html#plot_with_transit_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.modeling.plot_with_transit_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function will take in a lightcurve for a planet
 with a given set of transit parameters (period, t0, radius, a, b, baseline)
 and will plot a batman light curve model. Limb-darkening coefficients
@@ -518,6 +522,14 @@ can also be specified in the form [u1,u2].</p>
 <dt><strong>goodness</strong> <span class="classifier-delimiter">:</span> <span class="classifier">function</span></dt>
 <dd><p class="first last">A function that takes an array of values for (data-model),
 and returns a goodness of fit metric.</p>
+</dd>
+<dt><strong>datakw</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dictionary</span></dt>
+<dd><p class="first last">A dictionary with keywords that will be passed to the plt.plot()
+command that displays the actual data points.</p>
+</dd>
+<dt><strong>modelkw</strong> <span class="classifier-delimiter">:</span> <span class="classifier">dictionary</span></dt>
+<dd><p class="first last">A dictionary with keywords that will be passed to the plt.plot()
+command that displays the actual the smooth model.</p>
 </dd>
 </dl>
 </td>
@@ -738,7 +750,7 @@ using the two values as their allowable bounds.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="images.html" class="btn btn-neutral" title="Working with Images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tpf.html" class="btn btn-neutral" title="Target Pixel Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

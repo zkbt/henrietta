@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                0.6.2
+                0.8.0
               </div>
             
           
@@ -89,6 +89,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../fitting.html">Fitting a Model to Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../images.html">Working with Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tpf.html">Target Pixel Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -381,7 +382,9 @@
                            <span class="n">ld1</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">ld2</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
                            <span class="n">planet_name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
                            <span class="n">goodness</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                           <span class="n">show_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                           <span class="n">show_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">datakw</span><span class="o">=</span><span class="p">{},</span>
+                           <span class="n">modelkw</span><span class="o">=</span><span class="p">{}):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function will take in a lightcurve for a planet</span>
 <span class="sd">    with a given set of transit parameters (period, t0, radius, a, b, baseline)</span>
@@ -423,6 +426,14 @@
 <span class="sd">    goodness : function</span>
 <span class="sd">        A function that takes an array of values for (data-model),</span>
 <span class="sd">        and returns a goodness of fit metric.</span>
+
+<span class="sd">    datakw : dictionary</span>
+<span class="sd">        A dictionary with keywords that will be passed to the plt.plot()</span>
+<span class="sd">        command that displays the actual data points.</span>
+
+<span class="sd">    modelkw : dictionary</span>
+<span class="sd">        A dictionary with keywords that will be passed to the plt.plot()</span>
+<span class="sd">        command that displays the actual the smooth model.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># create a high-resolution grid of times to plot</span>
@@ -463,38 +474,44 @@
 
 
     <span class="n">a0</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux&#39;</span><span class="p">)</span><span class="c1">#,fontsize=18)</span>
-    <span class="n">datakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">actualdatakw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;royalblue&#39;</span><span class="p">,</span><span class="n">markersize</span><span class="o">=</span><span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">actualdatakw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+
+    <span class="n">actualmodelkw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">actualmodelkw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">modelkw</span><span class="p">)</span>
 
     <span class="n">summary</span> <span class="o">=</span> <span class="s1">&#39;BATMAN(period=</span><span class="si">{period}</span><span class="s1">,t0=</span><span class="si">{t0}</span><span class="s1">,radius=</span><span class="si">{radius}</span><span class="s1">,a=</span><span class="si">{a}</span><span class="s1">,b=</span><span class="si">{b}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
-    <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">highres_time</span><span class="p">,</span><span class="n">model_plot</span><span class="p">,</span><span class="n">zorder</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model&#39;</span><span class="p">)</span>
+    <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">highres_time</span><span class="p">,</span><span class="n">model_plot</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Model&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">actualmodelkw</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
-        <span class="n">a0</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+        <span class="n">a0</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">actualdatakw</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+        <span class="n">a0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Data&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">actualdatakw</span><span class="p">)</span>
 
 
     <span class="n">a0</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span><span class="c1">#loc=&#39;upper left&#39;, bbox_to_anchor=(1,1))</span>
 
     <span class="k">if</span> <span class="n">show_errors</span><span class="p">:</span>
-        <span class="n">a1</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span><span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
+        <span class="n">a1</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">yerr</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">,</span> <span class="o">**</span><span class="n">actualdatakw</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">a1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">datakw</span><span class="p">)</span>
-    <span class="n">a1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">a1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">,</span><span class="n">residual</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">actualdatakw</span><span class="p">)</span>
+    <span class="n">a1</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">actualmodelkw</span><span class="p">)</span>
     <span class="n">a1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)),</span><span class="mi">0</span><span class="o">+</span><span class="mf">1.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">residual</span><span class="p">)))</span>
     <span class="n">a1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
-    <span class="c1">#a1.legend()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
 
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span><span class="c1">#,fontsize=16)</span>
-    <span class="c1">#plt.tight_layout()</span>
+    <span class="k">if</span> <span class="n">planet_name</span> <span class="ow">is</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> | &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">planet_name</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">goodness</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="n">summary</span>
+        <span class="n">title</span> <span class="o">+=</span> <span class="n">summary</span>
         <span class="n">gof</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">gof</span> <span class="o">=</span> <span class="n">goodness</span><span class="p">(</span><span class="n">residual</span><span class="o">/</span><span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span><span class="p">)</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1">=</span><span class="si">{:.4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">goodness</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">gof</span><span class="p">)</span>
+        <span class="n">title</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> | </span><span class="si">{}</span><span class="s1">=</span><span class="si">{:.4}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">goodness</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">gof</span><span class="p">)</span>
     <span class="n">a0</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">gof</span></div>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Simulating Images &mdash; henrietta 0.0.0 documentation</title>
+  <title>Target Pixel Files &mdash; henrietta 0.0.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Working with Images" href="images.html" />
-    <link rel="prev" title="Fitting a Model to Data" href="fitting.html" /> 
+    <link rel="next" title="Function Definitions" href="api.html" />
+    <link rel="prev" title="Working with Images" href="images.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -89,13 +89,13 @@
 <li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fitting.html">Fitting a Model to Data</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulating Images</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Simulate-the-Optics-of-Our-Telescope">Simulate the Optics of Our Telescope</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Simulate-the-Detector-Behind-Our-Telescope">Simulate the Detector Behind Our Telescope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images.html">Working with Images</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Target Pixel Files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Downloading-TPFs">Downloading TPFs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Simple-TPF-Procedures">Simple TPF Procedures</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="images.html">Working with Images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpf.html">Target Pixel Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -143,13 +143,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Simulating Images</li>
+      <li>Target Pixel Files</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/simulating.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/tpf.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -345,94 +345,109 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="Simulating-Images">
-<h1>Simulating Images<a class="headerlink" href="#Simulating-Images" title="Permalink to this headline">¶</a></h1>
-<p>In class, we talked about how a telescope’s <em>optics</em> form an image at a
-focal plane and a telescope’s <em>detector</em> records that image. We’ve added
-two cartoon functions to <code class="docutils literal notranslate"><span class="pre">henrietta</span></code> that help us understand the
-basics of this process: one that uses online star catalogs and your
-inputs to (very approximately) simulate a patch of the sky seen through
-the optics of a telescope, and one that simulates a detector recording
-that image.</p>
+<div class="section" id="Target-Pixel-Files">
+<h1>Target Pixel Files<a class="headerlink" href="#Target-Pixel-Files" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> documention has <em>awesome</em> resources for playing with
+Target Pixel Files (TPFs) from Kepler or TESS. Go look
+<a class="reference external" href="http://docs.lightkurve.org">there</a>! However, we added a few small
+wrappers to make it very slightly easier to download a simple Target
+Pixel File for either Kepler, K2, or TESS. Here’s the scoop:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span><span class="o">,</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">henrietta</span> <span class="k">import</span> <span class="n">imaging</span>
+<span></span><span class="kn">import</span> <span class="nn">henrietta</span> <span class="k">as</span> <span class="nn">hsl</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="Simulate-the-Optics-of-Our-Telescope">
-<h2>Simulate the Optics of Our Telescope<a class="headerlink" href="#Simulate-the-Optics-of-Our-Telescope" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">simulate_optics</span></code> function produces a simulation of the image that
-would appear at the focal plane of a telescope, expressed in units of
-photons/s/pixel. These images are “perfect”, in the sense that they are
-an expectation for the rate at which photons will be hitting a detector.</p>
+<div class="section" id="Downloading-TPFs">
+<h2>Downloading TPFs<a class="headerlink" href="#Downloading-TPFs" title="Permalink to this headline">¶</a></h2>
+<p>For Kepler, you’ll need to specify a Kepler quarter, a period of roughly
+90 days. Remember that the pixels rotate on the sky 4 times a year, so
+you can’t seamlessly stitch together multiple TPFs.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fluximage</span> <span class="o">=</span> <span class="n">imaging</span><span class="o">.</span><span class="n">simulate_optics</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="s1">&#39;GJ 1132&#39;</span><span class="p">,</span>
-                                    <span class="n">collectingarea</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                    <span class="n">pixelscale</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span>
-                                    <span class="n">fov</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span>
-                                    <span class="n">background</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+<span></span><span class="n">tpf_kepler</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_tpf</span><span class="p">(</span><span class="s1">&#39;Kepler-7&#39;</span><span class="p">,</span> <span class="n">quarter</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">plt.imshow</span></code> function (with its many options!) can display that
-image for us to peruse.</p>
+<p>For K2, you can include a star name or an EPIC ID number (which can
+often be found on the NASA Exoplanet Archive).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">fluximage</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;photons/s/pixel&#39;</span><span class="p">);</span>
+<span></span><span class="n">tpf_k2</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_k2_tpf</span><span class="p">(</span><span class="mi">206103150</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="Simulate-the-Detector-Behind-Our-Telescope">
-<h2>Simulate the Detector Behind Our Telescope<a class="headerlink" href="#Simulate-the-Detector-Behind-Our-Telescope" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">simulate_detector</span></code> function takes an image at the focal plane (in
-photons/s), and simulates the total number of photons the detector would
-record. These are noisy images, with the effects of photon noise
-included.</p>
+<p>For TESS, only a <em>tiny</em> fraction of the data is available right now, all
+located at
+<a class="reference external" href="https://archive.stsci.edu/prepds/tess-data-alerts/">MAST</a>. Still,
+here’s a wrapper to download a star, based on its TESS Input Catalog
+(TIC) identification number.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">photonimage</span> <span class="o">=</span> <span class="n">imaging</span><span class="o">.</span><span class="n">simulate_detector</span><span class="p">(</span><span class="n">fluximage</span><span class="p">,</span>
-                                        <span class="n">exptime</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                        <span class="n">quantumefficiency</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
-                                        <span class="n">readnoise</span><span class="o">=</span><span class="mf">10.0</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">photonimage</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;photons/pixel&#39;</span><span class="p">);</span>
+<span></span><span class="n">tpf_tess</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_tess_tpf</span><span class="p">(</span><span class="mi">25155310</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>If you run <code class="docutils literal notranslate"><span class="pre">simulate_detector</span></code> several times, you’ll see you keep
-getting slightly different images. The function is simulating the actual
-detection of photons, and because we know photon-counting measurements
-always have uncertainties associated with them
-(<span class="math notranslate nohighlight">\(\sigma = \sqrt{N}\)</span>)ca</p>
-<p><strong>Simulate Your Own Star, with your Own Telescope</strong></p>
-<p>Here are some ways you might think about playing with these tools: Pick
-a star and simulate some images. How does a flux image (photons/s/pixel)
-look different with Kepler, TESS, or a cell phone camera? How does the
-appearance of a photon image (photons/pixel) change if you change the
-exposure time? What challenges would be unique to each telescope? Play
-with the <code class="docutils literal notranslate"><span class="pre">background</span></code> keyword in <code class="docutils literal notranslate"><span class="pre">simulate_optics</span></code>; why is it
-difficult to see stars during the day (on Earth)?</p>
+</div>
+<div class="section" id="Simple-TPF-Procedures">
+<h2>Simple TPF Procedures<a class="headerlink" href="#Simple-TPF-Procedures" title="Permalink to this headline">¶</a></h2>
+<p>This is just a tiny sample of things you can do with a TPF. Again, you
+should go read the <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> <a class="reference external" href="http://docs.lightkurve.org">documentation and
+tutorials</a> for TPFs! You can make an
+imshow plot of a single frame, where you specify which image you want in
+the movie via the <code class="docutils literal notranslate"><span class="pre">frame</span></code> keyword.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">tpf_k2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">tpf_k2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="mi">100</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<p>You can make a light curve from the TPF.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">lc</span> <span class="o">=</span><span class="n">tpf_k2</span><span class="o">.</span><span class="n">to_lightcurve</span><span class="p">(</span><span class="n">aperture_mask</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span>
+<span class="n">lc</span><span class="o">.</span><span class="n">scatter</span><span class="p">();</span>
+</pre></div>
+</div>
+</div>
+<p>You can access the times and the array of fluxes directly.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">time</span> <span class="o">=</span> <span class="n">tpf_k2</span><span class="o">.</span><span class="n">time</span>
+<span class="n">movie</span> <span class="o">=</span> <span class="n">tpf_k2</span><span class="o">.</span><span class="n">flux</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;This TPF has </span><span class="si">{}</span><span class="s1"> times and an array of pixels with shape </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="n">movie</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -444,10 +459,10 @@ difficult to see stars during the day (on Earth)?</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="images.html" class="btn btn-neutral float-right" title="Working with Images" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Function Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="fitting.html" class="btn btn-neutral" title="Fitting a Model to Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="images.html" class="btn btn-neutral" title="Working with Images" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

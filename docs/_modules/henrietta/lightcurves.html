@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                0.6.2
+                0.8.0
               </div>
             
           
@@ -89,6 +89,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../fitting.html">Fitting a Model to Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../images.html">Working with Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tpf.html">Target Pixel Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -163,7 +164,7 @@
                        <span class="n">quarter</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
                        <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;long&#39;</span><span class="p">,</span>
                        <span class="n">quality_bitmask</span><span class="o">=</span><span class="s1">&#39;hard&#39;</span><span class="p">,</span>
-                       <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;PDCSAP_FLUX&#39;</span><span class="p">):</span>
+                       <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;PDCSAP_FLUX&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    This function is a wrapper to download one or more quarters of Kepler</span>
 <span class="sd">    lightcurve data, and extract a LightCurve object from it.</span>
@@ -205,6 +206,9 @@
 <span class="sd">        rid of some instrumental systematics from the light curves (but watch</span>
 <span class="sd">        out! some astrophysical signals might be messed up too!)</span>
 
+<span class="sd">    kw : dict</span>
+<span class="sd">        Additional keywords will be passed to `.from_archive`.</span>
+
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 
@@ -219,7 +223,8 @@
     <span class="n">lcf</span> <span class="o">=</span> <span class="n">KeplerLightCurveFile</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">star</span><span class="p">,</span>
                                             <span class="n">quarter</span><span class="o">=</span><span class="n">quarter</span><span class="p">,</span>
                                             <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span>
-                                            <span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">)</span>
+                                            <span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">,</span>
+                                            <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
 
     <span class="c1"># if a list, stitch things together (crudely! will be terrible for SAP!)</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lcf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
