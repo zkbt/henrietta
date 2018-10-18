@@ -34,7 +34,7 @@
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.viewcode',
               'sphinx.ext.githubpages',
-              'nbsphinx']
+              'nbsphinx', 'numpydoc']
 
 nbsphinx_execute = 'never'
 
@@ -61,7 +61,8 @@ author = 'Zach Berta-Thompson and students at CU Boulder'
 # built documents.
 #
 # The short X.Y version.
-version = '0.0.0'
+import henrietta
+version = henrietta.__version__
 # The full version, including alpha/beta/rc tags.
 release = '0.0.0'
 

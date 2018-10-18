@@ -1,16 +1,16 @@
 # henrietta
-Tools for the Fall 2018 semester of ASTR3400: Research Methods (The Henrietta Project). The documentation for using these tools, along with some examples and exercises, are located over at [zkbt.github.io/henrietta/docs](http://zkbt.github.io/henrietta/docs). 
+Tools for the Fall 2018 semester of ASTR3400: Research Methods (The Henrietta Project). The documentation for using these tools, along with some examples and exercises, are located over at [zkbt.github.io/henrietta/docs](http://zkbt.github.io/henrietta/docs).
 
 ## Installation
 If you're working on the `scorpius` computers at SBO, you should be able to access these tools simply by running `source henrietta` from a UNIX prompt.
 
-If you're working on your own computer, you should be able to install this by running 
+If you're working on your own computer, you should be able to install this by running
 ```
-pip install git+https://github.com/zkbt/henrietta.git
+pip install henrietta
 ```
-from a UNIX prompt. As we add more code to this package, you may need to upgrade the version that is installed on your computer. To upgrade, run 
+from a UNIX prompt. As we add more code to this package, you may need to upgrade the version that is installed on your computer. To upgrade, run
 ```
-pip install git+https://github.com/zkbt/henrietta.git --upgrade
+pip install henrietta --upgrade
 ```
 instead. That will make sure it always grabs the latest version of the code.
 
@@ -24,4 +24,4 @@ This will link the installed version of the `henrietta` package to your local re
 
 ## Contributors
 
-This package was written by [Zach Berta-Thompson](https://github.com/zkbt) and [Will Waalkes](https://github.com/waalkesw).
+This package was written by [Zach Berta-Thompson](https://github.com/zkbt), [Will Waalkes](https://github.com/waalkesw), and [Jessica Roberts](https://github.com/jessicaeroberts).
