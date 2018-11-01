@@ -49,7 +49,6 @@ def mcmc_fit(astropy_model, lc):
         if model.fixed.keys()[k] == False:
             i += 1
 
-
     # intialize some walkers
     ndim, nwalkers, nsteps = i, 100, 10000
     burnin = int(0.2*nsteps)
