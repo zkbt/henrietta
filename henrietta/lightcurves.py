@@ -188,13 +188,15 @@ def extract_transits(lc, period, epoch, window=0.05):
     flux = lc.flux
     error = lc.flux_err
 
-    n = np.linspace(0,99999,100000)
-    mid_transit_times = (period*n + epoch)
+    n = np.round((time-epoch)/period)
+    n_transit = np.unique(n)
+
+    mid_transit_times = (period*n_transit + epoch)
 
     ingress = []
     egress = []
 
-    for i in range(len(n)):
+    for i in range(len(n_transit)):
         if (mid_transit_times[i] >= lc.time[0]):
             if (mid_transit_times[i] <= lc.time[-1]):
 
