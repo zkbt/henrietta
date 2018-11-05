@@ -26,7 +26,7 @@ def lnprob(parameters):
     # Pull out some model parameters
     params = parameters #somehow I have to specify which fixed and floating params are used
 
-    model = How am I actually calculating the batman modeL?
+    model = 'How am I actually calculating the batman model?'
 
     # This is a Gaussian likelihood, for independent data points
 
@@ -49,9 +49,12 @@ def mcmc_fit(astropy_model, lc):
     ld1 = astropy_model.ld1.value
     ld2 = astropy_model.ld2.value
 
+    variable_names = []
+
     i = 0
     for k in astropy_model.fixed:
         if astropy_model.fixed[k] == False:
+            variable_names.append(astropy_model.param_names[k])
             i += 1
 
     # intialize some walkers
