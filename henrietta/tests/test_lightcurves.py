@@ -30,7 +30,7 @@ def test_locate():
     plt.legend(bbox_to_anchor=(1,1), loc='upper left')
     plt.tight_layout()
 
-def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.15):
+def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.05):
 
     # create a simulated light curve
     lc = simulate_transit_data(period=period, t0=t0)
