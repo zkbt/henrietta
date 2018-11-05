@@ -40,18 +40,18 @@ def lnprob(parameters):
 
 def mcmc_fit(astropy_model, lc):
 
-    period = astropy_model.period
-    t0 = astropy_model.t0
-    radius = astropy_model.radius
-    a = astropy_model.a
-    b = astropy_model.b
-    baseline = astropy_model.baseline
-    ld1 = astropy_model.ld1
-    ld2 = astropy_model.ld2
+    period = astropy_model.period.value
+    t0 = astropy_model.t0.value
+    radius = astropy_model.radius.value
+    a = astropy_model.a.value
+    b = astropy_model.b.value
+    baseline = astropy_model.baseline.value
+    ld1 = astropy_model.ld1.value
+    ld2 = astropy_model.ld2.value
 
     i = 0
-    for k in model.fixed.keys():
-        if model.fixed.keys()[k] == False:
+    for k in astropy_model.fixed:
+        if astropy_model.fixed[k] == False:
             i += 1
 
     # intialize some walkers
@@ -60,6 +60,7 @@ def mcmc_fit(astropy_model, lc):
 
     # these are initial parameters
     param_initial = np.random.uniform(param[0], param[1], nwalkers)
+    'How to set up the initial parameters?'
 
     p0 = np.transpose([param_initial])
 
@@ -67,12 +68,10 @@ def mcmc_fit(astropy_model, lc):
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
     result = sampler.run_mcmc(p0, nsteps)
 
-    Rp = sampler.flatchain[int(nsteps*nwalkers/2):,0]
-    t0 = sampler.flatchain[int(nsteps*nwalkers/2):,1]
+    max_likelihood = {}
 
-    sig1_Rp = np.percentile(Rp, [16., 50., 84.])
-    print(sig1_Rp)
-    sig1_t0 = np.percentile(t0, [16., 50., 84.])
-    print(sig1_t0)
+    for j in range(i):
+        param_samples[j] = sampler.flatchain[int(nsteps*nwalkers/i):,j]
+        max_likelihood[variable_names[j]] = np.percentile(param_samples[j], [16., 50., 84.])
 
     return max_likelihood,sampler
