@@ -1,4 +1,5 @@
 from ..lightcurves import *
+from ..modeling import *
 
 def test_download_kepler_lc():
     '''
@@ -36,7 +37,7 @@ def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.15):
     lc = simulate_transit_data(period=period, t0=t0)
 
     # split into two light curves, one with transits, one without
-    transits, notransits = extract_transits(lc, period, epoch=t0, window)
+    transits, notransits = extract_transits(lc, period, epoch=t0, window=window)
 
     # make sure the sizes of these light curves make sense
     assert(len(transits.flux) + len(notransits.flux) == len(lc.flux))
@@ -44,3 +45,5 @@ def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.15):
     # make sure we can plot both of them (and)
     ax = transits.scatter(c='gray')
     notransits.scatter(ax=ax, c='darkorange')
+
+    return transits, notransits
