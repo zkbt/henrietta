@@ -188,7 +188,7 @@ def extract_transits(lc, period, epoch, window=0.05):
     flux = lc.flux
     error = lc.flux_err
 
-    n = np.linspace(0,9999,10000)
+    n = np.linspace(0,99999,100000)
     mid_transit_times = (period*n + epoch)
 
     ingress = []
