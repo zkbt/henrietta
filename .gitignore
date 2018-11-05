@@ -1,4 +1,16 @@
+# Anything in this file will by default by ignored by git.
+# If you want git to track something that would match one of
+# these filters, you would have to add it explicitly by name.
+*.mp4
+*.gif
+*.mov
+
+# the tests for lightkurve will make this directory, don't track it
 mastDownload
+examples
+
+# these are from pytest
+.pytest_cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
