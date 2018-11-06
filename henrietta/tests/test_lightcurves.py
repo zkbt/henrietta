@@ -43,7 +43,7 @@ def test_extract(period = 1.234, t0 = 2451234.5678, window = 0.05):
     assert(len(transits.flux) + len(notransits.flux) == len(lc.flux))
 
     # make sure we can plot both of them (and)
-    ax = transits.scatter(c='gray')
-    notransits.scatter(ax=ax, c='darkorange')
+    ax = transits.scatter(c='gray',normalize=False)
+    notransits.scatter(ax=ax, c='darkorange',normalize=False)
 
     return transits, notransits
