@@ -139,16 +139,10 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
 
 def extract_transits(lc, period, epoch, window=0.05):
     '''
-    This function is a wrapper to download a single quarter of Kepler
-    lightcurve data, and extract a LightCurve object from it.
-
-    When downloading a Kepler LightCurveFile from online, we get lots
-    of information, including multiple different kinds of light curves
-    for the same star. The goal of this little wrapper is to make it
-    easy to get just one single light curve to play with.
-
-    This has been tested only on data from the main Kepler mission.
-    For K2 data, you may need to download a TPF.
+    This function splits a light curve into two complementary
+    light curves: one that includes just the transits (and a
+    bit of a window surrounding them) and one that contains all
+    the other non-transit parts of the light curve.
 
     Parameters
     ----------
