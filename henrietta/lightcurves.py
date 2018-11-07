@@ -2,6 +2,7 @@ from lightkurve import KeplerLightCurveFile, lightcurve
 import matplotlib.pyplot as plt
 import numpy as np
 from .tools import *
+from lightkurve.lightcurve import LightCurve
 
 def download_kepler_lc(star='Kepler-186',
                        quarter='all',
@@ -140,13 +141,84 @@ def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
     return transit_loc
 
 
-def extract_transits(lc, period, epoch, duration, baseline):
+def extract_transits(lc, period, epoch, window=0.05):
     '''
-    Not yet implemented.
+    This function splits a light curve into two complementary
+    light curves: one that includes just the transits (and a
+    bit of a window surrounding them) and one that contains all
+    the other non-transit parts of the light curve.
+
+    Parameters
+    ----------
+
+    lc: object
+        The 'lightkurve' object which contains transit data (time, flux) that
+        we are analyzing.
+
+    period: float
+        The period (days) of the planet's orbit.
+
+    epoch: float
+        The JD value reported for the mid-transit time of this planet. Epoch
+        is used to find other transits in the data.
+
+    window: float
+        The transit duration (in days), used here to specify a window of data
+        points to extract as the in-transit data.
+
+    Returns
+    -------
+
+    transits: LightCurve object
+        This is a `lightkurve`-style LightCurve object, which contains
+        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
+        of the star). This object contains the data points between ingress
+        egress of a transit.
+
+    notransits: LightCurve object
+        This is a `lightkurve`-style LightCurve object, which contains
+        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness
+        of the star). This object contains the data points outside of a transit.
+
     '''
 
     time = lc.time
     flux = lc.flux
+    error = lc.flux_err
 
+    n = np.round((time-epoch)/period)
+    n_transit = np.unique(n)
+
+    mid_transit_times = (period*n_transit + epoch)
+
+    ingress = []
+    egress = []
+
+    for i in range(len(n_transit)):
+        if (mid_transit_times[i] >= lc.time[0]):
+            if (mid_transit_times[i] <= lc.time[-1]):
+
+                t0 = mid_transit_times[i]
+                ingress.append(t0 - window/2.0)
+                egress.append(t0 + window/2.0)
+
+    transit_indices = []
+
+    for i in range(len(time)):
+        for j in range(len(ingress)):
+            if time[i] >= ingress[j]:
+                if time[i] <= egress[j]:
+                    transit_indices.append(i)
+
+    transit_time = time[transit_indices]
+    transit_flux = flux[transit_indices]
+    transit_error = error[transit_indices]
+
+    oot_time = np.delete(time,transit_indices)
+    oot_flux = np.delete(flux,transit_indices)
+    oot_error = np.delete(error,transit_indices)
+
+    transits = LightCurve(transit_time, transit_flux, transit_error)
+    notransits = LightCurve(oot_time, oot_flux, oot_error)
 
     return transits, notransits
