@@ -21,16 +21,19 @@ which will adapt to however many free parameters are presentself.
 
 def lnprob(parameters):
 
-    #here, parameters is pulled from the astropy model object
+    'parameters length is the length of floating parameters'
 
-    # Pull out some model parameters
-    params = parameters #somehow I have to specify which fixed and floating params are used
+    'Non-fixed parameters have to be set by this array of parameters'
+    'i.e. astropy_model.t0 = parameters[0]'
 
-    model = 'How am I actually calculating the batman model?'
+    for l in parameters:
+        astropy_model.{}.format(l) = parameters[l]
+
+    model = astropy_model(lc.time)
 
     # This is a Gaussian likelihood, for independent data points
 
-    if (0.0 <= rp <= 1.0) and (times[0] <= t_0 <= times[-1] ):
+    if (0.0 <= radius <= 1.0) and (times[0] <= t0 <= times[-1] ):
         chisq = np.sum((lc.flux - model)**2/(lc.flux_err)**2)
         lnp = np.sum(1/np.sqrt(2*np.pi*(lc.flux_err))) - 0.5*chisq
 
@@ -40,14 +43,16 @@ def lnprob(parameters):
 
 def mcmc_fit(astropy_model, lc):
 
-    period = astropy_model.period.value
-    t0 = astropy_model.t0.value
-    radius = astropy_model.radius.value
-    a = astropy_model.a.value
-    b = astropy_model.b.value
-    baseline = astropy_model.baseline.value
-    ld1 = astropy_model.ld1.value
-    ld2 = astropy_model.ld2.value
+    period = astropy_model.period
+    t0 = astropy_model.t0
+    radius = astropy_model.radius
+    a = astropy_model.a
+    b = astropy_model.b
+    baseline = astropy_model.baseline
+    ld1 = astropy_model.ld1
+    ld2 = astropy_model.ld2
+
+    organized = dict(period, t0, radius, a, b, baseline, ld1, ld2)
 
     variable_names = []
 
@@ -61,11 +66,14 @@ def mcmc_fit(astropy_model, lc):
     ndim, nwalkers, nsteps = i, 100, 10000
     burnin = int(0.2*nsteps)
 
-    # these are initial parameters
-    param_initial = np.random.uniform(param[0], param[1], nwalkers)
-    'How to set up the initial parameters?'
+    param_initial = []
+    for k in organized:
+        if organized[k].fixed == False:
+            bounds = organized[k].bounds
+            organized[k].initialwalkers = np.random.uniform(bounds[0],bounds[1],nwalkers)
+            param_initial.append(organized[k].initialwalkers)
 
-    p0 = np.transpose([param_initial])
+    p0 = np.transpose(param_initial)
 
     # create a sampler and run it
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
