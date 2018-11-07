@@ -21,13 +21,15 @@ which will adapt to however many free parameters are presentself.
 
 def lnprob(parameters):
 
-    'parameters length is the length of floating parameters'
+    n = len(astropy_model.param_names)
 
-    'Non-fixed parameters have to be set by this array of parameters'
-    'i.e. astropy_model.t0 = parameters[0]'
-
-    for l in parameters:
-        astropy_model.{}.format(l) = parameters[l]
+    i = 0
+    for k in astropy_model.fixed:
+        if astropy_model.fixed[k] == False:
+            for m in range(n):
+                if astropy_model.param_names[m] == str(k):
+                    astropy_model.parameters[m] = parameters[i]
+                    i += 1
 
     model = astropy_model(lc.time)
 
@@ -43,23 +45,16 @@ def lnprob(parameters):
 
 def mcmc_fit(astropy_model, lc):
 
-    period = astropy_model.period
-    t0 = astropy_model.t0
-    radius = astropy_model.radius
-    a = astropy_model.a
-    b = astropy_model.b
-    baseline = astropy_model.baseline
-    ld1 = astropy_model.ld1
-    ld2 = astropy_model.ld2
-
-    organized = dict(period, t0, radius, a, b, baseline, ld1, ld2)
+    organized = dict(period = astropy_model.period, t0 = astropy_model.t0,
+                 radius = astropy_model.radius, a = astropy_model.a,
+                 b = astropy_model.b, baseline = astropy_model.baseline,
+                 ld1 = astropy_model.ld1, ld2 = astropy_model.ld2)
 
     variable_names = []
-
     i = 0
     for k in astropy_model.fixed:
         if astropy_model.fixed[k] == False:
-            variable_names.append(astropy_model.param_names[k])
+            variable_names.append(str(k))
             i += 1
 
     # intialize some walkers
