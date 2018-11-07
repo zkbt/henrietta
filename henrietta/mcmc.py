@@ -1,13 +1,7 @@
 from astropy.modeling import models, fitting, optimizers, statistic, custom_model
-import pandas
 import numpy as np
-import matplotlib.pyplot as plt
-import lightkurve
 import emcee
 import batman
-from lightkurve.lightcurve import LightCurve
-from ldtk import (LDPSetCreator,BoxcarFilter)
-from ldtk.filters import kepler
 
 """
 Here I will write a function that takes in an astropy transit model and
