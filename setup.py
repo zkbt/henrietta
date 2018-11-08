@@ -87,13 +87,15 @@ setup(
                       'scipy',
                       'ipython',
                       'matplotlib',
-                      'lightkurve',
+                      'lightkurve>=1.0b16',
                       'tqdm',
                       'thefriendlystars>=0.0.2',
-                      'illumination>=0.0.0',
+                      'illumination>=0.0.3',
                       'ipywidgets',
                       'jupyter',
-                      'ipympl'],
+                      'photutils',
+                      'ipympl',
+                      'scikit-image'],
 
     # the packages in `key` will be installed if folks run `pip install henrietta[key]`
     extras_require={'models':['batman-package'],
