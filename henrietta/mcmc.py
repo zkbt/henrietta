@@ -30,14 +30,16 @@ def lnprob(parameters):
     # This is a Gaussian likelihood, for independent data points
 
     if (0.0 <= radius <= 1.0) and (times[0] <= t0 <= times[-1] ):
-        chisq = np.sum((lc.flux - model)**2/(lc.flux_err)**2)
-        lnp = np.sum(1/np.sqrt(2*np.pi*(lc.flux_err))) - 0.5*chisq
+        chisq = np.nansum((lc.flux - model)**2/(lc.flux_err)**2)
+        lnp = np.nansum(1/np.sqrt(2*np.pi*(lc.flux_err))) - 0.5*chisq
 
         return lnp
 
     return -np.inf
 
 def mcmc_fit(astropy_model, lc):
+
+    lc = lc.normalize()
 
     organized = dict(period = astropy_model.period, t0 = astropy_model.t0,
                  radius = astropy_model.radius, a = astropy_model.a,
