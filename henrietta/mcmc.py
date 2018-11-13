@@ -11,6 +11,8 @@ which are variable, and runs an MCMC with those parameters.
 The astropy model already knows which parameters are fixed vs. variable,
 I just need to figure out how to extract those parameters and set up an mcmc
 which will adapt to however many free parameters are presentself.
+
+FOLD and NORMALIZE your lightkurve before running this MCMC
 """
 
 def lnprob(params):
@@ -38,9 +40,6 @@ def lnprob(params):
     return -np.inf
 
 def mcmc_fit(astropy_model, lc):
-
-    #lc = lc.fold(period=astropy_model.period.value)
-    #lc = lc.normalize()
 
     organized = dict(period = astropy_model.period, t0 = astropy_model.t0,
                  radius = astropy_model.radius, a = astropy_model.a,
