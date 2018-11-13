@@ -13,7 +13,7 @@ I just need to figure out how to extract those parameters and set up an mcmc
 which will adapt to however many free parameters are presentself.
 """
 
-def lnprob(parameters):
+def lnprob(params):
 
     n = len(astropy_model.param_names)
 
@@ -22,14 +22,14 @@ def lnprob(parameters):
         if astropy_model.fixed[k] == False:
             for m in range(n):
                 if astropy_model.param_names[m] == str(k):
-                    astropy_model.parameters[m] = parameters[i]
+                    astropy_model.parameters[m] = params[i]
                     i += 1
 
     model = astropy_model(lc.time)
 
     # This is a Gaussian likelihood, for independent data points
 
-    if (0.0 <= radius <= 1.0) and (times[0] <= t0 <= times[-1] ):
+    if (0.0 <= astropy_model.radius <= 1.0) and (times[0] <= astropy_model.t0 <= times[-1] ) and (1.0 <= astropy_model.a <= 200.0 ):
         chisq = np.nansum((lc.flux - model)**2/(lc.flux_err)**2)
         lnp = np.nansum(1/np.sqrt(2*np.pi*(lc.flux_err))) - 0.5*chisq
 
@@ -39,7 +39,8 @@ def lnprob(parameters):
 
 def mcmc_fit(astropy_model, lc):
 
-    lc = lc.normalize()
+    #lc = lc.fold(period=astropy_model.period.value)
+    #lc = lc.normalize()
 
     organized = dict(period = astropy_model.period, t0 = astropy_model.t0,
                  radius = astropy_model.radius, a = astropy_model.a,
@@ -54,7 +55,7 @@ def mcmc_fit(astropy_model, lc):
             i += 1
 
     # intialize some walkers
-    ndim, nwalkers, nsteps = i, 100, 10000
+    ndim, nwalkers, nsteps = i, 100, 5000
     burnin = int(0.2*nsteps)
 
     param_initial = []
@@ -73,7 +74,7 @@ def mcmc_fit(astropy_model, lc):
     max_likelihood = {}
 
     for j in range(i):
-        param_samples[j] = sampler.flatchain[int(nsteps*nwalkers/i):,j]
-        max_likelihood[variable_names[j]] = np.percentile(param_samples[j], [16., 50., 84.])
+        param_samples = sampler.flatchain[int(nsteps*nwalkers/i):,j]
+        max_likelihood[variable_names[j]] = np.percentile(param_samples, [16., 50., 84.])
 
     return max_likelihood,sampler
