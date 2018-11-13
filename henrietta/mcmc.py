@@ -27,6 +27,9 @@ def lnprob(params):
                     astropy_model.parameters[m] = params[i]
                     i += 1
 
+    if (astropy_model.a <= astropy_model.b):
+        astropy_model.a = astropy_model.b + 0.01
+        
     model = astropy_model(lc.time)
 
     # This is a Gaussian likelihood, for independent data points
