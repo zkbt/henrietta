@@ -140,4 +140,21 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
     if saveplots == True:
         plt.savefig('corner_plot.pdf', clobber=True)
 
+    n = len(astropy_model.param_names)
+    i = 0
+    for k in astropy_model.param_names:
+        if astropy_model.fixed[k] == False:
+            for m in range(n):
+                if astropy_model.param_names[m] == str(k):
+                    astropy_model.parameters[m] = max_likelihood[k][1]
+                    i += 1
+
+    plt.figure()
+    lc.errorbar(alpha= 0.5,zorder=0,label='Data')
+    plt.plot(lc.time,astropy_model(lc.time),zorder=100,label='Maximum Likelihood Model')
+    plt.legend()
+    plt.show()
+    if saveplots == True:
+        plt.savefig('Best-fit-model.pdf',clobber=True)
+
     return max_likelihood,sampler
