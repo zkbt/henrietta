@@ -14,6 +14,11 @@ to fit those parameters and create a maximum likelihood model.
 
 def lnprob(params):
 
+    """
+    Determine which parameters are variable, and set their value to the
+    current parameter value in the chain.
+    -----------
+    """
     n = len(astropy_model.param_names)
 
     i = 0
@@ -27,9 +32,12 @@ def lnprob(params):
     if (astropy_model.a <= astropy_model.b):
         astropy_model.a = astropy_model.b + 0.01
 
+    """
+    Create the new model and calculate the log probability for a Gaussian
+    likelihood.
+    ------------
+    """
     model = astropy_model(lc.time)
-
-    # This is a Gaussian likelihood, for independent data points
 
     if (0.0 <= astropy_model.radius <= 1.0) and (lc.time[0] <= astropy_model.t0 <= lc.time[-1] ) and (1.0 <= astropy_model.a <= 200.0 ):
         chisq = np.nansum((lc.flux - model)**2/(lc.flux_err)**2)
@@ -86,6 +94,13 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
         lc = lc.normalize()
         print("Do I have to do everything?")
 
+    """
+    Create an organized parameter dictionary so that we can easily
+    populate some initial parameter values, and then define an array
+    of these initial values, to be input into emcee.
+    ----------
+    """
+
     organized = dict(period = astropy_model.period, t0 = astropy_model.t0,
                  radius = astropy_model.radius, a = astropy_model.a,
                  b = astropy_model.b, baseline = astropy_model.baseline,
@@ -110,10 +125,28 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
 
     p0 = np.transpose(param_initial)
 
+    """
+    Create a sampler object and run the actual MCMC.
+    ----------
+    """
+
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
     result = sampler.run_mcmc(p0, nsteps)
 
+    """
+    Pull out all the samples for the modeled parameters.
+    ----------
+    """
+
     samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
+
+    """
+    Set up the max_likelihood dictionary and populate it with the sample
+    results. Then, plot each free parameter value as a function of the
+    step in the chain each walker is at. This will show us whether or not
+    parameters are converging, and at which values.
+    ----------
+    """
 
     max_likelihood = {}
 
@@ -129,6 +162,12 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
         if saveplots == True:
             plt.savefig('walker_plot.pdf', clobber=True)
 
+    """
+    Set up a corner plot, which will show us contour plots for each pair
+    of parameters.
+    ----------
+    """
+
     ndim = i
     labels = variable_names
 
@@ -139,6 +178,12 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
 
     if saveplots == True:
         plt.savefig('corner_plot.pdf', clobber=True)
+
+    """
+    Finally, set the model parameters to the maximum likelihood values and
+    produce a plot of the data with that best fit model.
+    ----------
+    """
 
     n = len(astropy_model.param_names)
     i = 0
