@@ -50,7 +50,9 @@ def lnprob(params):
 def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
 
     '''
-    This function is a
+    This function will employ a Markov-Chain Monte Carlo to fit any number
+    of free parameters to an exoplanet transit light curve.
+
 
     Parameters
     ----------
