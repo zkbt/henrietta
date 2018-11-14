@@ -196,7 +196,8 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
 
     plt.figure()
     lc.errorbar(alpha= 0.5,zorder=0,label='Data')
-    plt.plot(lc.time,astropy_model(lc.time),zorder=100,label='Maximum Likelihood Model')
+    plt.plot(lc.time,astropy_model(lc.time),zorder=100,
+                label='Maximum Likelihood Model', color='b')
     plt.legend()
     plt.show()
     if saveplots == True:
