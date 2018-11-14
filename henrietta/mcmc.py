@@ -47,7 +47,7 @@ def lnprob(params):
 
     return -np.inf
 
-def mcmc_fit(astropy_model, lc, saveplots=False):
+def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
 
     '''
     This function is a
@@ -82,6 +82,12 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
 
     '''
 
+    """
+    First, check that the lc object is normalized and folded. If not,
+    fold and normalize it.
+    ----------
+    """
+
     fold_check = input(["Is your light curve folded? (y/n)"])
 
     if fold_check == "n":
@@ -95,6 +101,19 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
         print("Do I have to do everything?")
 
     """
+    Determine the names of all variable parameters, so that we can use
+    these names later.
+    ----------
+    """
+
+    variable_names = []
+    i = 0
+    for k in astropy_model.param_names:
+        if astropy_model.fixed[k] == False:
+            variable_names.append(str(k))
+            i += 1
+
+    """
     Create an organized parameter dictionary so that we can easily
     populate some initial parameter values, and then define an array
     of these initial values, to be input into emcee.
@@ -106,14 +125,7 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
                  b = astropy_model.b, baseline = astropy_model.baseline,
                  ld1 = astropy_model.ld1, ld2 = astropy_model.ld2)
 
-    variable_names = []
-    i = 0
-    for k in astropy_model.param_names:
-        if astropy_model.fixed[k] == False:
-            variable_names.append(str(k))
-            i += 1
-
-    ndim, nwalkers, nsteps = i, 100, 10000
+    ndim, nwalkers, nsteps = i, 100, nsteps
     burnin = int(0.2*nsteps)
 
     param_initial = []
@@ -126,17 +138,12 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
     p0 = np.transpose(param_initial)
 
     """
-    Create a sampler object and run the actual MCMC.
+    Create a sampler object and run the MCMC.
     ----------
     """
 
     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
     result = sampler.run_mcmc(p0, nsteps)
-
-    """
-    Pull out all the samples for the modeled parameters.
-    ----------
-    """
 
     samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
 
@@ -195,9 +202,11 @@ def mcmc_fit(astropy_model, lc, saveplots=False):
                     i += 1
 
     plt.figure()
+    plt.title('Light Curve with Maximum Likelihood Model')
     lc.errorbar(alpha= 0.5,zorder=0,label='Data')
     plt.plot(lc.time,astropy_model(lc.time),zorder=100,
-                label='Maximum Likelihood Model', color='b')
+                label='Maximum Likelihood Model',
+                color='b')
     plt.legend()
     plt.show()
     if saveplots == True:
