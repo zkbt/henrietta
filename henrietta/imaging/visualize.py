@@ -3,7 +3,7 @@ from .io import compile_rgb
 import illumination as il
 import astropy.units as u
 
-def animate_tpf(tpf, howmanydays=None):
+def animate_tpf(tpf, showdifference=False, howmanydays=None, timestep=30):
     '''
     Create a .mp4 animation of the data in a TPF.
 
@@ -12,8 +12,15 @@ def animate_tpf(tpf, howmanydays=None):
     tpf : KeplerTargetPixelFile
         A time series of pixels.
 
+    showdifference : bool
+        Should we also show the difference image, of each frame
+        with the median-frame subtracted?
+
     howmanydays : float
         The maximum number of days to animate.
+
+    timestep : float
+        The cadence at which to animate the movie, in units of minutes.
     '''
 
     # create a sequence of images
@@ -21,18 +28,26 @@ def animate_tpf(tpf, howmanydays=None):
 
     # create a frame of the raw data
     frame = il.imshowFrame(data=seq, title='{} | {}'.format(tpf.mission, tpf.targetid))
+    frames = [frame]
 
-    # create a frame with the subtracted data
-    diff = il.imshowFrame(data=seq, title='difference', processingsteps=['subtractmedian'])
 
-    #
-    illustration = il.GenericIllustration(imshows=[frame, diff], sharecolorbar=False)
+    if showdifference:
+        # create a frame with the subtracted data
+        diff = il.imshowFrame(data=seq, title='difference', processingsteps=['subtractmedian'])
+        frames.append(diff)
+
+    # create an illustration
+    illustration = il.GenericIllustration(imshows=frames, sharecolorbar=False)
     filename = '{}-{}-animated.mp4'.format(tpf.mission, tpf.targetid)
     if howmanydays is None:
         maxtimespan = None
     else:
         maxtimespan = howmanydays*u.day
-    illustration.animate(filename=filename, cadence=seq.cadence(), maxtimespan=maxtimespan)
+    if timestep is None:
+        cadence = seq.cadence()
+    else:
+        cadence = timestep*u.minute
+    illustration.animate(filename=filename, cadence=cadence, maxtimespan=maxtimespan)
 
 
 def display_rgb(red=None, green=None, blue=None, size = 8, origin='upper'):

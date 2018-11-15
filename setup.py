@@ -90,7 +90,7 @@ setup(
                       'lightkurve>=1.0b16',
                       'tqdm',
                       'thefriendlystars>=0.0.2',
-                      'illumination>=0.0.2',
+                      'illumination>=0.0.3',
                       'ipywidgets',
                       'jupyter',
                       'photutils',

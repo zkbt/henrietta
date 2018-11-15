@@ -1,14 +1,15 @@
-from lightkurve import KeplerLightCurveFile, lightcurve
+from lightkurve import KeplerLightCurveFile, lightcurve, search_lightcurvefile
 import matplotlib.pyplot as plt
 import numpy as np
 from .tools import *
 from lightkurve.lightcurve import LightCurve
+from lightkurve.collections import LightCurveFileCollection
 
 def download_kepler_lc(star='Kepler-186',
                        quarter='all',
                        cadence='long',
                        quality_bitmask='hard',
-                       kind='PDCSAP_FLUX'):
+                       kind='PDCSAP_FLUX', **kw):
     '''
     This function is a wrapper to download one or more quarters of Kepler
     lightcurve data, and extract a LightCurve object from it.
@@ -50,6 +51,9 @@ def download_kepler_lc(star='Kepler-186',
         rid of some instrumental systematics from the light curves (but watch
         out! some astrophysical signals might be messed up too!)
 
+    kw : dict
+        Additional keywords will be passed to `.from_archive`.
+
     Returns
     -------
 
@@ -60,14 +64,20 @@ def download_kepler_lc(star='Kepler-186',
 
     '''
 
-    # download a KeplerLightCurveFile from the MAST archive
-    lcf = KeplerLightCurveFile.from_archive(star,
-                                            quarter=quarter,
-                                            cadence=cadence,
-                                            quality_bitmask=quality_bitmask)
+    # download a KeplerLightCurveFile (or list of them) from the MAST archive
+    if quarter == 'all':
+        lcf = search_lightcurvefile(star,
+                            quarter=None,
+                            cadence=cadence,
+                            **kw).download_all(quality_bitmask=quality_bitmask)
+    else:
+        lcf = search_lightcurvefile(star,
+                            quarter=quarter,
+                            cadence=cadence,
+                            **kw).download(quality_bitmask=quality_bitmask)
 
     # if a list, stitch things together (crudely! will be terrible for SAP!)
-    if type(lcf) == list:
+    if isinstance(lcf, LightCurveFileCollection):
 
         # make a normalized light curve from the first light curve file
         lc = lcf[0].get_lightcurve(kind).normalize()

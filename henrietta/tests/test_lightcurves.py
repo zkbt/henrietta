@@ -8,7 +8,11 @@ def test_download_kepler_lc():
     '''
 
     lc = download_kepler_lc('Kepler-17')
-    lc.plot(marker='.', linewidth=0)
+    ax = lc.plot(marker='.', linewidth=0)
+    singlequarter = download_kepler_lc('Kepler-17', quarter=1)
+    singlequarter.plot(ax=ax, marker='.', linewidth=0)
+
+
     folded = lc.fold(1.48571092)
     folded.scatter(marker='.', linewidth=0)
 
@@ -22,7 +26,7 @@ def test_locate():
     lc = download_kepler_lc('Kepler-10', quarter=1)
 
     # make a light curve plot
-    lc.plot(marker='.', linewidth=0)
+    lc.flatten().plot(marker='.', linewidth=0)
 
     # draw lines for the planet on top
     locations = locate_transits(lc, period=0.837491, t0=2454964.57513, color='royalblue', name='Kepler-10b')

@@ -1,11 +1,13 @@
-from ..imports import *
 import illumination as il
-from IPython.display import display
-import ipywidgets as widgets
+from ..imports import *
 from .apertures import *
 from ..imaging import io
-from astropy.table import vstack
 
+from IPython.display import display
+from astropy.table import vstack
+import ipywidgets as widgets
+
+# Check it out:
 # https://github.com/matplotlib/jupyter-matplotlib might be good for widgets!
 
 
