@@ -56,7 +56,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.14.0
               </div>
             
           
@@ -90,6 +90,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../images.html">Working with Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tpf.html">Target Pixel Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../mcmc.html">MCMC Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -155,10 +156,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for henrietta.lightcurves</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">KeplerLightCurveFile</span><span class="p">,</span> <span class="n">lightcurve</span>
+<span></span><span class="kn">from</span> <span class="nn">lightkurve</span> <span class="k">import</span> <span class="n">KeplerLightCurveFile</span><span class="p">,</span> <span class="n">lightcurve</span><span class="p">,</span> <span class="n">search_lightcurvefile</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.tools</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">lightkurve.lightcurve</span> <span class="k">import</span> <span class="n">LightCurve</span>
+<span class="kn">from</span> <span class="nn">lightkurve.collections</span> <span class="k">import</span> <span class="n">LightCurveFileCollection</span>
 
 <div class="viewcode-block" id="download_kepler_lc"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.download_kepler_lc">[docs]</a><span class="k">def</span> <span class="nf">download_kepler_lc</span><span class="p">(</span><span class="n">star</span><span class="o">=</span><span class="s1">&#39;Kepler-186&#39;</span><span class="p">,</span>
                        <span class="n">quarter</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span>
@@ -219,15 +222,20 @@
 
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c1"># download a KeplerLightCurveFile from the MAST archive</span>
-    <span class="n">lcf</span> <span class="o">=</span> <span class="n">KeplerLightCurveFile</span><span class="o">.</span><span class="n">from_archive</span><span class="p">(</span><span class="n">star</span><span class="p">,</span>
-                                            <span class="n">quarter</span><span class="o">=</span><span class="n">quarter</span><span class="p">,</span>
-                                            <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span>
-                                            <span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">,</span>
-                                            <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+    <span class="c1"># download a KeplerLightCurveFile (or list of them) from the MAST archive</span>
+    <span class="k">if</span> <span class="n">quarter</span> <span class="o">==</span> <span class="s1">&#39;all&#39;</span><span class="p">:</span>
+        <span class="n">lcf</span> <span class="o">=</span> <span class="n">search_lightcurvefile</span><span class="p">(</span><span class="n">star</span><span class="p">,</span>
+                            <span class="n">quarter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kw</span><span class="p">)</span><span class="o">.</span><span class="n">download_all</span><span class="p">(</span><span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lcf</span> <span class="o">=</span> <span class="n">search_lightcurvefile</span><span class="p">(</span><span class="n">star</span><span class="p">,</span>
+                            <span class="n">quarter</span><span class="o">=</span><span class="n">quarter</span><span class="p">,</span>
+                            <span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kw</span><span class="p">)</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">quality_bitmask</span><span class="o">=</span><span class="n">quality_bitmask</span><span class="p">)</span>
 
     <span class="c1"># if a list, stitch things together (crudely! will be terrible for SAP!)</span>
-    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">lcf</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lcf</span><span class="p">,</span> <span class="n">LightCurveFileCollection</span><span class="p">):</span>
 
         <span class="c1"># make a normalized light curve from the first light curve file</span>
         <span class="n">lc</span> <span class="o">=</span> <span class="n">lcf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_lightcurve</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
@@ -297,14 +305,85 @@
     <span class="k">return</span> <span class="n">transit_loc</span></div>
 
 
-<div class="viewcode-block" id="extract_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.extract_transits">[docs]</a><span class="k">def</span> <span class="nf">extract_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">baseline</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_transits"><a class="viewcode-back" href="../../api.html#henrietta.lightcurves.extract_transits">[docs]</a><span class="k">def</span> <span class="nf">extract_transits</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    Not yet implemented.</span>
+<span class="sd">    This function splits a light curve into two complementary</span>
+<span class="sd">    light curves: one that includes just the transits (and a</span>
+<span class="sd">    bit of a window surrounding them) and one that contains all</span>
+<span class="sd">    the other non-transit parts of the light curve.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    lc: object</span>
+<span class="sd">        The &#39;lightkurve&#39; object which contains transit data (time, flux) that</span>
+<span class="sd">        we are analyzing.</span>
+
+<span class="sd">    period: float</span>
+<span class="sd">        The period (days) of the planet&#39;s orbit.</span>
+
+<span class="sd">    epoch: float</span>
+<span class="sd">        The JD value reported for the mid-transit time of this planet. Epoch</span>
+<span class="sd">        is used to find other transits in the data.</span>
+
+<span class="sd">    window: float</span>
+<span class="sd">        The transit duration (in days), used here to specify a window of data</span>
+<span class="sd">        points to extract as the in-transit data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    transits: LightCurve object</span>
+<span class="sd">        This is a `lightkurve`-style LightCurve object, which contains</span>
+<span class="sd">        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness</span>
+<span class="sd">        of the star). This object contains the data points between ingress</span>
+<span class="sd">        egress of a transit.</span>
+
+<span class="sd">    notransits: LightCurve object</span>
+<span class="sd">        This is a `lightkurve`-style LightCurve object, which contains</span>
+<span class="sd">        the attributes `lc.time` (times in JD) and `lc.flux` (the brightness</span>
+<span class="sd">        of the star). This object contains the data points outside of a transit.</span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="n">time</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span>
     <span class="n">flux</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">flux_err</span>
 
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">time</span><span class="o">-</span><span class="n">epoch</span><span class="p">)</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
+    <span class="n">n_transit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="n">mid_transit_times</span> <span class="o">=</span> <span class="p">(</span><span class="n">period</span><span class="o">*</span><span class="n">n_transit</span> <span class="o">+</span> <span class="n">epoch</span><span class="p">)</span>
+
+    <span class="n">ingress</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">egress</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">n_transit</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">mid_transit_times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">mid_transit_times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">lc</span><span class="o">.</span><span class="n">time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+
+                <span class="n">t0</span> <span class="o">=</span> <span class="n">mid_transit_times</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">ingress</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t0</span> <span class="o">-</span> <span class="n">window</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+                <span class="n">egress</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t0</span> <span class="o">+</span> <span class="n">window</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="n">transit_indices</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ingress</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">ingress</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">time</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">egress</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
+                    <span class="n">transit_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="n">transit_time</span> <span class="o">=</span> <span class="n">time</span><span class="p">[</span><span class="n">transit_indices</span><span class="p">]</span>
+    <span class="n">transit_flux</span> <span class="o">=</span> <span class="n">flux</span><span class="p">[</span><span class="n">transit_indices</span><span class="p">]</span>
+    <span class="n">transit_error</span> <span class="o">=</span> <span class="n">error</span><span class="p">[</span><span class="n">transit_indices</span><span class="p">]</span>
+
+    <span class="n">oot_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">time</span><span class="p">,</span><span class="n">transit_indices</span><span class="p">)</span>
+    <span class="n">oot_flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span><span class="n">transit_indices</span><span class="p">)</span>
+    <span class="n">oot_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">error</span><span class="p">,</span><span class="n">transit_indices</span><span class="p">)</span>
+
+    <span class="n">transits</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">transit_time</span><span class="p">,</span> <span class="n">transit_flux</span><span class="p">,</span> <span class="n">transit_error</span><span class="p">)</span>
+    <span class="n">notransits</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span><span class="n">oot_time</span><span class="p">,</span> <span class="n">oot_flux</span><span class="p">,</span> <span class="n">oot_error</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">transits</span><span class="p">,</span> <span class="n">notransits</span></div>
 </pre></div>

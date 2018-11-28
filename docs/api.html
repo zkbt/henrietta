@@ -28,7 +28,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Target Pixel Files" href="tpf.html" /> 
+    <link rel="prev" title="MCMC Basics" href="mcmc.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -57,7 +57,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.14.0
               </div>
             
           
@@ -91,6 +91,7 @@
 <li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="images.html">Working with Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tpf.html">Target Pixel Files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mcmc.html">MCMC Basics</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Function Definitions</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.lightcurves">lightcurves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#module-henrietta.statistics">statistics</a></li>
@@ -255,8 +256,51 @@ of the star), as well as lots of methods for analysis and plotting.</p>
 
 <dl class="function">
 <dt id="henrietta.lightcurves.extract_transits">
-<code class="descclassname">henrietta.lightcurves.</code><code class="descname">extract_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>epoch</em>, <em>duration</em>, <em>baseline</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#extract_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.extract_transits" title="Permalink to this definition">¶</a></dt>
-<dd><p>Not yet implemented.</p>
+<code class="descclassname">henrietta.lightcurves.</code><code class="descname">extract_transits</code><span class="sig-paren">(</span><em>lc</em>, <em>period</em>, <em>epoch</em>, <em>window=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/henrietta/lightcurves.html#extract_transits"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#henrietta.lightcurves.extract_transits" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function splits a light curve into two complementary
+light curves: one that includes just the transits (and a
+bit of a window surrounding them) and one that contains all
+the other non-transit parts of the light curve.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><dl class="first docutils">
+<dt><strong>lc: object</strong></dt>
+<dd><p class="first last">The ‘lightkurve’ object which contains transit data (time, flux) that
+we are analyzing.</p>
+</dd>
+<dt><strong>period: float</strong></dt>
+<dd><p class="first last">The period (days) of the planet’s orbit.</p>
+</dd>
+<dt><strong>epoch: float</strong></dt>
+<dd><p class="first last">The JD value reported for the mid-transit time of this planet. Epoch
+is used to find other transits in the data.</p>
+</dd>
+<dt><strong>window: float</strong></dt>
+<dd><p class="first last">The transit duration (in days), used here to specify a window of data
+points to extract as the in-transit data.</p>
+</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="first last docutils">
+<dt><strong>transits: LightCurve object</strong></dt>
+<dd><p class="first last">This is a <cite>lightkurve</cite>-style LightCurve object, which contains
+the attributes <cite>lc.time</cite> (times in JD) and <cite>lc.flux</cite> (the brightness
+of the star). This object contains the data points between ingress
+egress of a transit.</p>
+</dd>
+<dt><strong>notransits: LightCurve object</strong></dt>
+<dd><p class="first last">This is a <cite>lightkurve</cite>-style LightCurve object, which contains
+the attributes <cite>lc.time</cite> (times in JD) and <cite>lc.flux</cite> (the brightness
+of the star). This object contains the data points outside of a transit.</p>
+</dd>
+</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -750,7 +794,7 @@ using the two values as their allowable bounds.</p>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="tpf.html" class="btn btn-neutral" title="Target Pixel Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="mcmc.html" class="btn btn-neutral" title="MCMC Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

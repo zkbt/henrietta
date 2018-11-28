@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Statistical Cartoons &mdash; henrietta 0.0.0 documentation</title>
+  <title>MCMC Basics &mdash; henrietta 0.0.0 documentation</title>
   
 
   
@@ -28,8 +28,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Modeling Basics" href="modeling.html" />
-    <link rel="prev" title="Light Curve Basics" href="lightcurves.html" /> 
+    <link rel="next" title="Function Definitions" href="api.html" />
+    <link rel="prev" title="Target Pixel Files" href="tpf.html" /> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -86,17 +86,13 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lightcurves.html">Light Curve Basics</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Statistical Cartoons</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#Making-a-Fake-Light-Curve">Making a Fake Light Curve</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Catching-Photons-in-a-Bucket">Catching Photons in a Bucket</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical Cartoons</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modeling.html">Modeling Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fitting.html">Fitting a Model to Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulating.html">Simulating Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="images.html">Working with Images</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tpf.html">Target Pixel Files</a></li>
-<li class="toctree-l1"><a class="reference internal" href="mcmc.html">MCMC Basics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MCMC Basics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Function Definitions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing and reporting issues</a></li>
 </ul>
@@ -144,13 +140,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Statistical Cartoons</li>
+      <li>MCMC Basics</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/statistics.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/mcmc.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -346,15 +342,9 @@ div.nboutput div.output_area.stderr {
     margin-right: 4px;  /* make room for the exclamation icon */
 }
 </style>
-<div class="section" id="Statistical-Cartoons">
-<h1>Statistical Cartoons<a class="headerlink" href="#Statistical-Cartoons" title="Permalink to this headline">¶</a></h1>
-<p>We built in a few toy models to help us understand photon-counting
-noise.</p>
-<div class="section" id="Making-a-Fake-Light-Curve">
-<h2>Making a Fake Light Curve<a class="headerlink" href="#Making-a-Fake-Light-Curve" title="Permalink to this headline">¶</a></h2>
-<p>Let’s make a really boring light curve, just so we can understand what
-we should expect for the noise properties of a star of a given
-brightness.</p>
+<div class="section" id="MCMC-Basics">
+<h1>MCMC Basics<a class="headerlink" href="#MCMC-Basics" title="Permalink to this headline">¶</a></h1>
+<p>Here is a quick outline of how to use the MCMC tool in <code class="docutils literal notranslate"><span class="pre">henrietta</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
@@ -365,68 +355,101 @@ brightness.</p>
 </pre></div>
 </div>
 </div>
+<p>Before we can create a light curve model using an MCMC, we need to
+download some light curve data to work with.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># create a fake light curve, where we expect 100 photons per exposure</span>
-<span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">create_photon_lightcurve</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-<span class="c1"># plot that fake light curve</span>
-<span class="n">lc</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">0</span><span class="p">);</span>
+<span></span><span class="n">lc</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">download_kepler_lc</span><span class="p">(</span><span class="s1">&#39;Kepler-10&#39;</span><span class="p">,</span> <span class="n">quarter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<p>Remember, we can always pull out the flux values from a light curve. For
-example, if we want to compute the RMS of the light curve, we can use:</p>
+<p>Then, we need to define our custom BATMAN model, including which
+parameters we want to fix and which parameters we want to fit.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">flux</span><span class="p">)</span>
+<span></span><span class="n">astropy_model</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">setup_transit_model</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="Catching-Photons-in-a-Bucket">
-<h2>Catching Photons in a Bucket<a class="headerlink" href="#Catching-Photons-in-a-Bucket" title="Permalink to this headline">¶</a></h2>
-<p>In some ways, we can think of the Kepler telescope just as a big light
-bucket. It collects photons that are raining down from particular
-locations on the sky. We can simulate how many photons a telescope will
-gather from the sky using the following:</p>
+<p>Let’s check out what the default model parameters are:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span></span><span class="n">astropy_model</span>
 </pre></div>
 </div>
 </div>
-<p>If we want to use this function without generating a plot (let’s imagine
-we want to run it millions of times), then we can call it with the
-<code class="docutils literal notranslate"><span class="pre">visualize</span></code> keyword set to <code class="docutils literal notranslate"><span class="pre">False</span></code>:</p>
+<p>Kepler-10b has a period of 0.8375 days and an impact parameter of 0.3.
+Let’s fix those values, but let the <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">t0</span></code>, and <code class="docutils literal notranslate"><span class="pre">a</span></code> be
+free parameters, with ranges defined around the anticipated true value:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre>
 <span></span>In [ ]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">N</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">catch_photons_in_bucket</span><span class="p">(</span><span class="n">rate</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                <span class="n">diameter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-                                <span class="n">time</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-                                <span class="n">visualize</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+<span></span><span class="n">astropy_model</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">setup_transit_model</span><span class="p">(</span><span class="n">period</span> <span class="o">=</span> <span class="mf">0.8375</span><span class="p">,</span>
+                                        <span class="n">b</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
+                                        <span class="n">t0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.09</span><span class="p">,</span><span class="mf">0.12</span><span class="p">],</span>
+                                        <span class="n">radius</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.005</span><span class="p">,</span><span class="mf">0.02</span><span class="p">],</span>
+                                        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">4.0</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
+<p>Now that we have our <code class="docutils literal notranslate"><span class="pre">astropy_model</span></code> object and our light curve data
+in the form of a <code class="docutils literal notranslate"><span class="pre">lightkurve</span></code> object, we are ready to model these
+parameters with a Markov-Chain Monte Carlo.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">mcmc_fit</span></code> function takes the astropy model, the light curve data,
+and one additional argument that will determine whether or not output
+plots will be saved to the local directory. You might want to start with
+a small number of steps in the MCMC chain (say 100 or 1000) to see how
+long it takes, and then scale up to longer MCMC runs from there. This
+<code class="docutils literal notranslate"><span class="pre">mcmc_fit</span></code> function returns two useful variables:</p>
+<p><code class="docutils literal notranslate"><span class="pre">max_likelihood</span></code> is a dictionary with keys equal to the names of the
+free parameters. This dictionary contains 3 values for each free
+parameter - the maximum likelihood value (detered as the median sampled
+parameter) and the upper and lower 1-sigma uncertainty parameter values.</p>
+<p><code class="docutils literal notranslate"><span class="pre">samples</span></code> is an object that contains many different tools for
+examining the MCMC results. For an in-depth look at the capabilities of
+this object, the user should consult the emcee handbook:
+<a class="reference external" href="http://dfm.io/emcee/current/">http://dfm.io/emcee/current/</a></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
 </div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">max_likelihood</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">hsl</span><span class="o">.</span><span class="n">mcmc_fit</span><span class="p">(</span><span class="n">astropy_model</span><span class="p">,</span><span class="n">lc</span><span class="p">,</span><span class="n">saveplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nsteps</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>If we open up our current directory, we should see some <code class="docutils literal notranslate"><span class="pre">.pdf</span></code> files
+that contain summaries of diagnostic plots made by this MCMC. We can
+also look at the <code class="docutils literal notranslate"><span class="pre">max_likelihood</span></code> variable now, to see the central
+1-sigma ranges for each of our fitted parameters.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre>
+<span></span>In [ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">max_likelihood</span>
+</pre></div>
+</div>
+</div>
+<p>There’s <em>lots</em> to learn about MCMC fitting of transits, but this tool
+might be a handy way to get started!</p>
 </div>
 
 
@@ -437,10 +460,10 @@ we want to run it millions of times), then we can call it with the
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modeling.html" class="btn btn-neutral float-right" title="Modeling Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="api.html" class="btn btn-neutral float-right" title="Function Definitions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="lightcurves.html" class="btn btn-neutral" title="Light Curve Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="tpf.html" class="btn btn-neutral" title="Target Pixel Files" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
