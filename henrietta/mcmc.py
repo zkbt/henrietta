@@ -169,8 +169,8 @@ def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
         ax[j].set_ylabel(variable_names[j])
         if j == i-1:
             ax[j].set_xlabel('Steps')
-        if saveplots == True:
-            plt.savefig('walker_plot.pdf', clobber=True)
+    if saveplots == True:
+        plt.savefig('walker_plot.pdf', clobber=True)
 
     """
     Set up a corner plot, which will show us contour plots for each pair
@@ -211,7 +211,7 @@ def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
                 color='b')
     plt.title('Light Curve with Maximum Likelihood Model')
     plt.legend()
-    plt.show()
+
     if saveplots == True:
         plt.savefig('Best-fit-model.pdf',clobber=True)
 
