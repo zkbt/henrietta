@@ -26,3 +26,4 @@ from .fitting import *
 from .tpf import *
 from .imaging import *
 from .photometry import *
+from .mcmc import *

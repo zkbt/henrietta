@@ -4,6 +4,7 @@
 *.mp4
 *.gif
 *.mov
+*.pdf
 
 # the tests for lightkurve will make this directory, don't track it
 mastDownload
@@ -113,3 +114,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+#A test notebook Will works on
+astropy_model_testing.ipynb
