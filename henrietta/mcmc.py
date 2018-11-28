@@ -3,6 +3,7 @@ import numpy as np
 import emcee
 import batman
 import corner as triangle
+import matplotlib.pyplot as plt
 
 """
 
@@ -12,7 +13,7 @@ to fit those parameters and create a maximum likelihood model.
 
 """
 
-def lnprob(params):
+def lnprob(params, astropy_model, lc):
 
     """
     Determine which parameters are variable, and set their value to the
@@ -98,7 +99,7 @@ def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
 
     norm_check = input(["Is your light curve normalized? (y/n)"])
 
-    if norm_check_check == "n":
+    if norm_check == "n":
         lc = lc.normalize()
         print("Do I have to do everything?")
 
@@ -144,7 +145,7 @@ def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
     ----------
     """
 
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=[astropy_model, lc])
     result = sampler.run_mcmc(p0, nsteps)
 
     samples = sampler.chain[:, burnin:, :].reshape((-1, ndim))
@@ -204,11 +205,11 @@ def mcmc_fit(astropy_model, lc, nsteps = 10000, saveplots=False):
                     i += 1
 
     plt.figure()
-    plt.title('Light Curve with Maximum Likelihood Model')
     lc.errorbar(alpha= 0.5,zorder=0,label='Data')
     plt.plot(lc.time,astropy_model(lc.time),zorder=100,
                 label='Maximum Likelihood Model',
                 color='b')
+    plt.title('Light Curve with Maximum Likelihood Model')
     plt.legend()
     plt.show()
     if saveplots == True:
