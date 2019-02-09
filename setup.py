@@ -87,7 +87,7 @@ setup(
                       'scipy',
                       'ipython',
                       'matplotlib',
-                      'lightkurve>=1.0b16',
+                      'lightkurve>=1.0b26',
                       'tqdm',
                       'thefriendlystars>=0.0.2',
                       'illumination>=0.0.3',

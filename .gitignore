@@ -5,6 +5,7 @@
 *.gif
 *.mov
 *.pdf
+.DS_Store
 
 # the tests for lightkurve will make this directory, don't track it
 mastDownload
