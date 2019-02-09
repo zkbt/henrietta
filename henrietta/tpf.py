@@ -1,4 +1,4 @@
-from lightkurve import KeplerTargetPixelFile, TessTargetPixelFile
+from lightkurve import KeplerTargetPixelFile, TessTargetPixelFile, search_targetpixelfile
 from .imports import *
 from .tools import *
 
@@ -40,10 +40,10 @@ def download_kepler_tpf(star='Kepler-186',
     '''
 
     # download a KeplerLightCurveFile from the MAST archive
-    tpf = KeplerTargetPixelFile.from_archive(star,
-                                             quarter=quarter,
-                                             cadence=cadence,
-                                             **kw)
+    tpf = search_targetpixelfile(star,
+                                 quarter=quarter,
+                                 cadence=cadence,
+                                 **kw).download()
     return tpf
 
 def download_k2_tpf(star='WASP-47', **kw):
@@ -73,7 +73,7 @@ def download_k2_tpf(star='WASP-47', **kw):
     '''
 
     # download a KeplerLightCurveFile from the MAST archive
-    tpf = KeplerTargetPixelFile.from_archive(star, **kw)
+    tpf = search_targetpixelfile(star, **kw).download()
     return tpf
 
 def download_tess_tpf(star=261136679, **kw):

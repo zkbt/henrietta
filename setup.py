@@ -87,7 +87,7 @@ setup(
                       'scipy',
                       'ipython',
                       'matplotlib',
-                      'lightkurve>=1.0b16',
+                      'lightkurve>=1.0b26',
                       'tqdm',
                       'thefriendlystars>=0.0.2',
                       'illumination>=0.0.3',
@@ -95,10 +95,12 @@ setup(
                       'jupyter',
                       'photutils',
                       'ipympl',
-                      'scikit-image'],
+                      'scikit-image',
+                      'emcee',
+                      'corner'],
 
     # the packages in `key` will be installed if folks run `pip install henrietta[key]`
-    extras_require={'models':['batman-package'],
+    extras_require={'models':['batman-package', ],
                     'docs':['sphinx', 'nbsphinx', 'sphinx_rtd_theme', 'numpydoc']},
     # (I think just leave this set to False)
     zip_safe=False,
