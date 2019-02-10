@@ -25,9 +25,13 @@ class Loupe(il.IllustrationBase):
         '''
         plt.ioff()
 
+        # don't let this illustration talk
+        self._pithy = True
+
+
         # figure out the geometry, for the figure
         aspectratio = self.image.shape[1]/float(self.image.shape[0])
-        width = 5
+        width = 5.5
         height = width/aspectratio
         #if aspectratio >=1:
         #    width = size*aspectratio
@@ -55,10 +59,48 @@ class Loupe(il.IllustrationBase):
         # draw this illustration
         self.plot()
 
-    def create_widgets(self, maxaperture=50):
+
+    def change_image(self, i):
+
+        # update the current image data
+        self.image = self.images[i]
+
+        # update the displayed image
+        time = self.images.time[i]
+        self.update(time)
+        plt.draw()
+
+
+
+    def create_widgets(self,    aperture_radius=5,
+                                subtract_background = False,
+                                background_radii=[15, 25],
+                                maxaperture=50,
+                                maxbackground=100,
+                                **kwargs):
         '''
-        (part of __init__)
         Create the control widgets for interactions.
+        (part of __init__)
+
+        Parameters
+        ----------
+        aperture_radius : int
+            The default radius for the photometric aperture
+            (can be changed interactively)
+
+        subtract_background : bool
+            Should we attempt to do background subtraction?
+            (can be changed interactively)
+
+        background_radii : list of two ints
+            The default radii for background subtraction
+            (can be changed interactively)
+
+        maxaperture : int
+            The maximum aperture radius to allow interactively.
+
+        maxbackground : int
+            The maximum background radius to allow interactively.
         '''
 
         ####################################
@@ -70,7 +112,7 @@ class Loupe(il.IllustrationBase):
 
         # a slider to pick the radius of the aperture
         aperture_radius_slider = widgets.IntSlider(
-                                    value=self.aperture_radius,
+                                    value=aperture_radius,
                                     min=0,
                                     max=maxaperture,
                                     step=1,
@@ -81,7 +123,7 @@ class Loupe(il.IllustrationBase):
                                     layout={'width':'100%'})
 
         # make the combined aperture widget
-        self.aperture_widget = widgets.VBox([aperture_radius_label,
+        self._widget_aperture = widgets.VBox([aperture_radius_label,
                                              aperture_radius_slider])
 
         ###########################################
@@ -100,10 +142,9 @@ class Loupe(il.IllustrationBase):
 
         # a range slider to pick the inner + outer radii of the annulus
         background_slider = widgets.IntRangeSlider(
-                                value=[2*self.aperture_radius,
-                                       3*self.aperture_radius],
+                                value=background_radii,
                                 min=0,
-                                max=100,
+                                max=maxbackground,
                                 step=1,
                                 description='Radii',
                                 disabled=True,
@@ -115,7 +156,8 @@ class Loupe(il.IllustrationBase):
         # only turn on the background slider if we need it
         def update_background_slider(checkbox):
             '''
-            What do we do when the background checkbox is updated?
+            What do we do to the background slider
+            when the background checkbox is updated?
             '''
             do_background = checkbox['new'] == False
             background_slider.disabled = do_background
@@ -126,33 +168,55 @@ class Loupe(il.IllustrationBase):
                        (background_slider, 'min'))
 
         # create the combined background widget
-        self.background_widget = widgets.VBox([background_label,
+        self._widget_background = widgets.VBox([background_label,
                                                background_checkbox,
                                                background_slider])
 
 
-        # set up the interaction loop
-        self.widge = widgets.interactive(self.photometry,
-                                         aperture_radius=aperture_radius_slider,
-                                         background_radii=background_slider,
-                                         subtract_background=background_checkbox)
-
-        #self.window = widgets.Output(layout={'border': '1px solid black', 'width':'70%', 'height':'500px'})
-        self.output_widget = widgets.Output(layout={'border': '1px solid black',
-                                                    'margin': '1% 0% 1% 0%',
-                                                    'height':'100px'})
-
-
-
-        self.instruction_widget = widgets.Output(layout={'border': '1px solid black',
+        # create a place to share instructions
+        self._widget_instruction = widgets.Output(layout={'border': '1px solid black',
                                                         'margin': '1% 0% 1% 0%',
-                                                        'height':'40px',
+                                                        'max_height':'30px',
                                                         'background_color':'red',
                                                         })
 
-    def __init__(self, image,
-                       aperture_radius=10.0,
+        # create an output to share results
+        self._widget_results = widgets.Output(layout={'border': '1px solid black',
+                                                    'margin': '1% 0% 1% 0%',
+                                                    'max_height':'200px'})
+
+        # a slider to pick the radius of the aperture
+        image_slider = widgets.IntSlider(
+                                    value=0,
+                                    min=0,
+                                    max=len(self.images)-1,
+                                    step=1,
+                                    description='#',
+                                    orientation='vertical',
+                                    continuous_update=False,
+                                    readout=True,
+                                    layout=dict(height='100%'))
+
+
+        self._widget_imageslider = widgets.VBox([image_slider],
+                             layout=dict(margin='0% 0% 0% 0%'))
+
+
+        # set up the interaction loop for the photometry
+        self._interaction_photometry = widgets.interactive(self.photometry,
+                                         aperture_radius=aperture_radius_slider,
+                                         background_radii=background_slider,
+                                         subtract_background=background_checkbox,
+                                         image_number=image_slider)
+
+
+        # create a shared widget for the controls
+        self._widget_controls = widgets.VBox([self._widget_aperture, self._widget_background])
+
+    def __init__(self, images,
+                       aperture_radius=5,
                        subtract_background = False,
+                       background_radii=[15, 25],
                        **framekw):
         '''
         Parameters
@@ -161,72 +225,64 @@ class Loupe(il.IllustrationBase):
         image : 2D array, str
             An image or a path to a filename containing an image.
 
-        aperture_radius : float
-            The default radius for the photometric aperture
-            (can be changed interactively).
-
-        subtract_background : bool
-            Should we attempt to do background subtraction?
-            (not fully implemented yet)
-
         **framekw passed to CameraFrame
         '''
 
-        # load an image if given a filename
-        if type(image) == str:
-            image = io.read_image(image)
-
-        self.images = il.make_image_sequence(image)
-
-        # don't let this illustration talk
-        self._pithy = True
-
-        # store the image as an attribute of the loupe
-        self.image = image
-
-
-        # store the initial defaults
         self.aperture_radius = aperture_radius
         self.subtract_background = subtract_background
+        self.background_radii = background_radii
+
+        # load an image if given a filename
+        if type(images) == str:
+            images = io.read_image(images)
+
+        self.images = il.make_image_sequence(images)
+
+        # store the image as an attribute of the loupe
+        self.image = self.images[0]
 
         # start with no apertures
         self.apertures = []
         self.napertures = 0
 
 
-        self.create_widgets()
+        # create the widgets
+        self.create_widgets(aperture_radius=aperture_radius,
+                            subtract_background=subtract_background,
+                            background_radii=background_radii)
 
 
-
-        with self.instruction_widget:
+        with self._widget_instruction:
             print("Please [a]dd or [z]ap an aperture at the cursor location.")
 
         # display the widgets
 
+        #
 
-        controls = widgets.VBox([self.aperture_widget, self.background_widget],
-                                        layout=dict(width='35%',
-                                                    margin='0% 3% 0% 0%'))
-
-        #plot = widgets.HBox([self.figure.canvas], layout={'width':'500px',
-        #                                                'height':'500px',})
-
-
+        # populate the illustration with data
         self.create_frame()
-        image = widgets.VBox([self.figure.canvas],
-                             layout=dict(width='62%',
-                                         margin='0% 3% 0% 0%'))
-
-        interaction = widgets.HBox([controls, image])
-
-        layout = widgets.VBox([self.instruction_widget,
-                               interaction,
-                               self.output_widget])
 
 
+        self._widget_image = widgets.VBox([self.figure.canvas],
+                             layout=dict(width='62%', margin='0% 2% 0% 0%'))
+
+        self._widget_left = widgets.VBox([
+                                          self._widget_controls,
+                                          self._widget_results],
+                            layout=dict(width='30%', margin='0% 0% 0% 2%'))
 
 
-        display(layout)
+        self._widget_interaction = widgets.HBox([self._widget_left,
+                                            self._widget_imageslider,
+                                            self._widget_image])
+
+
+        self._widget_layout = widgets.VBox([self._widget_instruction,
+                                            self._widget_interaction])
+
+
+
+        display(self._widget_layout)
 
         # set it up so we can add or subtract an aperture by clicking on the image
         self.figure.canvas.mpl_connect('key_press_event', self.do_something_with_keyboard)
@@ -249,7 +305,7 @@ class Loupe(il.IllustrationBase):
         elif event.key.lower() == 'a':
             self.add_aperture(event.xdata, event.ydata)
         plt.draw()
-        self.widge.update()
+        self._interaction_photometry.update()
 
     def add_aperture(self, x, y):
         '''
@@ -291,7 +347,10 @@ class Loupe(il.IllustrationBase):
         toremove.erase()
 
 
-    def photometry(self, aperture_radius=10,r_in=20,r_out=30,back_photo=True):
+    def photometry(self, aperture_radius=5,
+                         subtract_background = False,
+                         background_radii=[15, 25],
+                         image_number=0):
 
         '''
         Create apertures around specified list of stars
@@ -314,6 +373,9 @@ class Loupe(il.IllustrationBase):
         average background pixel value around each star : array (If back_photo=True)
         plots image with the aperture and centroids located for each star
         '''
+
+        # set the image to image
+        self.change_image(image_number)
 
         # if we have no apertures, do nothing
         if len(self.apertures) == 0:
@@ -340,8 +402,8 @@ class Loupe(il.IllustrationBase):
         #    back_values = back_table['aperture_sum'].data/area['aperture_sum'].data
         #    return flux_values,back_values*np.pi*aperture_radius**2
         #else:
-        self.output_widget.clear_output()
-        with self.output_widget:
+        self._widget_results.clear_output()
+        with self._widget_results:
             self.summarize()
         self.measurements = vstack([a.phot_table for a in self.apertures])
         self.measurements['name'] = [a.name for a in self.apertures]
