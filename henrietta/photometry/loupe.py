@@ -7,6 +7,8 @@ from IPython.display import display
 from astropy.table import vstack
 import ipywidgets as widgets
 
+from lightkurve import LightCurve
+
 # Check it out:
 # https://github.com/matplotlib/jupyter-matplotlib might be good for widgets!
 
@@ -59,7 +61,6 @@ class Loupe(il.IllustrationBase):
         # draw this illustration
         self.plot()
 
-
     def change_image(self, i):
 
         # update the current image data
@@ -70,14 +71,7 @@ class Loupe(il.IllustrationBase):
         self.update(time)
         plt.draw()
 
-
-
-    def create_widgets(self,    aperture_radius=5,
-                                subtract_background = False,
-                                background_radii=[15, 25],
-                                maxaperture=50,
-                                maxbackground=100,
-                                **kwargs):
+    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=50, maxbackground=100, **kwargs):
         '''
         Create the control widgets for interactions.
         (part of __init__)
@@ -173,6 +167,10 @@ class Loupe(il.IllustrationBase):
                                                background_slider])
 
 
+        #########################################
+        # create some output widgest for displays
+        #########################################
+
         # create a place to share instructions
         self._widget_instruction = widgets.Output(layout={'border': '1px solid black',
                                                         'margin': '1% 0% 1% 0%',
@@ -183,7 +181,12 @@ class Loupe(il.IllustrationBase):
         # create an output to share results
         self._widget_results = widgets.Output(layout={'border': '1px solid black',
                                                     'margin': '1% 0% 1% 0%',
-                                                    'max_height':'200px'})
+                                                    'max_height':'200px',
+                                                    'min_height':'30px'})
+
+        #####################################
+        # create time slider to change images
+        #####################################
 
         # a slider to pick the radius of the aperture
         image_slider = widgets.IntSlider(
@@ -197,7 +200,7 @@ class Loupe(il.IllustrationBase):
                                     readout=True,
                                     layout=dict(height='100%'))
 
-
+        # create a container to store the time slider in
         self._widget_imageslider = widgets.VBox([image_slider],
                              layout=dict(margin='0% 0% 0% 0%'))
 
@@ -213,11 +216,7 @@ class Loupe(il.IllustrationBase):
         # create a shared widget for the controls
         self._widget_controls = widgets.VBox([self._widget_aperture, self._widget_background])
 
-    def __init__(self, images,
-                       aperture_radius=5,
-                       subtract_background = False,
-                       background_radii=[15, 25],
-                       **framekw):
+    def __init__(self, images, aperture_radius=5, subtract_background = False, background_radii=[15, 25], **framekw):
         '''
         Parameters
         ----------
@@ -228,9 +227,18 @@ class Loupe(il.IllustrationBase):
         **framekw passed to CameraFrame
         '''
 
+        ####################################
+        # set the defaults
+        ####################################
+
         self.aperture_radius = aperture_radius
         self.subtract_background = subtract_background
         self.background_radii = background_radii
+
+
+        ####################################
+        # load sequence of images
+        ####################################
 
         # load an image if given a filename
         if type(images) == str:
@@ -238,12 +246,8 @@ class Loupe(il.IllustrationBase):
 
         self.images = il.make_image_sequence(images)
 
-        # store the image as an attribute of the loupe
+        #  define the first image, initially
         self.image = self.images[0]
-
-        # start with no apertures
-        self.apertures = []
-        self.napertures = 0
 
 
         # create the widgets
@@ -251,13 +255,9 @@ class Loupe(il.IllustrationBase):
                             subtract_background=subtract_background,
                             background_radii=background_radii)
 
-
         with self._widget_instruction:
             print("Please [a]dd or [z]ap an aperture at the cursor location.")
 
-        # display the widgets
-
-        #
 
         # populate the illustration with data
         self.create_frame()
@@ -287,9 +287,11 @@ class Loupe(il.IllustrationBase):
         # set it up so we can add or subtract an aperture by clicking on the image
         self.figure.canvas.mpl_connect('key_press_event', self.do_something_with_keyboard)
 
-        # (for better layout, is it possible to place the matplotlib notebook
-        #  plot *inside* a widget Output? that way, I could set the layout
-        # for the output to decide where the plot goes
+
+        # start with no apertures defined
+        self.apertures = []
+        self.napertures = 0
+
 
     def do_something_with_keyboard(self, event):
         '''
@@ -299,11 +301,20 @@ class Loupe(il.IllustrationBase):
         ----------
         event : matplotlib.backend_bases.LocationEvent
         '''
+
+        # store the last event that was clicked
         self.lastevent = event
-        if event.key.lower() == 'z':
-            self.remove_aperture(event.xdata, event.ydata)
-        elif event.key.lower() == 'a':
-            self.add_aperture(event.xdata, event.ydata)
+
+        # define the available options
+        self.options = {'z':self.remove_aperture,
+                        'a':self.add_aperture}
+
+        # do the requested action
+        key_pressed = event.key.lower()
+        action = self.options.get(key_pressed, None)
+        action(event.xdata, event.ydata)
+
+        # update the plot and the photometry
         plt.draw()
         self._interaction_photometry.update()
 
@@ -314,12 +325,15 @@ class Loupe(il.IllustrationBase):
         #with self.out:
         #    print('adding aperture at {}'.format((x,y)))
         position = np.array([x,y])
-        name = 'Star {}'.format(self.napertures)
+        name = '{}'.format(self.napertures)
 
         new = InteractiveAperture(name=name,
                                   pos=position,
                                   loupe=self,
-                                  aperture_radius=self.aperture_radius)
+                                  aperture_radius=self.aperture_radius,
+                                  subtract_background=self.subtract_background,
+                                  background_radii=self.background_radii)
+
         # plot this aperture on the image
         new.plot(ax=self.frames['imshow'].ax)
 
@@ -386,9 +400,8 @@ class Loupe(il.IllustrationBase):
         image = self.image
 
         self.aperture_radius = aperture_radius
-
-        #if back_photo == True:
-        #    back_aperture = photutils.CircularAnnulus(pos,r_in,r_out)
+        self.subtract_background = subtract_background
+        self.background_radii = background_radii
 
         for i, a in enumerate(self.apertures):
             a.update()
@@ -402,18 +415,31 @@ class Loupe(il.IllustrationBase):
         #    back_values = back_table['aperture_sum'].data/area['aperture_sum'].data
         #    return flux_values,back_values*np.pi*aperture_radius**2
         #else:
+
+        self.measurements = vstack([a.table for a in self.apertures])
         self._widget_results.clear_output()
         with self._widget_results:
-            self.summarize()
-        self.measurements = vstack([a.phot_table for a in self.apertures])
-        self.measurements['name'] = [a.name for a in self.apertures]
-        self.measurements = self.measurements['name','xcenter', 'ycenter', 'aperture_sum']
+            print('r={:.0f}px (area={:.1f}px)'.format(self.aperture_radius, self.apertures[0].area()))
+            print(self.measurements)
+
+        #self.measurements = self.measurements['name','xcenter', 'ycenter', 'aperture_sum']
 
         plt.draw()
 
         return self.measurements
 
-    def summarize(self):
-        print('With r={}px apertures:'.format(self.aperture_radius))
-        for a in self.apertures:
-            print(' {}'.format(a))
+    def make_lightcurves(self):
+        tables = []
+        times = []
+        for i in range(len(self.images)):
+            table = self.photometry(image_number=i)
+            table.add_index('#')
+            tables.append(table)
+            times.append(self.images.time[i].jd)
+
+        lightcurves = {}
+        for k in tables[0]['#']:
+            lightcurves[k] = LightCurve( flux=[t.loc[k]['flux'] for t in tables])
+
+        self.lightcurves = lightcurves
+        return lightcurves
