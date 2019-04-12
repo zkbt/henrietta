@@ -2,6 +2,7 @@ import illumination as il
 from ..imports import *
 from .apertures import *
 from ..imaging import io
+from tqdm import tqdm
 
 from IPython.display import display
 from astropy.table import vstack
@@ -61,17 +62,18 @@ class Loupe(il.IllustrationBase):
         # draw this illustration
         self.plot()
 
-    def change_image(self, i):
+    def change_image(self, i, quick=False):
 
         # update the current image data
         self.image = self.images[i]
 
         # update the displayed image
         time = self.images.time[i]
-        self.update(time)
-        plt.draw()
+        if not quick:
+            self.update(time)
+            plt.draw()
 
-    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=50, maxbackground=100, **kwargs):
+    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=200, maxbackground=400, **kwargs):
         '''
         Create the control widgets for interactions.
         (part of __init__)
@@ -364,7 +366,8 @@ class Loupe(il.IllustrationBase):
     def photometry(self, aperture_radius=5,
                          subtract_background = False,
                          background_radii=[15, 25],
-                         image_number=0):
+                         image_number=0,
+                         quick=False):
 
         '''
         Create apertures around specified list of stars
@@ -388,8 +391,12 @@ class Loupe(il.IllustrationBase):
         plots image with the aperture and centroids located for each star
         '''
 
+        # point at this current figure
+        if not quick:
+            plt.figure(self.figure.number)
+
         # set the image to image
-        self.change_image(image_number)
+        self.change_image(image_number, quick=quick)
 
         # if we have no apertures, do nothing
         if len(self.apertures) == 0:
@@ -406,7 +413,6 @@ class Loupe(il.IllustrationBase):
         for i, a in enumerate(self.apertures):
             a.update()
 
-
         #if back_photo == True:
         #    back_table = photutils.aperture_photometry(image,back_aperture)
         #    area = np.pi*(r_out**2-r_in**2)
@@ -417,22 +423,25 @@ class Loupe(il.IllustrationBase):
         #else:
 
         self.measurements = vstack([a.table for a in self.apertures])
-        self._widget_results.clear_output()
-        with self._widget_results:
-            print('r={:.0f}px (area={:.1f}px)'.format(self.aperture_radius, self.apertures[0].area()))
-            print(self.measurements)
 
-        #self.measurements = self.measurements['name','xcenter', 'ycenter', 'aperture_sum']
-
-        plt.draw()
+        if not quick:
+            self._widget_results.clear_output()
+            with self._widget_results:
+                print('r={:.0f}px (area={:.1f}px)'.format(self.aperture_radius, self.apertures[0].area()))
+                print(self.measurements)
+            plt.draw()
 
         return self.measurements
 
     def make_lightcurves(self):
+
+        # create an empty list of photometry tables and times
         tables = []
         times = []
-        for i in range(len(self.images)):
-            table = self.photometry(image_number=i)
+
+        # loop over all the images
+        for i in tqdm(range(len(self.images))):
+            table = self.photometry(image_number=i, quick=True)
             table.add_index('#')
             tables.append(table)
             times.append(self.images.time[i].jd)
