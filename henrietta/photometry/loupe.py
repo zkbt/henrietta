@@ -73,7 +73,7 @@ class Loupe(il.IllustrationBase):
             self.update(time)
             plt.draw()
 
-    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=200, maxbackground=400, **kwargs):
+    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=100, maxbackground=200, **kwargs):
         '''
         Create the control widgets for interactions.
         (part of __init__)
