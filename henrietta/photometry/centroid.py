@@ -2,7 +2,7 @@ from numpy import *
 import pdb
 import matplotlib.pyplot as plt
 
-def mean_centroid(image,center,boxsize=60.,num_stars=2):
+def mean_centroid(image, center, boxsize=60.):
 
 	'''
     Determines the weighted mean centroid for multiple stars
@@ -20,13 +20,13 @@ def mean_centroid(image,center,boxsize=60.,num_stars=2):
     num_stars : int
         Number of stars to look at
 
-
     Returns
     -------
     centroid position for each star : array
-
     '''
 
+	# figure out the number of stars from the list of centers
+	num_stars = len(center)
 	centroid = zeros((num_stars,2)) #setting up the centroid array
 	L = boxsize #size of the box to isolate the star
 
