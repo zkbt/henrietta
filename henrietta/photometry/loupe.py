@@ -326,7 +326,6 @@ class Loupe(il.IllustrationBase):
         self.apertures = []
         self.napertures = 0
 
-
     def do_something_with_keyboard(self, event):
         '''
         If the user clicks on the imshow, do something with that click.

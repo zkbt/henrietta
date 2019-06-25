@@ -5,9 +5,8 @@ from .tools import *
 from lightkurve.lightcurve import LightCurve
 from lightkurve.collections import LightCurveFileCollection
 
+
 def download_kepler_lc(star='Kepler-186',
-                       quarter='all',
-                       cadence='long',
                        quality_bitmask='hard',
                        kind='PDCSAP_FLUX', **kw):
     '''
@@ -65,16 +64,7 @@ def download_kepler_lc(star='Kepler-186',
     '''
 
     # download a KeplerLightCurveFile (or list of them) from the MAST archive
-    if quarter == 'all':
-        lcf = search_lightcurvefile(star,
-                            quarter=None,
-                            cadence=cadence,
-                            **kw).download_all(quality_bitmask=quality_bitmask)
-    else:
-        lcf = search_lightcurvefile(star,
-                            quarter=quarter,
-                            cadence=cadence,
-                            **kw).download(quality_bitmask=quality_bitmask)
+    lcf = search_lightcurvefile(star,**kw).download_all(quality_bitmask=quality_bitmask)
 
     # if a list, stitch things together (crudely! will be terrible for SAP!)
     if isinstance(lcf, LightCurveFileCollection):
@@ -94,6 +84,8 @@ def download_kepler_lc(star='Kepler-186',
     # return the light curve
     return lc
 
+def download_lc(*args, **kwargs):
+    return download_kepler_lc(*args, **kwargs)
 
 
 def locate_transits(lc, period, t0=0, name=None, color='green', **kw):
