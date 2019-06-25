@@ -5,14 +5,15 @@ from ..imaging import io
 from tqdm import tqdm
 
 from IPython.display import display
+
+# is there a way to force %matplotlib notebook?
+#from IPython import get_ipython
+#get_ipython().run_line_magic('matplotlib', 'widget')
+
 from astropy.table import vstack
 import ipywidgets as widgets
 
 from lightkurve import LightCurve
-
-# Check it out:
-# https://github.com/matplotlib/jupyter-matplotlib might be good for widgets!
-
 
 class Loupe(il.IllustrationBase):
     '''
@@ -73,7 +74,7 @@ class Loupe(il.IllustrationBase):
             self.update(time)
             plt.draw()
 
-    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=200, maxbackground=400, **kwargs):
+    def create_widgets(self, aperture_radius=5, subtract_background = False, background_radii=[15, 25], maxaperture=100, maxbackground=200, **kwargs):
         '''
         Create the control widgets for interactions.
         (part of __init__)
@@ -107,7 +108,8 @@ class Loupe(il.IllustrationBase):
         aperture_radius_label = widgets.Label('Photometric Aperture')
 
         # a slider to pick the radius of the aperture
-        aperture_radius_slider = widgets.IntSlider(
+        '''
+        aperture_radius_slider = widgets.FloatSlider(
                                     value=aperture_radius,
                                     min=0,
                                     max=maxaperture,
@@ -115,12 +117,21 @@ class Loupe(il.IllustrationBase):
                                     description='Radius',
                                     orientation='horizontal',
                                     continuous_update=False,
-                                    readout=True,
+                                    readout=False,
                                     layout={'width':'100%'})
+        '''
+        aperture_radius_text = widgets.FloatText(
+                                    value=aperture_radius,
+                                    description='Radius',
+                                    layout={'width':'80%'})
+
+        #widgets.jslink([aperture_radius_slider, 'value'],
+        #               [aperture_radius_text, 'value'])
 
         # make the combined aperture widget
         self._widget_aperture = widgets.VBox([aperture_radius_label,
-                                             aperture_radius_slider])
+                                              #aperture_radius_slider,
+                                              aperture_radius_text])
 
         ###########################################
         # create the background subtraction control
@@ -135,6 +146,23 @@ class Loupe(il.IllustrationBase):
         # a label for the background subtraction
         background_label = widgets.Label('Background Subtraction',
                                          disabled=True)
+
+        # create text boxes for the inner and outer radii
+        background_inner_text = widgets.BoundedFloatText(
+                                    value=background_radii[0],
+                                    description='Inner Radius',
+                                    layout={'width':'80%'})
+
+        background_outer_text = widgets.BoundedFloatText(
+                                    value=background_radii[1],
+                                    description='Outer Radius',
+                                    layout={'width':'80%'})
+
+        widgets.jslink((aperture_radius_text, 'value'),
+                       (background_inner_text, 'min'))
+
+        widgets.jslink((background_inner_text, 'value'),
+                       (background_outer_text, 'min'))
 
         # a range slider to pick the inner + outer radii of the annulus
         background_slider = widgets.IntRangeSlider(
@@ -156,17 +184,20 @@ class Loupe(il.IllustrationBase):
             when the background checkbox is updated?
             '''
             do_background = checkbox['new'] == False
-            background_slider.disabled = do_background
+            background_inner_text.disabled = do_background
+            background_outer_text.disabled = do_background
+
         background_checkbox.observe(update_background_slider, names='value')
 
         # don't let the background inner radius go inside the aperture radius
-        widgets.jslink((aperture_radius_slider, 'value'),
-                       (background_slider, 'min'))
+        #widgets.jslink((aperture_radius_slider, 'value'),
+        #               (background_slider, 'min'))
 
         # create the combined background widget
         self._widget_background = widgets.VBox([background_label,
                                                background_checkbox,
-                                               background_slider])
+                                               background_inner_text,
+                                               background_outer_text])
 
 
         #########################################
@@ -209,8 +240,9 @@ class Loupe(il.IllustrationBase):
 
         # set up the interaction loop for the photometry
         self._interaction_photometry = widgets.interactive(self.photometry,
-                                         aperture_radius=aperture_radius_slider,
-                                         background_radii=background_slider,
+                                         aperture_radius=aperture_radius_text,
+                                         background_inner=background_inner_text,
+                                         background_outer=background_outer_text,
                                          subtract_background=background_checkbox,
                                          image_number=image_slider)
 
@@ -294,7 +326,6 @@ class Loupe(il.IllustrationBase):
         self.apertures = []
         self.napertures = 0
 
-
     def do_something_with_keyboard(self, event):
         '''
         If the user clicks on the imshow, do something with that click.
@@ -314,11 +345,12 @@ class Loupe(il.IllustrationBase):
         # do the requested action
         key_pressed = event.key.lower()
         action = self.options.get(key_pressed, None)
-        action(event.xdata, event.ydata)
+        if action is not None:
+            action(event.xdata, event.ydata)
 
-        # update the plot and the photometry
-        plt.draw()
-        self._interaction_photometry.update()
+            # update the plot and the photometry
+            plt.draw()
+            self._interaction_photometry.update()
 
     def add_aperture(self, x, y):
         '''
@@ -334,7 +366,8 @@ class Loupe(il.IllustrationBase):
                                   loupe=self,
                                   aperture_radius=self.aperture_radius,
                                   subtract_background=self.subtract_background,
-                                  background_radii=self.background_radii)
+                                  background_radii=self.background_radii,
+                                  )
 
         # plot this aperture on the image
         new.plot(ax=self.frames['imshow'].ax)
@@ -352,8 +385,7 @@ class Loupe(il.IllustrationBase):
         x, y : float
             The location where we want to remove an aperture.
         '''
-        #with self.out:
-        #    print('removing aperture from {}'.format((x,y)))
+
         positions = [a.positions[0] for a in self.apertures]
         xexisting, yexisting = np.array(positions).T
         distance = (xexisting - x)**2 + (yexisting - y)**2
@@ -365,7 +397,8 @@ class Loupe(il.IllustrationBase):
 
     def photometry(self, aperture_radius=5,
                          subtract_background = False,
-                         background_radii=[15, 25],
+                         background_inner=15,
+                         background_outer=25,
                          image_number=0,
                          quick=False):
 
@@ -391,6 +424,8 @@ class Loupe(il.IllustrationBase):
         plots image with the aperture and centroids located for each star
         '''
 
+
+        background_radii=[background_inner, background_outer]
         # point at this current figure
         if not quick:
             plt.figure(self.figure.number)

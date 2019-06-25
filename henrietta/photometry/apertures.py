@@ -39,6 +39,7 @@ class InteractiveAperture(photutils.CircularAperture):
 
         # create a background annulus
         r_in, r_out = background_radii
+        r_out = np.maximum(r_out, r_in + 1)
         self.background_aperture = photutils.CircularAnnulus(pos, r_in, r_out)
         self.subtract_background = subtract_background
 
